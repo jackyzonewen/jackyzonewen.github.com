@@ -1,0 +1,228 @@
+---
+layout: post
+title: "一步一步教你搭建基于OctoPress+Github的个人博客"
+date: 2013-10-30 17:47
+comments: true
+categories: 
+---
+##一步一步教你搭建基于OctoPress+Github的个人博客##
+---------------------
+![enter image description here][1]
+
+----------
+####最近看了很多博客，然后想尝试着搭建一个属于自己的博客，所以搜集了网上一些教程，然后针对于自己在搭建过程中出  现的问题记录下来，希望大家可以照着教程更方便的搭建属于自己的博客并且熟悉如何来管理自己的博客，如有什么错误之处，还望指正。####
+----------
+
+### 目录 ###
+ - 安装Ruby环境
+ - 设置Github账号
+ - 安装OctoPress
+ - 配置
+ - 管理博客
+ - 同步
+ - Mardown指南
+ - 参考
+
+----------
+
+###安装Ruby环境###
+
+如果你的电脑已经安装Ruby-1.9.3及以上的版本，那么直接跳过这一步骤，OSX现在一般都自带Ruby环境，自带的Ruby环境目录为/usr/local/rvm和/usr/bin/ruby
+
+
+**安装Ruby版本管理RVM:**
+
+    bash -s stable < <(curl -s https://raw.github.com/wayneeseguin/rvm/master/binscripts/rvm-installer)
+
+**设置环境变量:**
+
+    echo '[[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm" # Load RVM function' >> ~/.bash_profile
+    source ~/.bash_profile
+
+
+**安装ruby**  
+最新的必须使用ruby-1.9.3的环境，否则的话会提示rdiscount2.7.0.3安装失败
+
+    rvm install 1.9.3 && rvm use 1.9.3
+    rvm rubygems latest
+
+----------
+
+
+###设置Github账号###
+
+首先你需要有一个Github的账号，Github账号的注册地址是：[https://github.com/signup/free][2]。  
+然后，你需要新建一个仓库，如果你有自己的域名的话，那么Respository的名称可以随便取，否则的话，将你的Respository的名称设置为:YourAccountName.github.com。
+
+----------
+
+###安装Octopress###
+
+**这里我认为你是第一次安装Octopress，你可以克隆已经修改的博客源码，我们这里基于Octopress大师的源码，参考[http://octopress.org/docs/setup/][3]。**
+
+    git clone git://github.com/imathis/octopress.git octopress
+    cd octopress    # If you use RVM, You'll be asked if you trust the .rvmrc file (say yes).
+    ruby --version  # Should report Ruby 1.9.3
+
+**安装相关依赖项：**
+
+    gem install bundler
+    rbenv rehash    # If you use rbenv, rehash to be able to run the bundle command
+    bundle install
+    
+**安装默认的Octopress 主题**
+
+    rake install
+    
+----------
+
+###配置Octopress###
+
+关于_config.yml文件中的更多内容，请看这里的内容：[Configuring Octopress][4]  
+最好把里面的twitter相关的信息全部删掉，否则在国内加载会很慢；同理，修改定制文件/source/_includes/custom/head.html 把google的自定义字体去掉。
+
+**配置评论和分享到微博功能：**
+
+- 在_config.yml中增加一项： weibo_share: true
+- 修改 source/_includes/post/sharing.html ，增加如下代码(注意圆角)：
+
+    ｛% if site.weibo_share %｝  
+    ｛% include post/weibo.html %｝  
+    ｛% endif %｝
+- 增加文件：source/_includes/post/weibo.html
+- 访问 http://www.jiathis.com/ ，获取分享的代码
+- 访问 http://uyan.cc/ ，获得评论的代码
+- 将上面2步的代码都加入到weibo.html中即可
+- 增加 source/_includes/post/copyright.html，加入以下内容：  
+    原创&amp;整理的文章，版权声明:自由转载-非商用&amp;衍生-保持署名 | <a herf="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh">Creative Commons BY-NC-ND 3.0</a>
+- 修改 source/_layouts/post.html，在标签下增加如下代码:  
+``<footer> 
+    <p class="meta">  
+      ……省略代码  
+      ｛% include post/categories.html %}  
+    </p>  
+    <!-- begin 这里是增加的 -->  
+    <p class="meta">  
+      ｛% include post/copyright.html %}  
+    </p>  
+    <!-- end 这里是增加的 -->  
+    ……省略代码  
+  </footer>  ``
+
+ 
+###管理博客###
+
+**部署博客到Github**
+  
+    rake setup_github_pages
+
+系统新增了一个文件夹_deploy，其实这个文件夹本身也是一个git代码库，你可以使用ls -a命令,目录用来存放部署到master分支的内容。期间会要求你输入仓库的url，根据提示，进行输入即可。
+
+    rake generate
+    rake deploy
+    
+生成博客文件，并将生成的博客文件拷贝到_deploy/目录下，然后将这些内容添加到git中，并commit和push到仓库的master分支，如果提示git push成功的话，你可以访问你的博客了，第一次可能需要多等几分钟。
+
+方便我们多台电脑同步写博客，并且更好的管理博客，最后别忘了提交源代码，这里是将源码提交到source分支：
+
+    git add .
+    git commit -a -m 'comment'
+    git push origin source
+
+**开始写博客**
+
+Octopress为我们提供了一些task来创建博文和页面。博文必须存储在source/_posts目录下，并且需要按照Jekyll的命名规范对文章进行命名：YYYY-MM-DD-post-title.markdown。文章的名字会被当做url的一部分，而其中的日期用于对博文的区分和排序。
+通过Octopress提供的task可以正确的按照命名规范创建一个博文，并且在博文中会附带常用的一些yaml元数据。创建并部署博文的一个完整过程：  
+
+    rake new_post["New Post"]
+    # 进入source_posts目录下面编辑博客内容，期间可以使用rake preview进行预览
+    rake generate # 重新生成页面
+    # 保存源文件
+    git add .
+    git commit -am "Some comment here." 
+    git push origin source
+    # 发布到Github上面
+    rake deploy
+
+----------
+
+###同步###
+
+
+你的Github仓库现在有两个分支，分别是master和source。master存储的是博客网站本身，而source存储的是生成博客的源文件。master的内容放在根目录的_deploy文件夹内，当你push源文件时会忽略，它使用的是rake deploy命令来更新的。
+
+首先将博客的源文件clone到本地的myblog文件夹内
+
+    git clone -b source git@github.com:username/username.github.com.git myblog
+
+当需要从另外一台机器来编写博客时，如果机子未配置ruby环境，参考上面教程进行配置，如果未配置过Octopress环境，执行下面操作：
+
+    cd myblog  
+    ruby --version # Should report Ruby 1.9.3  
+    gem install bundler  
+    bundle install  
+    rake install  
+
+如果已经配置过Octopress环境，那么执行下面的操作:
+将博客文件clone到octopress的_deploy文件夹内，或者可以重新用rake setup_github_pages初始化_deploy目录。
+
+    cd myblog
+    git clone git@github.com:username/username.github.com.git _deploy 
+这一步必须要，否则rake deploy会因为找不到_deploy目录而失败。
+
+如果几台电脑上面都配置好了Otcopress，要在其中一台上写博客需要进行同步，更新source仓库即可，更新master并不是必须的，因为更改源文件之后还是需要rake generate，这个时候会自动进行 master更新。
+
+    cd myblog  
+    git pull origin source  # update the local source branch  
+    cd ./_deploy  
+    git pull origin master  # update the local master branch 
+
+----------
+
+
+###Mardown指南###
+
+
+介绍markdown的教程很多，提供几个供大家参考:
+
+- [鲁塔弗：markdown 简明语法][5]  
+- [图灵社区：怎样使用Markdown][6]  
+- [简书：献给写作者的 Markdown 新手指南][7]  
+- [官方文档(中文版)：Markdown 语法说明][8]  
+- [用Markdown来书写你的博客][9]  
+
+
+编辑工具:
+
+- [简书][10]  
+- [MaDe (Chrome插件)][11]  
+- [dillinger][12]  
+- [StackEdit][13] 
+- [Cmd][14]
+
+----------
+
+###参考###
+
+ - [devtang][15]
+ - [破船][16]
+ - [Git 简易指南][17]
+
+
+  [1]: http://beyondvincent.com/images/2013/08/github_page_and-octopress.png
+  [2]: https://github.com/signup/free
+  [3]: http://octopress.org/docs/setup/
+  [4]: http://octopress.org/docs/configuring/
+  [5]: http://lutaf.com/markdown-simple-usage.htm
+  [6]: http://www.ituring.com.cn/article/23
+  [7]: http://jianshu.io/p/q81RER
+  [8]: http://wowubuntu.com/markdown/#p
+  [9]: http://upwith.me/?p=503
+  [10]: http://jianshu.io/
+  [11]: https://chrome.google.com/webstore/detail/made/oknndfeeopgpibecfjljjfanledpbkog
+  [12]: http://dillinger.io/
+  [13]: https://stackedit.io/
+  [14]: http://www.zybuluo.com/mdeditor
+  [15]: http://blog.devtang.com/blog/2012/02/10/setup-blog-based-on-github/
+  [16]: http://beyondvincent.com/blog/2013/08/03/108-creating-a-github-blog-using-octopress/
+  [17]: http://rogerdudler.github.io/git-guide/index.zh.html
