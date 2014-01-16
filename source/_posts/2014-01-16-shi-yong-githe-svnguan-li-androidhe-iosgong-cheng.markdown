@@ -39,7 +39,8 @@ Git的操作流程如下图所示：
  - [Git权威指南][11] 适合作为参考手册，[国人][12]写的一本非常好的Git参考书
  - [Git - SVN Crash Course][13] 从SVN过度到Git手册
  - [Github帮助文档][14] 如何创建SSH Key
- - [Git教程][15] 翻译国外的一边简单的Git教程
+ - [Git教程][15] 翻译国外的一篇简单的Git教程
+ - [Git教程][33] 非常不错的Git系列教程
  - [项目中git管理源码流程][16]
  - [Git flow 开发流程][17]
  - [如何高效利用GitHub][18]
@@ -214,4 +215,4 @@ ps：这里注意，如果你需要设置的忽略的某些文件已经加入了
   [30]: https://itunes.apple.com/gb/app/gitbox/id403388357?mt=12
   [31]: https://gist.github.com/jackyzonewen/7262190
   [32]: https://gist.github.com/jackyzonewen/8119689/edit
-
+  [33]: http://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000
