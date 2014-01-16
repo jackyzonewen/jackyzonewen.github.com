@@ -4,7 +4,7 @@
   <title><![CDATA[挡不住的君文]]></title>
   <link href="http://jackyzonewen.github.io/atom.xml" rel="self"/>
   <link href="http://jackyzonewen.github.io/"/>
-  <updated>2014-01-06T17:29:04+08:00</updated>
+  <updated>2014-01-16T21:01:00+08:00</updated>
   <id>http://jackyzonewen.github.io/</id>
   <author>
     <name><![CDATA[jackyzonewen]]></name>
@@ -12,6 +12,207 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[使用git和svn管理android和iOS工程]]></title>
+    <link href="http://jackyzonewen.github.io/blog/2014/01/16/shi-yong-githe-svnguan-li-androidhe-iosgong-cheng/"/>
+    <updated>2014-01-16T19:32:00+08:00</updated>
+    <id>http://jackyzonewen.github.io/blog/2014/01/16/shi-yong-githe-svnguan-li-androidhe-iosgong-cheng</id>
+    <content type="html"><![CDATA[<p><strong>背景</strong></p>
+
+<ol>
+<li>公司为了保护&#8221;知识产权&#8221;，对于源码的权限控制比较严格，所以工作大多使用的是SVN版本管理。</li>
+<li>移动开发很多优秀的开源第三方库都是用git管理源代码，并且放在开源的托管网站。</li>
+<li>git处理分支管理非常方便，速度比小李飞刀还快··········非常强大。</li>
+<li>管理自己源码，防止硬盘崩溃了或者电脑丢了导致所有源码全部丢失。</li>
+</ol>
+
+
+<hr />
+
+<p><strong>免费的git代码托管服务</strong></p>
+
+<ul>
+<li><a href="https://github.com/">Github</a>非常多著名的开源项目</li>
+<li><a href="http://git.oschina.net/">OsChina</a> 国产的，你懂的</li>
+<li><a href="https://bitbucket.org/">Bitbucket</a> 支持Git、Mercurial，免费版有5个用户限制，公有和私有仓库都可以无限制创建，有协作工具(Issue tracker，Wiki)。</li>
+<li><a href="http://www.assembla.com/">Assembla</a>支持SVN、Git、Mercurial，免费版，无用户限制，无仓库限制，存储空间1G，没有协作工具(Issue tracker，Wiki等),考虑先使用 Bitbucket, 当用户不够用的时候再迁移到 Assembla。</li>
+</ul>
+
+
+<hr />
+
+<p><strong>使用</strong></p>
+
+<p>Git的操作流程如下图所示：</p>
+
+<p><img src="http://i.stack.imgur.com/MgaV9.png" alt="enter image description here" /></p>
+
+<p><strong>学习Git的资源</strong></p>
+
+<ul>
+<li><a href="http://rogerdudler.github.io/git-guide/index.zh.html">Git大白话</a> 大白话讲解Git，博客最后也提供了一些资源</li>
+<li><a href="http://marklodato.github.io/visual-git-guide/index-en.html">A Visual Git Reference</a>图形化Git使用指南。<a href="http://marklodato.github.io/visual-git-guide/index-zh-cn.html">翻译版本</a></li>
+<li><a href="http://www-cs-students.stanford.edu/~blynn/gitmagic/intl/zh_cn/">Git Magic</a> 很通俗的一本介绍Git的书</li>
+<li><a href="http://git-scm.com/book/zh">Pro Git</a>  全面介绍Git的书，非常详细。</li>
+<li><a href="http://www.worldhello.net/">Git权威指南</a> 适合作为参考手册，<a href="http://www.worldhello.net/">国人</a>写的一本非常好的Git参考书</li>
+<li><a href="http://git.or.cz/course/svn.html">Git &ndash; SVN Crash Course</a> 从SVN过度到Git手册</li>
+<li><a href="https://help.github.com/articles/generating-ssh-keys">Github帮助文档</a> 如何创建SSH Key</li>
+<li><a href="http://www.cnblogs.com/zhangjing230/archive/2012/05/09/2489745.html">Git教程</a> 翻译国外的一边简单的Git教程</li>
+<li><a href="http://danielxu.github.io/blog/2013/02/18/git-simple-workflow/">项目中git管理源码流程</a></li>
+<li><a href="http://ihower.tw/blog/archives/5140">Git flow 开发流程</a></li>
+<li><a href="http://www.yangzhiping.com/tech/github.html">如何高效利用GitHub</a></li>
+<li><a href="http://www.worldhello.net/gotgithub/04-work-with-others/010-fork-and-pull.html">Github中使用Fork + Pull模式</a></li>
+</ul>
+
+
+<p><strong>SVN相关的资源</strong></p>
+
+<ul>
+<li><a href="http://www.cocoachina.com/bbs/read.php?tid=112069">SVN使用详解</a></li>
+<li><a href="http://www.cnblogs.com/onlyfu/archive/2012/05/08/2489814.html">Mac下面如何配置SVN服务器</a></li>
+<li><a href="http://subgit.com/documentation/index.html">SubGit</a>一个智能的将版本控制系统从 SVN 移植到 Git 的工具</li>
+<li><a href="https://github.com/nirvdrum/svn2git">svn2git</a>ruby实现的从svn移至到git得工具</li>
+<li><a href="http://www.cnblogs.com/chencidi/articles/1904781.html">Eclipse下配置SVN插件教程</a></li>
+<li><a href="http://blog.csdn.net/luckarecs/article/details/7427605">Eclipse下配置EGit插件教程</a></li>
+</ul>
+
+
+<p><strong>Git图形客户端</strong></p>
+
+<ul>
+<li><a href="http://sourcetreeapp.com/">Source Tree</a> Windows 和 OS X 下免费的 Git 和 Hg 客户端</li>
+<li><a href="http://www.git-tower.com/">Tower</a> OSX下面收费的客户端，很清新</li>
+<li><a href="http://mac.github.com/">Github for mac</a>Github提供的客户端，有windows和OSX版本</li>
+<li><a href="http://gitx.laullon.com/">GitX</a>OSX下的开源的客户端</li>
+<li><a href="https://itunes.apple.com/gb/app/gitbox/id403388357?mt=12">GitBox</a>OSX下的客户端</li>
+</ul>
+
+
+<p><strong>配置忽略文件</strong></p>
+
+<p>开发android和iOS项目使用的集成开发环境Xcode和Eclipse默认生成的工程有很多文件都不应该加入到版本控制中，因为这些文件是个人生成的，每台电脑都可能不一样，所以如果加入到版本控制之中，有时候会经常发生冲突，非常恼火。</p>
+
+<p><strong>Git配置</strong></p>
+
+<p>在Git的版本控制中，如果需要忽略某些文件，不加入版本控制，有三种方法能达到目的，只不过适用情景不一样:</p>
+
+<p>(1).针对单一工程设置忽略文件，这种方式会让这个工程的所有修改者在克隆代码的同时，也能克隆到过滤规则，而不用自己再写一份，能保证所有修改者应用的都是同一份规则，而不是张三有一套过滤规则，李四又使用另一套过滤规则，个人比较喜欢这种方式，在工程目录下建立.gitignore文件，然后将这个文件也加入版本控制，我一般将这个文件保存我的一个目录中，每次使用cp命令复制到工程目录下面,例如：</p>
+
+<pre><code>$cd myproject
+$cp ~/back/.gitignore . # 将用户back目录的.gitignore文件拷贝到当前工程目录下
+</code></pre>
+
+<p>(2).全局设置忽略配置文件，在全局起作用，只要是Git管理的工程，都会忽略不在控制范围内的文件或目录。这种方法对开发者来说，比较省事，只要一次全局配置，不用每次建立工程都要配置一遍过滤规则。但是这不保证其他的开发者在克隆你的代码后，他们那边的规则跟你的是一样的，这就带来了代码提交过程中的各种冲突问题。在用户目录下创建.gitignoreglobal 文件，将要忽略的配置写入该文件:</p>
+
+<pre><code>vi ~/.gitignoreglobal # 然后写入需要忽略的文件列表
+</code></pre>
+
+<p>(3). 单个工程设置排除(权限最高，只能对自己本地仓库有作用，其他人没办法通过这种方式来共享忽略规则，除非他人也修改其本地仓库的该文件)，在工程目录下找到.git/info/exclude，不建议使用。</p>
+
+<pre><code>$cd myproject
+$vi .git/info/exclude # 然后写入需要忽略的文件列表
+</code></pre>
+
+<p><a href="https://gist.github.com/jackyzonewen/7262190">我的Git配置</a>忽略文件列表如下:</p>
+
+<pre><code># Xcode 
+############
+.DS_Store
+build/*
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+xcuserdata
+profile
+*.moved-aside
+DerivedData
+.idea/
+*.hmap
+*.xccheckout
+
+#CocoaPods
+##########
+Pods
+
+# Textmate -
+############
+*.tm_build_errors
+
+# Subversion
+############
+.svn
+
+# Android
+############
+# built application files
+*.apk
+*.ap_
+
+# files for the dex VM
+*.dex
+
+# Java class files
+*.class
+
+# generated files
+bin/
+gen/
+
+# Local configuration file (sdk path, etc)
+local.properties
+
+# Eclipse project files
+.classpath
+.project
+
+# Proguard folder generated by Eclipse
+proguard/
+
+# Intellij project files
+*.iml
+*.ipr
+*.iws
+.idea/
+</code></pre>
+
+<p><strong>SVN配置</strong></p>
+
+<p>同理svn也需要设置忽略列表，svn全局忽略配置文件位于用户根目录下:  ~/.subversion/config，如果不存在config文件，新建一个config文件，然后再config文件设置中加入忽略文件列表，<a href="https://gist.github.com/jackyzonewen/8119689/edit">我的svn配置</a>忽略文件列表如下：</p>
+
+<pre><code>global-ignores = *~.nib *.so *.pbxuser *.mode *.perspective* *.o *.lo *.la #*# .*.rej *.rej .*~ *~ .#* .DS_Store *.modee1v3 build xcuserdata/* *.xcuserdatad *.xcuserstate *.xccheckout .gitignore .git
+enable-auto-props = yes
+*.mode* = svn:mime-type=text/X-xcode
+*.pbxuser = svn:mime-type=text/X-xcode
+*.perspective* = svn:mime-type=text/X-xcode
+*.pbxproj = svn:mime-type=text/X-xcode
+*.xccheckout = svn:mime-type=text/X-xcode
+</code></pre>
+
+<p>ps：这里注意，如果你需要设置的忽略的某些文件已经加入了版本控制，这个时候你添加.gitignore文件或者配置svn的config文件，是不起作用的，这个时候你需要使用git rm命令或者svn rm命令将该文件剔除版本管理，提交后忽略文件列表设置才生效。</p>
+
+<p><strong>如何同时使用svn和git来管理项目?</strong></p>
+
+<p>我目前的项目是这么处理的:</p>
+
+<ol>
+<li>先从公司的svn服务器上面拉出项目，设置svn的忽略文件列表(上面已经列出)，我加入了git相关的，例如.gitignore、.git等。</li>
+<li>进入项目根目录，使用git init命令初始化git仓库，然后加入.gitignore配置文件。(这个时候你使用svn
+status发现svn是未检测到有变化的) 通过git add命令和git commit命令提交版本。</li>
+<li>然后新建dev或者feature分支来进行开发。</li>
+<li>如果需要提交代码到svn，切回master分支，将dev分支或者feature分支合并到master分支，然后提交svn。</li>
+<li>提交完成后再切回到你的工作分支进行工作，如此反复····</li>
+</ol>
+
+
+<p>所有的小的改动都是在git中进行管理，或者新的想法新建一个分支去实现，完成一个功能或者修复一个bug，然后提交到svn中。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[ruby rvm brew gem bundler梳理]]></title>
