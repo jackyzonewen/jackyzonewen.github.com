@@ -65,8 +65,15 @@ categories:
 
 **安装相关依赖项：**
 
+
+	# 更换源
+	gem sources -a http://ruby.taobao.org/  
+	gem sources -r http://rubygems.org/  
+	gem sources -l  
+    
+	# 安装依赖
     gem install bundler
-    rbenv rehash    # If you use rbenv, rehash to be able to run the bundle command
+    #rbenv rehash    # If you use rbenv, rehash to be able to run the bundle command
     bundle install
     
 **安装默认的Octopress 主题**
@@ -95,6 +102,7 @@ categories:
 - 增加 source/_includes/post/copyright.html，加入以下内容：  
     原创&amp;整理的文章，版权声明:自由转载-非商用&amp;衍生-保持署名 | <a herf="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh">Creative Commons BY-NC-ND 3.0</a>
 - 修改 source/_layouts/post.html，在标签下增加如下代码:  
+ 
 ``<footer> 
     <p class="meta">  
       ……省略代码  
@@ -116,7 +124,7 @@ categories:
     rake setup_github_pages
 
 系统新增了一个文件夹_deploy，其实这个文件夹本身也是一个git代码库，你可以使用ls -a命令,目录用来存放部署到master分支的内容。期间会要求你输入仓库的url，根据提示，进行输入即可。
-
+	
     rake generate
     rake deploy
     
@@ -136,12 +144,15 @@ Octopress为我们提供了一些task来创建博文和页面。博文必须存�
     rake new_post["New Post"]
     # 进入source_posts目录下面编辑博客内容，期间可以使用rake preview进行预览
     rake generate # 重新生成页面
+    # 预览效果
+    rake preview
+    # 发布到Github上面
+    rake deploy
+    
     # 保存源文件
     git add .
     git commit -am "Some comment here." 
     git push origin source
-    # 发布到Github上面
-    rake deploy
 
 ----------
 
