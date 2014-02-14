@@ -4,7 +4,7 @@
   <title><![CDATA[挡不住的君文]]></title>
   <link href="http://jackyzonewen.github.io/atom.xml" rel="self"/>
   <link href="http://jackyzonewen.github.io/"/>
-  <updated>2014-01-17T00:18:10+08:00</updated>
+  <updated>2014-02-14T13:43:10+08:00</updated>
   <id>http://jackyzonewen.github.io/</id>
   <author>
     <name><![CDATA[jackyzonewen]]></name>
@@ -493,8 +493,14 @@ ruby --version  # Should report Ruby 1.9.3
 
 <p><strong>安装相关依赖项：</strong></p>
 
-<pre><code>gem install bundler
-rbenv rehash    # If you use rbenv, rehash to be able to run the bundle command
+<pre><code># 更换源
+gem sources -a http://ruby.taobao.org/  
+gem sources -r http://rubygems.org/  
+gem sources -l  
+
+# 安装依赖
+gem install bundler
+#rbenv rehash    # If you use rbenv, rehash to be able to run the bundle command
 bundle install
 </code></pre>
 
@@ -525,21 +531,25 @@ bundle install
 <li>将上面2步的代码都加入到weibo.html中即可</li>
 <li>增加 source/_includes/post/copyright.html，加入以下内容：<br/>
   原创&amp;整理的文章，版权声明:自由转载-非商用&amp;衍生-保持署名 | <a herf="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh">Creative Commons BY-NC-ND 3.0</a></li>
-<li>修改 source/_layouts/post.html，在标签下增加如下代码:<br/>
-<code>&lt;footer&gt;
-  &lt;p class="meta"&gt;  
-    ……省略代码  
-    ｛% include post/categories.html %}  
-  &lt;/p&gt;  
-  &lt;!-- begin 这里是增加的 --&gt;  
-  &lt;p class="meta"&gt;  
-    ｛% include post/copyright.html %}  
-  &lt;/p&gt;  
-  &lt;!-- end 这里是增加的 --&gt;  
-  ……省略代码  
-&lt;/footer&gt; </code></li>
+<li>修改 source/_layouts/post.html，在标签下增加如下代码:</li>
 </ul>
 
+
+<p>&#8220;<footer></p>
+
+<pre><code>&lt;p class="meta"&gt;  
+  ……省略代码  
+  ｛% include post/categories.html %}  
+&lt;/p&gt;  
+&lt;!-- begin 这里是增加的 --&gt;  
+&lt;p class="meta"&gt;  
+  ｛% include post/copyright.html %}  
+&lt;/p&gt;  
+&lt;!-- end 这里是增加的 --&gt;  
+……省略代码  
+</code></pre>
+
+<p>  </footer>  &#8220;</p>
 
 <h3>管理博客</h3>
 
@@ -571,12 +581,15 @@ git push origin source
 <pre><code>rake new_post["New Post"]
 # 进入source_posts目录下面编辑博客内容，期间可以使用rake preview进行预览
 rake generate # 重新生成页面
+# 预览效果
+rake preview
+# 发布到Github上面
+rake deploy
+
 # 保存源文件
 git add .
 git commit -am "Some comment here." 
 git push origin source
-# 发布到Github上面
-rake deploy
 </code></pre>
 
 <hr />
@@ -652,15 +665,6 @@ git pull origin master  # update the local master branch
 <li><a href="http://rogerdudler.github.io/git-guide/index.zh.html">Git 简易指南</a></li>
 </ul>
 
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[我的博客起来了]]></title>
-    <link href="http://jackyzonewen.github.io/blog/2013/10/30/wo-de-bo-ke-qi-lai-liao/"/>
-    <updated>2013-10-30T11:27:00+08:00</updated>
-    <id>http://jackyzonewen.github.io/blog/2013/10/30/wo-de-bo-ke-qi-lai-liao</id>
-    <content type="html"><![CDATA[<h2>Year!折腾了数个小时，成功的构建了自己的“家”了。最近看了很多优秀的blog，所以也想自己来搭建一个这样的平台，希望可以坚持记录自己的生活和工作来沉淀自己，主要还是记录一些技术!</h2>
 ]]></content>
   </entry>
   
