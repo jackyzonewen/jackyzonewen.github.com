@@ -142,7 +142,7 @@ Octopress为我们提供了一些task来创建博文和页面。博文必须存�
 通过Octopress提供的task可以正确的按照命名规范创建一个博文，并且在博文中会附带常用的一些yaml元数据。创建并部署博文的一个完整过程：  
 
     rake new_post["New Post"]
-    # 进入source_posts目录下面编辑博客内容，期间可以使用rake preview进行预览
+    # 进入source/_posts目录下面编辑博客内容，期间可以使用rake preview进行预览
     rake generate # 重新生成页面
     # 预览效果
     rake preview
