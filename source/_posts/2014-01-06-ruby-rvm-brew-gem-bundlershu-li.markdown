@@ -112,7 +112,31 @@ Homebrew自动建立的formula已经包含了基本的configure和make install�
 
 **Gem**也是Ruby软件包管理工具。常用的命令有search, install, list,uninstall。如果要看安装的gem文档，一是可以用ri，二是可以gem server启动一个web服务。详细的帮助参见[RubyGems Guides][4]。
 
-brew和gem不同，brew用于操作系统层面上软件包的安装，而gem只是管理ruby软件
+brew和gem不同，brew用于操作系统层面上软件包的安装，而gem只是管理ruby软件,gem常用命令如下:
+
+	gem -v #gem版本
+	gem update #更新所有包 
+	gem update --system #更新RubyGems软件 
+	gem install rake #安装rake,从本地或远程服务器 
+	gem install rake --remote #安装rake,从远程服务器 
+	gem install watir -v(或者--version) 1.6.2#指定安装版本的 
+	gem uninstall rake #卸载rake包 
+	gem list d #列出本地以d打头的包 
+	gem query -n ''[0-9]'' --local #查找本地含有数字的包 
+	gem search log --both #从本地和远程服务器上查找含有log字符串的包 
+	gem search log --remoter #只从远程服务器上查找含有log字符串的包 
+	gem search -r log #只从远程服务器上查找含有log字符串的包 
+	gem help #提醒式的帮助 
+	gem help install #列出install命令 帮助 
+	gem help examples #列出gem命令使用一些例子 
+	gem build rake.gemspec #把rake.gemspec编译成rake.gem 
+	gem check -v pkg/rake-0.4.0.gem #检测rake是否有效 
+	gem cleanup #清除所有包旧版本，保留最新版本 
+	gem contents rake #显示rake包中所包含的文件 
+	gem dependency rails -v 0.10.1 #列出与rails相互依赖的包 
+	gem environment #查看gem的环境
+
+注意：安装的时候不要使用sudo，默认的Mac OS安装了Ruby，所以这个时候如果使用sudo，更新的是系统版本的ruby对应的gems。
 
 ---
 
