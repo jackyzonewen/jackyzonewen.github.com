@@ -121,7 +121,8 @@ brew和gem不同，brew用于操作系统层面上软件包的安装，而gem只
 	gem install rake --remote #安装rake,从远程服务器 
 	gem install watir -v(或者--version) 1.6.2#指定安装版本的 
 	gem uninstall rake #卸载rake包 
-	gem list d #列出本地以d打头的包 
+	gem list d #列出本地以d打头的包
+	gem list --local | grep cocoapods #列出cocoapods相关的set 
 	gem query -n ''[0-9]'' --local #查找本地含有数字的包 
 	gem search log --both #从本地和远程服务器上查找含有log字符串的包 
 	gem search log --remoter #只从远程服务器上查找含有log字符串的包 
