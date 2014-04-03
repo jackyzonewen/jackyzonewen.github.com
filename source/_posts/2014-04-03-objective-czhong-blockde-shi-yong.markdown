@@ -491,16 +491,16 @@ __unsafe_unretained TestCycleRetain *weakSelf = self;
 [10、objc中的block][13]
 
 
-[1]:(http://www.cnblogs.com/biosli/archive/2013/05/29/iOS_Objective-C_Block.html)
-[2]:(http://www.cnbluebox.com/?p=255)
-[3]:(http://blog.devtang.com/blog/2013/07/28/a-look-inside-blocks/)
-[4]:(http://www.galloway.me.uk/2012/10/a-look-inside-blocks-episode-1/)
-[5]:(http://www.galloway.me.uk/2012/10/a-look-inside-blocks-episode-2/)
-[6]:(http://www.galloway.me.uk/2013/05/a-look-inside-blocks-episode-3-block-copy/)
-[7]:(http://blog.sina.com.cn/s/blog_7b9d64af0101c4sh.html)
-[8]:(http://tanqisen.github.io/blog/2013/04/19/gcd-block-cycle-retain/)
-[9]:(http://beyondvincent.com/blog/2013/07/09/99/)
-[10]:(http://beyondvincent.com/blog/2013/07/10/100/)
-[11]:(http://beyondvincent.com/blog/2013/07/11/101/)
-[12]:(http://beyondvincent.com/blog/2013/07/08/98/)
-[13]:(http://blog.ibireme.com/2013/11/27/objc-block/)
+[1]:http://www.cnblogs.com/biosli/archive/2013/05/29/iOS_Objective-C_Block.html
+[2]:http://www.cnbluebox.com/?p=255
+[3]:http://blog.devtang.com/blog/2013/07/28/a-look-inside-blocks/
+[4]:http://www.galloway.me.uk/2012/10/a-look-inside-blocks-episode-1/
+[5]:http://www.galloway.me.uk/2012/10/a-look-inside-blocks-episode-2/
+[6]:http://www.galloway.me.uk/2013/05/a-look-inside-blocks-episode-3-block-copy/
+[7]:http://blog.sina.com.cn/s/blog_7b9d64af0101c4sh.html
+[8]:http://tanqisen.github.io/blog/2013/04/19/gcd-block-cycle-retain/
+[9]:http://beyondvincent.com/blog/2013/07/09/99/
+[10]:http://beyondvincent.com/blog/2013/07/10/100/
+[11]:http://beyondvincent.com/blog/2013/07/11/101/
+[12]:http://beyondvincent.com/blog/2013/07/08/98/
+[13]:http://blog.ibireme.com/2013/11/27/objc-block/

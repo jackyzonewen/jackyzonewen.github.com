@@ -194,6 +194,7 @@ Octopress为我们提供了一些task来创建博文和页面。博文必须存�
  - [devtang][15]
  - [破船][16]
  - [Git 简易指南][17]
+ - [像黑客一样写博客][18]
 
 
   [1]: http://beyondvincent.com/images/2013/08/github_page_and-octopress.png
@@ -203,3 +204,4 @@ Octopress为我们提供了一些task来创建博文和页面。博文必须存�
   [15]: http://blog.devtang.com/blog/2012/02/10/setup-blog-based-on-github/
   [16]: http://beyondvincent.com/blog/2013/08/03/108-creating-a-github-blog-using-octopress/
   [17]: http://rogerdudler.github.io/git-guide/index.zh.html
+  [18]: http://blog.csdn.net/jackystudio/article/details/16117585
