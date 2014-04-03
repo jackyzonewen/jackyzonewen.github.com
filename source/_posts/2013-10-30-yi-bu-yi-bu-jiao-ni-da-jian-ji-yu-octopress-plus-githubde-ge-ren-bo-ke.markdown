@@ -189,29 +189,6 @@ Octopress为我们提供了一些task来创建博文和页面。博文必须存�
 
 ----------
 
-
-###Mardown指南###
-
-
-介绍markdown的教程很多，提供几个供大家参考:
-
-- [鲁塔弗：markdown 简明语法][5]  
-- [图灵社区：怎样使用Markdown][6]  
-- [简书：献给写作者的 Markdown 新手指南][7]  
-- [官方文档(中文版)：Markdown 语法说明][8]  
-- [用Markdown来书写你的博客][9]  
-
-
-编辑工具:
-
-- [简书][10]  
-- [MaDe (Chrome插件)][11]  
-- [dillinger][12]  
-- [StackEdit][13] 
-- [Cmd][14]
-
-----------
-
 ###参考###
 
  - [devtang][15]
@@ -223,16 +200,6 @@ Octopress为我们提供了一些task来创建博文和页面。博文必须存�
   [2]: https://github.com/signup/free
   [3]: http://octopress.org/docs/setup/
   [4]: http://octopress.org/docs/configuring/
-  [5]: http://lutaf.com/markdown-simple-usage.htm
-  [6]: http://www.ituring.com.cn/article/23
-  [7]: http://jianshu.io/p/q81RER
-  [8]: http://wowubuntu.com/markdown/#p
-  [9]: http://upwith.me/?p=503
-  [10]: http://jianshu.io/
-  [11]: https://chrome.google.com/webstore/detail/made/oknndfeeopgpibecfjljjfanledpbkog
-  [12]: http://dillinger.io/
-  [13]: https://stackedit.io/
-  [14]: http://www.zybuluo.com/mdeditor
   [15]: http://blog.devtang.com/blog/2012/02/10/setup-blog-based-on-github/
   [16]: http://beyondvincent.com/blog/2013/08/03/108-creating-a-github-blog-using-octopress/
   [17]: http://rogerdudler.github.io/git-guide/index.zh.html
