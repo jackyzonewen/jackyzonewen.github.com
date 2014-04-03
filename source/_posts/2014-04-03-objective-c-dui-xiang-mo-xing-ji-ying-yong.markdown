@@ -249,7 +249,7 @@ id和Class类型的声明：
 > membership. Instead, you should use the class method to determine the
 > class of an object instance.
 
-
+KVO的内部实现，请看[这里][8]  
 
 **Method Swizzling API说明**
 
@@ -277,7 +277,7 @@ Objective-C提供了以下API来动态替换类方法或实例方法的实现：
 
 使用示例
 
-iOS6.0.2系统下，系统提供的UIImagePickerController在iPad横屏下有转屏的Bug，造成其方向错误。具体的Bug详情可以见[这里][3]。
+iOS6.0.2系统下，系统提供的UIImagePickerController在iPad横屏下有转屏的Bug，造成其方向错误。具体的Bug详情可以见[这里][3]。  
 
 为了修复该Bug，我们需要替换UIImagePickerController的如下2个方法
 
@@ -359,3 +359,4 @@ iOS6.0.2系统下，系统提供的UIImagePickerController在iPad横屏下有转
 [5]:https://github.com/jverkoey/nimbus
 [6]:http://blog.devtang.com/blog/2013/10/15/objective-c-object-model/
 [7]:http://blog.ibireme.com/2013/11/25/objc-object/
+[8]:http://www.cocoachina.com/applenews/devnews/2014/0107/7667.html
