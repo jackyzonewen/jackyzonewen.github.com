@@ -12,8 +12,7 @@ iOS 内存布局如下图所示：
 
 - 在应用程序分配的内存空间里面，最低地址位是固定的代码段和数据段，往上是堆，用来存放全局变量，对于 ObjC 来说，就是alloc出来的变量，都会放进这里，堆不够用的时候就会往上申请空间。最顶部高地址位是栈，局部的基本类型变量都会放进栈里。ObjC的对象都是以指针进行操控的，局部变量的指针都在栈里，全局的变量在堆里，而无论是什么指针，alloc出来的都在堆里，所以alloc出来的变量一定要记得 release。对于 autorelease变量来说，每个函数有一个对应的 autorelease pool，函数出栈的时候pool被销毁，同时调用这个pool里面变量的dealloc函数来实现其内部alloc出来的变量的释放。
 
-- 栈(stack segment)：执行方法时会在栈中创建一个方法栈帧(stack frame)，其中的非对象的局部变量都在栈帧中，方法执行完成返回后，栈帧中的所有局部被清空。栈是后进先出(LIFO)的结构。当函数调用其他的函数时，“stack frame”会被创建；当其他函数退出后，这个“frame ”会自动被破坏。所以如果存在NSStackBlock类型的块，在函数执行完成之后会被销毁，详见另外一篇博客[“Objective-C中Block的使用
-”](http://jackyzonewen.github.io/blog/2014/04/03/objective-czhong-blockde-shi-yong/)
+- 栈(stack segment)：执行方法时会在栈中创建一个方法栈帧(stack frame)，其中的非对象的局部变量都在栈帧中，方法执行完成返回后，栈帧中的所有局部被清空。栈是后进先出(LIFO)的结构。当函数调用其他的函数时，“stack frame”会被创建；当其他函数退出后，这个“frame ”会自动被破坏。所以如果存在NSStackBlock类型的块，在函数执行完成之后会被销毁。
 
 - 堆(heap segment)：全局和静态变量保存在“heap ”中，直到应用退出。为了访问你创建在heap 中的数据，你最少要求有一个保存在stack 中的指针，因为你的CPU 通过stack 中的指针访问heap 中的数据。你可以认为stack中的一个指针仅仅是一个整型变量，保存了heap 中特定内存地址的数据。简而言之，操作系统使用stack 段中的指针值访问heap 段中的对象。如果stack 对象的指针没有了，则heap 中的对象就不能访问。这也是内存泄露的原因。
 
