@@ -6,7 +6,7 @@ comments: true
 categories: 
 ---
 
-> 抽空看了几篇好的关于block的博文，顺便总结一下，方便查阅。
+> 看了几篇关于block的不错的博文，记录下来，方便查阅。
 
 #### Block简介
 
@@ -155,7 +155,7 @@ Block的isa指针指向的是_NSConcreteStackBlock，这个prototype重新定义
 
 + 当一个block对象在堆上了，生命周期和普通的NSObject对象的管理一样，copy和release一一对应，不然会存在系统级别的内存泄露，在Instruments里跟不到问题触发点。
 
-+ NSMallocBlock支持retain、release，虽然retainCount始终是1，但内存管理器中仍然会增加、减少计数。copy之后不会生成新的对象，只是增加了一次引用，类似retain；
++ NSMallocBlock支持retain、release，虽然retainCount始终是1，但内存管理器中仍然会增加、减少计数。copy之后不会生成新的对象，只是增加了一次引用，类似NSObject的retain操作，多个block指针指向的是heap中的同一块内存，[图解][14]；
 
 + NSStackBlock：NSStackBlock在函数返回后，Block内存将被回收，即使retain也没用，容易犯的错误是[[mutableAarry addObject:stackBlock]，在函数出栈后，从数组中取到的stackBlock已经被回收，变成了野指针。正确的做法是先将stackBlock copy到堆上，然后加入数组：[mutableAarry addObject:[[stackBlock copy] autorelease]]。如果要长期持有block对象请把她移到堆上。
 
@@ -223,7 +223,7 @@ Block的isa指针指向的是_NSConcreteStackBlock，这个prototype重新定义
     	// 这里输出1， 因为sum中将base++了
 	}
 
-**__BLOCK修饰的变量**:被__block修饰的变量称作Block变量，基本类型的Block变量等效于全局变量、或静态变量(同一个变量)。
+**__BLOCK修饰的变量**:被__block修饰的变量称作Block变量，基本类型的Block变量等效于全局变量、或静态变量(同一个变量)，当存在NSMallocBlock类型的block和NSStackBlock类型的block同时引用\_\_block变量，\_\_block变量将会被移到heap中。
 
 #####2、对象
 
@@ -490,7 +490,6 @@ __unsafe_unretained TestCycleRetain *weakSelf = self;
 [9、初识block][12]
 [10、objc中的block][13]
 
-
 [1]:http://www.cnblogs.com/biosli/archive/2013/05/29/iOS_Objective-C_Block.html
 [2]:http://www.cnbluebox.com/?p=255
 [3]:http://blog.devtang.com/blog/2013/07/28/a-look-inside-blocks/
@@ -504,3 +503,4 @@ __unsafe_unretained TestCycleRetain *weakSelf = self;
 [11]:http://beyondvincent.com/blog/2013/07/11/101/
 [12]:http://beyondvincent.com/blog/2013/07/08/98/
 [13]:http://blog.ibireme.com/2013/11/27/objc-block/
+[14]:http://www.cnblogs.com/studentdeng/archive/2012/02/03/2336863.html
