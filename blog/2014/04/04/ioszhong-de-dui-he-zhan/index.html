@@ -1,0 +1,296 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>iOS中的堆和栈 - 挡不住的君文</title>
+  <meta name="author" content="jackyzonewen">
+
+  
+  <meta name="description" content="iOS 内存布局如下图所示： 在应用程序分配的内存空间里面，最低地址位是固定的代码段和数据段，往上是堆，用来存放全局变量，对于 ObjC 来说，就是alloc出来的变量，都会放进这里，堆不够用的时候就会往上申请空间。最顶部高地址位是栈，局部的基本类型变量都会放进栈里。 &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://jackyzonewen.github.io/blog/2014/04/04/ioszhong-de-dui-he-zhan">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="挡不住的君文" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">挡不住的君文</a></h1>
+  
+    <h2>专注于移动互联</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:jackyzonewen.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">iOS中的堆和栈</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-04-04T14:11:00+08:00" pubdate data-updated="true">Apr 4<span>th</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>iOS 内存布局如下图所示：</p>
+
+<p><img src="http://dl.iteye.com/upload/picture/pic/115454/2d89dcdc-0a17-3ac8-afbe-c2782f498cbe.gif" alt="" /></p>
+
+<ul>
+<li><p>在应用程序分配的内存空间里面，最低地址位是固定的代码段和数据段，往上是堆，用来存放全局变量，对于 ObjC 来说，就是alloc出来的变量，都会放进这里，堆不够用的时候就会往上申请空间。最顶部高地址位是栈，局部的基本类型变量都会放进栈里。ObjC的对象都是以指针进行操控的，局部变量的指针都在栈里，全局的变量在堆里，而无论是什么指针，alloc出来的都在堆里，所以alloc出来的变量一定要记得 release。对于 autorelease变量来说，每个函数有一个对应的 autorelease pool，函数出栈的时候pool被销毁，同时调用这个pool里面变量的dealloc函数来实现其内部alloc出来的变量的释放。</p></li>
+<li><p>栈(stack segment)：执行方法时会在栈中创建一个方法栈帧(stack frame)，其中的非对象的局部变量都在栈帧中，方法执行完成返回后，栈帧中的所有局部被清空。栈是后进先出(LIFO)的结构。当函数调用其他的函数时，“stack frame”会被创建；当其他函数退出后，这个“frame ”会自动被破坏。所以如果存在NSStackBlock类型的块，在函数执行完成之后会被销毁。</p></li>
+<li><p>堆(heap segment)：全局和静态变量保存在“heap ”中，直到应用退出。为了访问你创建在heap 中的数据，你最少要求有一个保存在stack 中的指针，因为你的CPU 通过stack 中的指针访问heap 中的数据。你可以认为stack中的一个指针仅仅是一个整型变量，保存了heap 中特定内存地址的数据。简而言之，操作系统使用stack 段中的指针值访问heap 段中的对象。如果stack 对象的指针没有了，则heap 中的对象就不能访问。这也是内存泄露的原因。</p></li>
+<li><p>在iOS操作系统的stack段和heap段中，你都可以创建数据对象。例如：NSString 的对象就是stack中的对象，NSMutableString的对象就是heap中的对象。前者创建时分配的内存长度固定且不可修改；后者是分配内存长度是可变的，可有多个owner, 适用于计数管理内存管理模式。
+两类对象的创建方法也不同，前者直接创建“NSString * str1=@&ldquo;welcome&rdquo;; “，而后者需要先分配再初始化“ NSMutableString * mstr1=[[NSMutableString alloc] initWithString:@&ldquo;welcome&rdquo;]; ”。</p>
+
+<ul>
+<li>stack中对象的优点主要有两点，一是创建速度快，二是管理简单，它有严格的生命周期；stack 对象的缺点是它不灵活，创建时长度是多大就一直是多大，创建时是哪个函数创建的，它的owner 就一直是它。不像heap 对象那样有多个owner，其实多个owner等同于引用计数。只有heap 对象才是采用“引用计数”方法管理它。</li>
+<li>stack对象的创建：只要栈的剩余空间大于stack对象申请创建的空间，操作系统就会为程序提供这段内存空间，否则将报异常提示栈溢出。</li>
+<li>heap 对象的创建：操作系统对于heap段内存是采用链表进行管理。操作系统有一个记录空闲内存地址的链表，当收到程序的申请时，会遍历链表，寻找第一个空间大于所申请的heap节点，然后将该节点从空闲节点链表中删除，并将该节点的空间分配给程序。</li>
+</ul>
+</li>
+<li><p>一般情况下应用程序是不需要考虑堆和栈的大小的，总是当作足够大来使用就能满足一般业务开发。但是事实上堆和栈都不是无上限的，过多的递归会导致栈溢出，过多的 alloc 变量会导致堆溢出。</p></li>
+</ul>
+
+
+<h4>堆和栈的区别</h4>
+
+<p><strong>管理方式：</strong></p>
+
+<ul>
+<li>对于栈来讲，是由编译器自动管理，无需我们手工控制；</li>
+<li>对于堆来说，释放工作由程序员控制，容易产生memory leak。</li>
+</ul>
+
+
+<p><strong>申请大小：</strong></p>
+
+<ul>
+<li>在Windows下,栈是向低地址扩展的数据结构，是一块连续的内存的区域。这句话的意思是栈顶的地址和栈的最大容量是系统预先规定好的，在 WINDOWS下，栈的大小是2M（也有的说是1M，总之是一个编译时就确定的常数），如果申请的空间超过栈的剩余空间时，将提示overflow。因此，能从栈获得的空间较小。</li>
+<li>堆是向高地址扩展的数据结构，是不连续的内存区域。这是由于系统是用链表来存储的空闲内存地址的，自然是不连续的，而链表的遍历方向是由低地址向高地址。堆的大小受限于计算机系统中有效的虚拟内存。由此可见，堆获得的空间比较灵活，也比较大。</li>
+</ul>
+
+
+<p><strong>碎片问题：</strong></p>
+
+<ul>
+<li>对于栈来讲，则不会存在这个问题，因为栈是先进后出的队列，他们是如此的一一对应，以至于永远都不可能有一个内存块从栈中间弹出</li>
+<li>对于堆来讲，频繁的new/delete势必会造成内存空间的不连续，从而造成大量的碎片，使程序效率降低。</li>
+</ul>
+
+
+<p><strong>分配方式：</strong></p>
+
+<ul>
+<li>堆都是动态分配的，没有静态分配的堆。</li>
+<li>栈有2种分配方式：静态分配和动态分配。静态分配是编译器完成的，比如局部变量的分配。动态分配由alloca函数进行分配，但是栈的动态分配和堆是不同的，他的动态分配是由编译器进行释放，无需我们手工实现。</li>
+</ul>
+
+
+<p><strong>分配效率：</strong></p>
+
+<ul>
+<li>栈是机器系统提供的数据结构，计算机会在底层对栈提供支持：分配专门的寄存器存放栈的地址，压栈出栈都有专门的指令执行，这就决定了栈的效率比较高。</li>
+<li>堆则是C/C++函数库提供的，它的机制是很复杂的。</li>
+</ul>
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">jackyzonewen</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-04-04T14:11:00+08:00" pubdate data-updated="true">Apr 4<span>th</span>, 2014</time>
+      
+
+
+    </p>
+    <p class="meta">
+      原创&amp;整理的文章，版权声明:自由转载-非商用&amp;衍生-保持署名
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+  
+     <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style_32x32">
+	<a class="jiathis_button_qzone"></a>
+	<a class="jiathis_button_tsina"></a>
+	<a class="jiathis_button_tqq"></a>
+	<a class="jiathis_button_weixin"></a>
+	<a class="jiathis_button_renren"></a>
+	<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	<a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+<!-- UY BEGIN -->
+<div id="uyan_frame"></div>
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js"></script>
+<!-- UY END -->
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2014/04/03/objective-c-dui-xiang-mo-xing-ji-ying-yong/" title="Previous Post: Objective-C 对象模型及应用">&laquo; Objective-C 对象模型及应用</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2014/04/09/iosping-mu-xuan-zhuan/" title="Next Post: iOS屏幕旋转">iOS屏幕旋转 &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/04/09/iosping-mu-xuan-zhuan/">iOS屏幕旋转</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/04/04/ioszhong-de-dui-he-zhan/">iOS中的堆和栈</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/04/03/objective-c-dui-xiang-mo-xing-ji-ying-yong/">Objective-C 对象模型及应用</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/04/03/objective-czhong-blockde-shi-yong/">Objective-C中Block的使用</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/04/03/markdownshi-yong/">MarkDown使用</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+<section>  
+  <h1>Categories</h1>  
+  <ul id="categories">  
+      
+  </ul>  
+</section>    
+<section>  
+<h1>Visitor</h1>  
+<div>  
+    <p></p>  
+    <center>  
+    <a href="http://info.flagcounter.com/3pF8"><img src="http://s08.flagcounter.com/count/3pF8/bg_FFFFFF/txt_000000/border_CCCCCC/columns_3/maxflags_12/viewers_3/labels_0/pageviews_1/flags_0/" alt="Flag Counter" border="0"></a>  
+    </center>  
+</div>  
+</section>  
+  
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - jackyzonewen -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

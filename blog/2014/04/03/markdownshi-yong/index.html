@@ -1,0 +1,369 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>MarkDown使用 - 挡不住的君文</title>
+  <meta name="author" content="jackyzonewen">
+
+  
+  <meta name="description" content="Markdown 语法的目标是：成为一种适用于网络的书写语言。Markdown不是想要取代 HTML，甚至也没有要和它相近，它的语法种类很少，只对应 HTML 标记的一小部分。不在 Markdown 涵盖范围之内的标签，都可以直接在文档里面用 HTML 撰写。不需要额外标注这是 HTML 或是 &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://jackyzonewen.github.io/blog/2014/04/03/markdownshi-yong">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="挡不住的君文" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">挡不住的君文</a></h1>
+  
+    <h2>专注于移动互联</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:jackyzonewen.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">MarkDown使用</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-04-03T11:42:00+08:00" pubdate data-updated="true">Apr 3<span>rd</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><blockquote><p><p>Markdown 语法的目标是：成为一种适用于网络的书写语言。Markdown不是想要取代 HTML，甚至也没有要和它相近，它的语法种类很少，只对应 HTML 标记的一小部分。不在 Markdown 涵盖范围之内的标签，都可以直接在文档里面用 HTML 撰写。不需要额外标注这是 HTML 或是 Markdown；只要直接加标签就可以了。</p></blockquote>
+
+<hr />
+
+<h4> 1.标题 </h4>
+
+
+<p>使用<code>&lt;h4&gt; 形式 &lt;/h4&gt;</code>或者<code>#### 标题</code>的形式来表示四级标题，总共支持6级标题。<br/>
+注：标题文字前后留一个空格，标准的mardDown语法</p>
+
+<hr />
+
+<h4>2.列表</h4>
+
+<p>无序列表写法</p>
+
+<ul>
+<li>列表1
+
+<ul>
+<li>子列表1</li>
+<li>子列表2</li>
+<li>子列表3</li>
+</ul>
+</li>
+<li>列表2</li>
+<li>列表3</li>
+<li>列表4</li>
+</ul>
+
+
+<p>有序列表的写法</p>
+
+<ol>
+<li>列表1</li>
+<li>列表2</li>
+<li>列表3</li>
+<li>列表4</li>
+</ol>
+
+
+<p>注意：-(*或者+)、1. 和列表之间保留一个字符的空格</p>
+
+<hr />
+
+<h4>链接和图片</h4>
+
+<p>在 Markdown 中，插入链接不需要其他按钮，你只需要使用 <code>[显示文本](链接地址)</code> 或者在文章最后给上索引，<code>[显示文本][1]</code> ，例如：</p>
+
+<pre><code>[我的博客](http://jackyzonewen.github.io/)
+或者
+[我的博客][1]
+[1]:(http://jackyzonewen.github.io/)
+</code></pre>
+
+<p>在 Markdown 中，插入图片不需要其他按钮，你只需要使用 <code>![](图片链接地址)</code> 这样的语法即可，例如：</p>
+
+<pre><code>![](http://ww4.sinaimg.cn/bmiddle/aa397b7fjw1dzplsgpdw5j.jpg)
+</code></pre>
+
+<hr />
+
+<h4>引用</h4>
+
+<p>只需要在你希望引用的文字前面加上 > 就好了，例如：</p>
+
+<pre><code>&gt; 一盏灯， 一片昏黄； 一简书， 一杯淡茶。 守着那一份淡定， 品读属于自己的寂寞。 保持淡定， 才能欣赏到最美丽的风景！ 保持淡定， 人生从此不再寂寞。
+</code></pre>
+
+<p>效果如下:</p>
+
+<blockquote><p>一盏灯， 一片昏黄； 一简书， 一杯淡茶。 守着那一份淡定， 品读属于自己的寂寞。 保持淡定， 才能欣赏到最美丽的风景！ 保持淡定， 人生从此不再寂寞。</p></blockquote>
+
+<hr />
+
+<h4>粗体和斜体</h4>
+
+<p>Markdown 的粗体和斜体也非常简单，用两个 * 包含一段文本就是粗体的语法，用一个 * 包含一段文本就是斜体的语法。例如：</p>
+
+<p><em>一盏灯</em>， 一片昏黄；<strong>一简书</strong>， 一杯淡茶。 守着那一份淡定， 品读属于自己的寂寞。 保持淡定， 才能欣赏到最美丽的风景！ 保持淡定， 人生从此不再寂寞。</p>
+
+<hr />
+
+<h4>代码</h4>
+
+<p>行开头空4格空格，或者一个Tab来表示程序代码，例如:</p>
+
+<pre><code>//这里显示一些代码，在正文显示中会自动识别语言，进行代码染色，这是一段C#代码
+public class Blog
+{
+     public int Id { get; set; }
+     public string Subject { get; set; }
+}
+</code></pre>
+
+<hr />
+
+<h4>其它</h4>
+
+<pre><code>单个回车：空格
+连续回车：分段
+行尾连续两个空格：段内换行
+</code></pre>
+
+<hr />
+
+<p>介绍markdown的教程很多，提供几个供大家参考:</p>
+
+<ul>
+<li><a href="http://lutaf.com/markdown-simple-usage.htm">鲁塔弗：markdown 简明语法</a></li>
+<li><a href="http://www.ituring.com.cn/article/23">图灵社区：怎样使用Markdown</a></li>
+<li><a href="http://jianshu.io/p/q81RER">简书：献给写作者的 Markdown 新手指南</a></li>
+<li><a href="http://wowubuntu.com/markdown/#p">官方文档(中文版)：Markdown 语法说明</a></li>
+<li><a href="http://upwith.me/?p=503">用Markdown来书写你的博客</a></li>
+</ul>
+
+
+<p>编辑工具:</p>
+
+<ul>
+<li><a href="http://jianshu.io/">简书</a></li>
+<li><a href="https://chrome.google.com/webstore/detail/made/oknndfeeopgpibecfjljjfanledpbkog">MaDe (Chrome插件)</a></li>
+<li><a href="http://dillinger.io/">dillinger</a></li>
+<li><a href="https://stackedit.io/">StackEdit</a></li>
+<li><a href="http://www.zybuluo.com/mdeditor">Cmd</a></li>
+</ul>
+
+
+<h4>参考教程：</h4>
+
+<ul>
+<li><a href="http://lutaf.com/markdown-simple-usage.htm">鲁塔弗：markdown 简明语法</a></li>
+<li><a href="http://www.ituring.com.cn/article/23">图灵社区：怎样使用Markdown</a></li>
+</ul>
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">jackyzonewen</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-04-03T11:42:00+08:00" pubdate data-updated="true">Apr 3<span>rd</span>, 2014</time>
+      
+
+
+    </p>
+    <p class="meta">
+      原创&amp;整理的文章，版权声明:自由转载-非商用&amp;衍生-保持署名
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+  
+     <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style_32x32">
+	<a class="jiathis_button_qzone"></a>
+	<a class="jiathis_button_tsina"></a>
+	<a class="jiathis_button_tqq"></a>
+	<a class="jiathis_button_weixin"></a>
+	<a class="jiathis_button_renren"></a>
+	<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	<a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+<!-- UY BEGIN -->
+<div id="uyan_frame"></div>
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js"></script>
+<!-- UY END -->
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2014/01/16/shi-yong-githe-svnguan-li-androidhe-iosgong-cheng/" title="Previous Post: 使用git和svn管理android和iOS工程">&laquo; 使用git和svn管理android和iOS工程</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2014/04/03/objective-czhong-blockde-shi-yong/" title="Next Post: Objective-C中Block的使用">Objective-C中Block的使用 &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/04/09/iosping-mu-xuan-zhuan/">iOS屏幕旋转</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/04/04/ioszhong-de-dui-he-zhan/">iOS中的堆和栈</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/04/03/objective-c-dui-xiang-mo-xing-ji-ying-yong/">Objective-C 对象模型及应用</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/04/03/objective-czhong-blockde-shi-yong/">Objective-C中Block的使用</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/04/03/markdownshi-yong/">MarkDown使用</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+<section>  
+  <h1>Categories</h1>  
+  <ul id="categories">  
+      
+  </ul>  
+</section>    
+<section>  
+<h1>Visitor</h1>  
+<div>  
+    <p></p>  
+    <center>  
+    <a href="http://info.flagcounter.com/3pF8"><img src="http://s08.flagcounter.com/count/3pF8/bg_FFFFFF/txt_000000/border_CCCCCC/columns_3/maxflags_12/viewers_3/labels_0/pageviews_1/flags_0/" alt="Flag Counter" border="0"></a>  
+    </center>  
+</div>  
+</section>  
+  
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - jackyzonewen -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

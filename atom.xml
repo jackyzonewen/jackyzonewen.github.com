@@ -4,7 +4,7 @@
   <title><![CDATA[挡不住的君文]]></title>
   <link href="http://jackyzonewen.github.io/atom.xml" rel="self"/>
   <link href="http://jackyzonewen.github.io/"/>
-  <updated>2014-04-01T20:26:13+08:00</updated>
+  <updated>2014-04-09T23:20:17+08:00</updated>
   <id>http://jackyzonewen.github.io/</id>
   <author>
     <name><![CDATA[jackyzonewen]]></name>
@@ -12,6 +12,1332 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[iOS屏幕旋转]]></title>
+    <link href="http://jackyzonewen.github.io/blog/2014/04/09/iosping-mu-xuan-zhuan/"/>
+    <updated>2014-04-09T21:07:00+08:00</updated>
+    <id>http://jackyzonewen.github.io/blog/2014/04/09/iosping-mu-xuan-zhuan</id>
+    <content type="html"><![CDATA[<h5>屏幕旋转背后做了什么？</h5>
+
+<p>先来看一段简单的代码：</p>
+
+<pre><code>// iOS5以前支持
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
+    return YES;
+}
+
+// iOS6以后支持
+- (BOOL)shouldAutorotate
+{
+    return YES;
+}
+
+- (NSUInteger)supportedInterfaceOrientations
+{
+    return UIInterfaceOrientationMaskAll;
+}
+
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+{
+    NSLog(@"UIViewController willRotateToInterfaceOrientation : %ld", toInterfaceOrientation);
+}
+
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
+{
+    NSLog(@"UIViewController didRotateFromInterfaceOrientation, view ：%@", self.view);
+}
+</code></pre>
+
+<p>可以看到代码支持四个方向的旋转，并且在旋转之后打印了相关的信息如下：</p>
+
+<p><img src="http://t24-3.yunpan.360.cn/s1/800-600.5a11fd226044451b94ebd42dce6d3b4218cb6eb6.e1185e.jpg?st=qxasF8uZc_UuuEvq02Y-Ig&amp;e=1397145600&amp;mt=png" alt="" /></p>
+
+<p>设备的初始方向是UIInterfaceOrientationPortrait的，然后顺时针依次经过UIInterfaceOrientationLandscapeLeft，UIInterfaceOrientationPortraitUpsideDown，UIInterfaceOrientationLandscapeRight，最后再回到UIInterfaceOrientationPortrait方向，在旋转的过程中，frame没有变化，Transform一直在变化，因此我们可以怀疑屏幕旋转是通过变化Transform实现的，不用怀疑，其实就是通过view的transform属性实现的。</p>
+
+<h5>什么是Transform？</h5>
+
+<p>Transform(变化矩阵)是一种3×3的矩阵，如下图所示：</p>
+
+<p><img src="http://t24-2.yunpan.360.cn/s1/800-600.3bb75da0f1354777f4478ab6b274eedc559d3961.ff3cfb.jpg?st=l8oTD-_7ITsFHopIApxDxQ&amp;e=1397145600&amp;mt=png" alt="" /></p>
+
+<p>通过这个矩阵我们可以对一个坐标系统进行缩放，平移，旋转以及这两者的任意组着操作。而且矩阵的操作不具备交换律，即矩阵的操作的顺序不同会导致不同的结果。UIView有个transform的属性，通过设置该属性，我们可以实现调整该view在其superView中的大小和位置。</p>
+
+<p>矩阵实现坐标变化背后的数学知识：</p>
+
+<p><img src="http://t24-3.yunpan.360.cn/s1/800-600.956929f992b1307f0b88b44b27bc63f72a37c283.271f70.jpg?st=QGkHkxEHhXzBhyxPub_Qnw&amp;e=1397145600&amp;mt=png" alt="" /></p>
+
+<p>　　设x，y分别代表在原坐标系统中的位置，x&#8217;，y&#8217;代表通过矩阵变化以后在新的系统中的位置。其中式1就是矩阵变化的公式，对式1进行展开以后就可以得到式2。从式2我们可以清楚的看到（x，y）到（x&#8217;，y&#8217;）的变化关系。</p>
+
+<p>　　1）当c，b，tx，ty都为零时，x&#8217; = ax，y&#8217; = dy；即a，d就分别代表代表x，y方向上放大的比例；当a，d都为1时，x&#8217; = x，y&#8217; = y；这个时候这个矩阵也就是传说中的CGAffineTransformIdentity(标准矩阵)。</p>
+
+<p>　　2）当a，d为1，c，b为零的时候，x&#8217; = x + tx，y&#8217; = y + ty；即tx，ty分别代表x，y方向上的平移距离。</p>
+
+<p>　　3）前面两种情况就可以实现缩放和平移了，那么旋转如何表示呢？</p>
+
+<p>　　假设不做平移和缩放操作，那么从原坐标系中的一点(x，y)旋转α°以后到了新的坐标系中的一点(x&#8217;，y&#8217;)，那么旋转矩阵如下：</p>
+
+<p><img src="http://t24-2.yunpan.360.cn/s1/800-600.f6d0ed5cafa6f3cf0dd84cd97644bb6148dec169.6359ee.jpg?st=ipP20LvB1LrUn88ffSG9Cg&amp;e=1397145600&amp;mt=png" alt="" /></p>
+
+<p>展开以后就是x&#8217; = xcosα &ndash; ysinα，y&#8217; = xsinα + ycosα；</p>
+
+<p>回过头来看看前面设备旋转时的输出日志，当设备位于Portrait方向的时候由于矩阵是标准矩阵，所以没有进行打印。当转到UIInterfaceOrientationLandscapeLeft方向的时候，我们的设备是顺时针转了90°(逆时针为正，顺时针为负)，这个时候矩阵应该是（cos-90°，sin-90°，-sin-90°，cos-90°，tx，ty），由于未进行平移操作所以tx，ty都为0，刚好可以跟我们控制台输出：&#8221;UIViewController didRotateFromInterfaceOrientation, view ：&lt;UIView: 0x10922cf40; frame = (0 0; 320 568); transform = [0, -1, 1, 0, 0, 0]; autoresize = RM+BM; layer = &lt;CALayer: 0x10924cd60>>&ldquo;一致。观察其他两个方向的输出，发现结果均和分析一致。</p>
+
+<p>由此可以发现屏幕旋转其实就是通过view的矩阵变化实现，当设备监测到旋转的时候，会通知当前程序，当前程序再通知程序中的window，window会通知它的rootViewController的，rootViewController对其view的transform进行设置，最终完成旋转。<br/>
+　　
+如果我们直接将一个view添加到window上，系统将不会帮助我们完成旋操作，这个时候我们就需要自己设置该view的transform来实现旋转了。这种情况虽然比较少，但是也存在的，例如现在很多App做的利用状态栏进行消息提示的功能就是利用自己创建window并且自己设置transform来完成旋转支持。</p>
+
+<p>加速计是整个IOS屏幕旋转的基础，依赖加速计，设备才可以判断出当前的设备方向，IOS系统共定义了以下七种设备方向：<br/>
+　　</p>
+
+<pre><code>typedef NS_ENUM(NSInteger, UIDeviceOrientation) {  
+    UIDeviceOrientationUnknown,  
+    UIDeviceOrientationPortrait,            // Device oriented vertically, home button on the bottom  
+    UIDeviceOrientationPortraitUpsideDown,  // Device oriented vertically, home button on the top  
+    UIDeviceOrientationLandscapeLeft,       // Device oriented horizontally, home button on the right  
+    UIDeviceOrientationLandscapeRight,      // Device oriented horizontally, home button on the left  
+    UIDeviceOrientationFaceUp,              // Device oriented flat, face up  
+    UIDeviceOrientationFaceDown             // Device oriented flat, face down  
+};
+</code></pre>
+
+<p>以及如下四种界面方向：</p>
+
+<pre><code>typedef NS_ENUM(NSInteger, UIInterfaceOrientation) {  
+    UIInterfaceOrientationPortrait           = UIDeviceOrientationPortrait,  
+    UIInterfaceOrientationPortraitUpsideDown = UIDeviceOrientationPortraitUpsideDown,  
+    UIInterfaceOrientationLandscapeLeft      = UIDeviceOrientationLandscapeRight,  
+    UIInterfaceOrientationLandscapeRight     = UIDeviceOrientationLandscapeLeft  
+};
+</code></pre>
+
+<p><img src="https://developer.apple.com/library/ios/featuredarticles/ViewControllerPGforiPhoneOS/Art/view_orientations_2x.png" alt="" /></p>
+
+<p>当加速计检测到方向变化的时候，会发出<a href="https://developer.apple.com/library/ios/featuredarticles/ViewControllerPGforiPhoneOS/RespondingtoDeviceOrientationChanges/RespondingtoDeviceOrientationChanges.html#//apple_ref/doc/uid/TP40007457-CH7-SW1">UIDeviceOrientationDidChangeNotification</a>通知，这样任何关心方向变化的view都可以通过注册该通知，在设备方向变化的时候做出相应的响应，在屏幕旋转的时候，UIKit帮助我们做了很多事情，方便我们完成屏幕旋转。</p>
+
+<p>UIKit的相应屏幕旋转的流程如下：</p>
+
+<ol>
+<li>设备旋转的时候，UIKit接收到旋转事件。</li>
+<li>UIKit通过AppDelegate通知当前程序的window。</li>
+<li>Window会知会它的rootViewController，判断该view controller所支持的旋转方向，完成旋转。</li>
+<li>如果存在弹出的view controller的话，系统则会根据弹出的view controller，来判断是否要进行旋转。</li>
+</ol>
+
+
+<p>在响应设备旋转时，我们可以通过UIViewController的方法实现更细粒度的控制，当view controller接收到window传来的方向变化的时候，流程如下:</p>
+
+<ol>
+<li>首先判断当前viewController是否支持旋转到目标方向，如果支持的话进入流程2，否则此次旋转流程直接结束。</li>
+<li>调用 willRotateToInterfaceOrientation:duration: 方法，通知view controller将要旋转到目标方向。如果该viewController是一个container view controller的话，它会继续调用其content view controller的该方法。这个时候我们也可以暂时将一些view隐藏掉，等旋转结束以后在现实出来。</li>
+<li>window调整显示的view controller的bounds，由于view controller的bounds发生变化，将会触发 viewWillLayoutSubviews 方法。这个时候self.interfaceOrientation和statusBarOrientation方向还是原来的方向。</li>
+<li>接着当前view controller的 willAnimateRotationToInterfaceOrientation:duration: 方法将会被调用。系统将会把该方法中执行的所有属性变化放到动animation block中。</li>
+<li>执行方向旋转的动画。</li>
+<li>最后调用 didRotateFromInterfaceOrientation: 方法，通知view controller旋转动画执行完毕。这个时候我们可以将第二部隐藏的view再显示出来。</li>
+</ol>
+
+
+<p>整个响应过程如下图所示：</p>
+
+<p><img src="https://developer.apple.com/library/ios/featuredarticles/ViewControllerPGforiPhoneOS/Art/rotation_onestep_2x.png" alt="" /></p>
+
+<p>iOS横竖屏切换的方案目前有以下几种实现的方法：</p>
+
+<ol>
+<li>通过AutoResizeMask或者AutoLayout来实现界面的适配。比较简单，不够灵活。</li>
+<li>通过代码，在横竖屏切换的时候，重新调整控件的frame。调试比较麻烦，最灵活。</li>
+<li>横竖屏采用不同的界面，当屏幕切换的时候，显示对应的视图。</li>
+</ol>
+
+
+<p>屏幕旋转相关知识点：</p>
+
+<ul>
+<li><p>iOS6使用supportedInterfaceOrientations 和 shouldAutorotate 2个方法来代替shouldAutorotateToInterfaceOrientation(deprecated)。注意：为了向后兼容iOS 4 and 5，还是需要在你的app里保留shouldAutorotateToInterfaceOrientation。</p></li>
+<li><p>iOS5和以前SDK, 如果没有重写shouldAutorotateToInterfaceOrientation，那么对于iphone来讲，默认是只支持portrait，不能旋转,iPad默认支持所有方向。</p></li>
+<li><p>iOS6之后如果没有重写shouldAutorotate和supportedInterfaceOrientations,默认 iphone则是&#8221;可以旋转，支持非upside down的方向&#8221;， iPad默认支持所有方向。</p></li>
+<li><p>在iOS 4 and 5，都是由具体的view controller来决定对应的view的orientation设置；而在iOS 6,则是由top-most controller来决定view的orientation设置。</p></li>
+<li><p>当我们的view controller隐藏的时候，设备方向也可能发生变化。例如view Controller A弹出一个全屏的view controller B的时候，由于A完全不可见，所以就接收不到屏幕旋转消息。这个时候如果屏幕方向发生变化，再dismiss B的时候，A的方向就会不正确。我们可以通过在view controller A的viewWillAppear中更新方向来修正这个问题。</p></li>
+<li><p>屏幕旋转时的一些建议</p>
+
+<ul>
+<li>在旋转过程中，暂时界面操作的响应。</li>
+<li>旋转前后，尽量当前显示的位置不变。</li>
+<li>对于view层级比较复杂的时候，为了提高效率在旋转开始前使用截图替换当前的view层级，旋转结束后再将原view层级替换回来。</li>
+<li>在旋转后最好强制reload tableview，保证在方向变化以后，新的row能够充满全屏。例如对于有些照片展示界面，竖屏只显示一列，但是横屏的时候显示列表界面，这个时候一个界面就会显示更多的元素，此时reload内容就是很有必要的。</li>
+</ul>
+</li>
+</ul>
+
+
+<p>举个例子：app的rootViewController是navigation controller &ldquo;nav&rdquo;, 在”nav&#8221;里的stack依次是：main view &ndash;> first view > second view，而main view里有一个button会present modal view &ldquo;modal view&rdquo;.<br/>
+那么for ios 4 and 5，在ipad里，如果你要上述view都仅支持横屏orientation，你需要在上面的main view, first view, second view, model view里都添加下面代码：</p>
+
+<pre><code>- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {  
+    return (interfaceOrientation == UIInterfaceOrientationLandscapeLeft || interfaceOrientation==UIInterfaceOrientationLandscapeRight);  
+}  
+</code></pre>
+
+<p>对于iOS6, 由于是由top-most controller来设置orientation，因此你在main view, first view, second view里添加下面的代码是没有任何效果的，而应该是在nav controller里添加下列代码。而modal view则不是在nav container里，因此你也需要在modal view里也添加下列代码。</p>
+
+<pre><code>-(NSUInteger)supportedInterfaceOrientations{  
+    return UIInterfaceOrientationMaskLandscape;  
+}  
+
+- (BOOL)shouldAutorotate  
+{  
+    return YES;  
+}
+</code></pre>
+
+<p>你需要自定义一个UINavigationController的子类for &ldquo;nav controller&#8221;，这样才可以添加上述代码。和navigation controller类似，tab controller里的各个view的orientation设置应该放在tab controller里。</p>
+
+<p>对于ios6的top-most controller决定orientation设置，导致这样一个问题：在 top-most controller里的views无法拥有不相同的orientation设置。例如：对于 iphone, 在nav controller里，你有main view, first view 和 second view，前2个都只能打竖，而second view是用来播放video，可以打横打竖。那么在ios 4 and 5里可以通过在main view 和 first view的shouldAutorotateToInterfaceOrientation里设置只能打竖，而在second view的shouldAutorotateToInterfaceOrientation设置打竖打横即可。而在ios 6里则无法实现这种效果，因为在main view, first view和 second view的orientation设置是无效的，只能够在nav controller里设置。那么你可能想着用下列代码在nav controller里控制哪个view打竖，哪个view打横。</p>
+
+<pre><code>-(NSUInteger)supportedInterfaceOrientations{  
+    if([[self topViewController] isKindOfClass:[SubSubView class]])  
+        return UIInterfaceOrientationMaskAllButUpsideDown;  
+    else  
+        return UIInterfaceOrientationMaskPortrait;  
+}
+</code></pre>
+
+<p>或者在top-most controller中直接获取顶部的ViewController支持的方向，需要在下面层次的ViewController中都设置支持的方向：</p>
+
+<pre><code>-(NSUInteger)supportedInterfaceOrientations{  
+    return self.topViewController.supportedInterfaceOrientations;
+}
+</code></pre>
+
+<p>这样可以使得在main view 和 first view里无法打横，而second view横竖都行。但问题来了，如果在second view时打横，然后返回到 first view，那么first view是打横显示的！</p>
+
+<p>目前想到的解决方法只能是把second view脱离nav controller，以modal view方式来显示。这样就可以在modal view里设置打横打竖，而在nav controller里设置只打竖。</p>
+
+<p>如果你的app的所有view的orientation的设置是统一的，那么你可以简单的在plist file里设置即可，不用添加上面的代码。而如果你添加了上面的代码，就会覆盖plist里orientation的设置。</p>
+
+<p>参考：</p>
+
+<ul>
+<li><a href="https://developer.apple.com/library/ios/featuredarticles/ViewControllerPGforiPhoneOS/RespondingtoDeviceOrientationChanges/RespondingtoDeviceOrientationChanges.html#//apple_ref/doc/uid/TP40007457-CH7-SW1">苹果官网</a></li>
+<li><a href="http://www.cnblogs.com/smileEvday/archive/2013/04/24/3041407.html">smileEvday</a></li>
+<li><a href="http://blog.csdn.net/jaywon/article/details/8208991">jaywon</a></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[iOS中的堆和栈]]></title>
+    <link href="http://jackyzonewen.github.io/blog/2014/04/04/ioszhong-de-dui-he-zhan/"/>
+    <updated>2014-04-04T14:11:00+08:00</updated>
+    <id>http://jackyzonewen.github.io/blog/2014/04/04/ioszhong-de-dui-he-zhan</id>
+    <content type="html"><![CDATA[<p>iOS 内存布局如下图所示：</p>
+
+<p><img src="http://dl.iteye.com/upload/picture/pic/115454/2d89dcdc-0a17-3ac8-afbe-c2782f498cbe.gif" alt="" /></p>
+
+<ul>
+<li><p>在应用程序分配的内存空间里面，最低地址位是固定的代码段和数据段，往上是堆，用来存放全局变量，对于 ObjC 来说，就是alloc出来的变量，都会放进这里，堆不够用的时候就会往上申请空间。最顶部高地址位是栈，局部的基本类型变量都会放进栈里。ObjC的对象都是以指针进行操控的，局部变量的指针都在栈里，全局的变量在堆里，而无论是什么指针，alloc出来的都在堆里，所以alloc出来的变量一定要记得 release。对于 autorelease变量来说，每个函数有一个对应的 autorelease pool，函数出栈的时候pool被销毁，同时调用这个pool里面变量的dealloc函数来实现其内部alloc出来的变量的释放。</p></li>
+<li><p>栈(stack segment)：执行方法时会在栈中创建一个方法栈帧(stack frame)，其中的非对象的局部变量都在栈帧中，方法执行完成返回后，栈帧中的所有局部被清空。栈是后进先出(LIFO)的结构。当函数调用其他的函数时，“stack frame”会被创建；当其他函数退出后，这个“frame ”会自动被破坏。所以如果存在NSStackBlock类型的块，在函数执行完成之后会被销毁。</p></li>
+<li><p>堆(heap segment)：全局和静态变量保存在“heap ”中，直到应用退出。为了访问你创建在heap 中的数据，你最少要求有一个保存在stack 中的指针，因为你的CPU 通过stack 中的指针访问heap 中的数据。你可以认为stack中的一个指针仅仅是一个整型变量，保存了heap 中特定内存地址的数据。简而言之，操作系统使用stack 段中的指针值访问heap 段中的对象。如果stack 对象的指针没有了，则heap 中的对象就不能访问。这也是内存泄露的原因。</p></li>
+<li><p>在iOS操作系统的stack段和heap段中，你都可以创建数据对象。例如：NSString 的对象就是stack中的对象，NSMutableString的对象就是heap中的对象。前者创建时分配的内存长度固定且不可修改；后者是分配内存长度是可变的，可有多个owner, 适用于计数管理内存管理模式。
+两类对象的创建方法也不同，前者直接创建“NSString * str1=@&ldquo;welcome&rdquo;; “，而后者需要先分配再初始化“ NSMutableString * mstr1=[[NSMutableString alloc] initWithString:@&ldquo;welcome&rdquo;]; ”。</p>
+
+<ul>
+<li>stack中对象的优点主要有两点，一是创建速度快，二是管理简单，它有严格的生命周期；stack 对象的缺点是它不灵活，创建时长度是多大就一直是多大，创建时是哪个函数创建的，它的owner 就一直是它。不像heap 对象那样有多个owner，其实多个owner等同于引用计数。只有heap 对象才是采用“引用计数”方法管理它。</li>
+<li>stack对象的创建：只要栈的剩余空间大于stack对象申请创建的空间，操作系统就会为程序提供这段内存空间，否则将报异常提示栈溢出。</li>
+<li>heap 对象的创建：操作系统对于heap段内存是采用链表进行管理。操作系统有一个记录空闲内存地址的链表，当收到程序的申请时，会遍历链表，寻找第一个空间大于所申请的heap节点，然后将该节点从空闲节点链表中删除，并将该节点的空间分配给程序。</li>
+</ul>
+</li>
+<li><p>一般情况下应用程序是不需要考虑堆和栈的大小的，总是当作足够大来使用就能满足一般业务开发。但是事实上堆和栈都不是无上限的，过多的递归会导致栈溢出，过多的 alloc 变量会导致堆溢出。</p></li>
+</ul>
+
+
+<h4>堆和栈的区别</h4>
+
+<p><strong>管理方式：</strong></p>
+
+<ul>
+<li>对于栈来讲，是由编译器自动管理，无需我们手工控制；</li>
+<li>对于堆来说，释放工作由程序员控制，容易产生memory leak。</li>
+</ul>
+
+
+<p><strong>申请大小：</strong></p>
+
+<ul>
+<li>在Windows下,栈是向低地址扩展的数据结构，是一块连续的内存的区域。这句话的意思是栈顶的地址和栈的最大容量是系统预先规定好的，在 WINDOWS下，栈的大小是2M（也有的说是1M，总之是一个编译时就确定的常数），如果申请的空间超过栈的剩余空间时，将提示overflow。因此，能从栈获得的空间较小。</li>
+<li>堆是向高地址扩展的数据结构，是不连续的内存区域。这是由于系统是用链表来存储的空闲内存地址的，自然是不连续的，而链表的遍历方向是由低地址向高地址。堆的大小受限于计算机系统中有效的虚拟内存。由此可见，堆获得的空间比较灵活，也比较大。</li>
+</ul>
+
+
+<p><strong>碎片问题：</strong></p>
+
+<ul>
+<li>对于栈来讲，则不会存在这个问题，因为栈是先进后出的队列，他们是如此的一一对应，以至于永远都不可能有一个内存块从栈中间弹出</li>
+<li>对于堆来讲，频繁的new/delete势必会造成内存空间的不连续，从而造成大量的碎片，使程序效率降低。</li>
+</ul>
+
+
+<p><strong>分配方式：</strong></p>
+
+<ul>
+<li>堆都是动态分配的，没有静态分配的堆。</li>
+<li>栈有2种分配方式：静态分配和动态分配。静态分配是编译器完成的，比如局部变量的分配。动态分配由alloca函数进行分配，但是栈的动态分配和堆是不同的，他的动态分配是由编译器进行释放，无需我们手工实现。</li>
+</ul>
+
+
+<p><strong>分配效率：</strong></p>
+
+<ul>
+<li>栈是机器系统提供的数据结构，计算机会在底层对栈提供支持：分配专门的寄存器存放栈的地址，压栈出栈都有专门的指令执行，这就决定了栈的效率比较高。</li>
+<li>堆则是C/C++函数库提供的，它的机制是很复杂的。</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Objective-C 对象模型及应用]]></title>
+    <link href="http://jackyzonewen.github.io/blog/2014/04/03/objective-c-dui-xiang-mo-xing-ji-ying-yong/"/>
+    <updated>2014-04-03T21:37:00+08:00</updated>
+    <id>http://jackyzonewen.github.io/blog/2014/04/03/objective-c-dui-xiang-mo-xing-ji-ying-yong</id>
+    <content type="html"><![CDATA[<p>Objective-C的运行时runtime开源的，源码可以到<a href="http://www.opensource.apple.com/tarballs/objc4/">苹果官网</a>下载，在objc4-532.2以后，苹果把NSObject的实现也开源了。</p>
+
+<h5>isa指针</h5>
+
+<p>Objective-C是一门面向对象的编程语言。每一个对象都是一个类的实例。在Objective-C语言的内部，每一个对象都有一个名为isa的指针，指向该对象的类。每一个类描述了一系列它的实例的特点，包括成员变量的列表，成员函数的列表等。每一个对象都可以接受消息，而对象能够接收的消息列表是保存在它所对应的类中。</p>
+
+<p>id和Class类型的声明：</p>
+
+<pre><code>struct objc_class {
+    struct objc_class *isa;
+};
+struct objc_object {
+    struct objc_class *isa;
+};
+
+typedef struct objc_class *Class; //类  (class object)
+typedef struct objc_object *id;   //对象 (instance of class)
+
+// NSObject的声明
+@interface NSObject &lt;NSObject&gt; {
+    Class isa  OBJC_ISA_AVAILABILITY;
+}
+</code></pre>
+
+<ol>
+<li>在objc中id代表了一个对象，类似于(void *)，凡是首地址是isa的struct指针，都可以被认为是objc中的对象，运行时可以通过isa指针，查找到该对象是属于什么类(Class)。</li>
+<li>在objc中每一个类实际上也是一个对象。每一个类也有一个名为isa的指针。每一个类也可以接受消息，例如[NSObject alloc]，就是向NSObject这个类发送名为alloc消息。</li>
+<li>因为类也是一个对象，那它也必须是另一个类的实列，这个类就是元类(metaclass)。元类保存了类方法的列表。当一个类方法被调用时，元类会首先查找它本身是否有该类方法的实现，如果没有，则该元类会向它的父类查找该方法，直到一直找到继承链的头。</li>
+<li>元类(metaclass)也是一个对象，那么元类的isa指针又指向哪里呢？为了设计上的完整，所有的元类的isa指针都会指向一个根元类(root metaclass)。根元类(root metaclass)本身的isa指针指向自己，这样就行成了一个闭环。上面提到，一个对象能够接收的消息列表是保存在它所对应的类中的。在实际编程中，我们几乎不会遇到向元类发消息的情况，那它的isa指针在实际上很少用到。不过这么设计保证了面向对象的干净，即所有事物都是对象，都有isa指针。</li>
+<li>类方法的定义是保存在元类(metaclass)中，而方法调用的规则是，如果该类没有一个方法的实现，则向它的父类继续查找。所以，为了保证父类的类方法可以在子类中可以被调用，所以子类的元类会继承父类的元类，换而言之，类对象和元类对象有着同样的继承关系。</li>
+</ol>
+
+
+<p><img src="http://blog.devtang.com/images/class-diagram.jpg" alt="" /></p>
+
+<h5>实例说明</h5>
+
+<p>写一个简单的类NyanCat，并且用C重写一遍，看看编译器在底层到底是如何实现的。</p>
+
+<pre><code>// 有两个实例变量，有一个类方法、一个实例方法
+@interface NyanCat : NSObject {
+    int age;
+    NSString *name;
+}
+- (void)nyan;
++ (void)nyan;
+@end
+
+@implementation NyanCat
+- (void)nyan1 {
+    printf("instance nyan~");
+}
++ (void)nyan2 {
+    printf("class nyan~");
+}
+@end
+</code></pre>
+
+<p>使用clang工具重写这个类：</p>
+
+<pre><code>clang -rewrite-objc NyanCat.m
+</code></pre>
+
+<p>对重写后的代码进行整理，包含下面的信息:</p>
+
+<pre><code>//Class的实际结构
+struct _class_t {
+    struct _class_t *isa;        //isa指针
+    struct _class_t *superclass; //父类
+    void *cache;
+    void *vtable;
+    struct _class_ro_t *ro;     //Class包含的信息
+};
+
+//Class包含的信息
+struct _class_ro_t {
+    unsigned int flags;
+    unsigned int instanceStart;
+    unsigned int instanceSize;
+    unsigned int reserved;
+    const unsigned char *ivarLayout;
+    const char *name;                                 //类名
+    const struct _method_list_t *baseMethods;         //方法列表
+    const struct _objc_protocol_list *baseProtocols;  //协议列表
+    const struct _ivar_list_t *ivars;                 //ivar列表
+    const unsigned char *weakIvarLayout;
+    const struct _prop_list_t *properties;            //属性列表
+};
+
+ //NyanCat(meta-class)
+struct _class_t OBJC_METACLASS_$_NyanCat  = {
+    .isa        = &amp;OBJC_METACLASS_$_NSObject,
+    .superclass = &amp;OBJC_METACLASS_$_NSObject,
+    .cache      = (void *)&amp;_objc_empty_cache,
+    .vtable     = (void *)&amp;_objc_empty_vtable,
+    .ro         = &amp;_OBJC_METACLASS_RO_$_NyanCat, //包含了类方法等
+};
+
+//NyanCat(Class)
+struct _class_t OBJC_CLASS_$_NyanCat = {
+    .isa        = &amp;OBJC_METACLASS_$_NyanCat,   //此处isa指向meta-class
+    .superclass = &amp;OBJC_CLASS_$_NSObject,
+    .superclass = (void *)&amp;_objc_empty_cache,
+    .vtable     = (void *)&amp;_objc_empty_vtable,
+    .ro         = &amp;_OBJC_CLASS_RO_$_NyanCat,   //包含了实例方法 ivar信息等
+};
+
+typedef struct objc_object NyanCat;   //定义NyanCat类型
+//更详细的不贴代码了..
+</code></pre>
+
+<ul>
+<li>所有NyanCat的实例的isa都指向了NyanCat(Class)。</li>
+<li>NyanCat(Class)是一个全局变量，其中记录了类名、成员变量信息、property信息、protocol信息和实例方法列表等。</li>
+<li>NyanCat(Class)的isa指向了全局变量NyanCat(meta-class)，meta-class里只记录了类名、类方法列表等。</li>
+<li>在_class_t里面，第二个成员是superclass，很明显这个指针指向了它的父类。运行时可以通过isa和superclass获取一个类在继承树上的完整信息。</li>
+</ul>
+
+
+<p>例如：<br/>
+向cat (instance) 发送消息nyan1时，运行时会通过isa指针查找到NyanCat(Class)，这里保存着本类中定义的实例方法的指针。
+向NyanCat(Class)发送消息nyan2时，运行时会通过isa查找到NyanCat(meta-class)，这里保存着本类中定义的类方法的指针。</p>
+
+<p><img src="http://blog.ibireme.com/wp-content/uploads/2013/11/objctree.png" alt="" /></p>
+
+<p>在实现中，Root Class是指NSObject，我们可以从图中看出：</p>
+
+<ol>
+<li>NSObject类包括它的对象实例方法。</li>
+<li>NSObject的元类包括它的类方法，例如alloc方法。</li>
+<li>NSObject的元类继承自NSObject类。</li>
+<li>一个NSObject的类中的方法同时也会被NSObject的子类在查找方法时找到。</li>
+</ol>
+
+
+<p>跟随黑线，可以看到isa的指向，运行时，每个对象的isa都不为空，这样只要是一个id类型的对象，runtime都可以通过访问首地址偏移(isa)来获取该对象的信息了。<br/>
+跟随绿线，可以看到superclass的指向。当运行时在搜寻方法、ivar信息时，如果没有找到信息，则会沿superclass的线查找上去，最终NSObject(根类)的superclass是nil。</p>
+
+<p>为了验证上面的说法，可以敲一下代码看看：</p>
+
+<pre><code>#import "NyanCat.h"
+#import &lt;objc/runtime.h&gt;
+#import &lt;objc/objc.h&gt;
+
+void test() {
+    NyanCat *cat = [[NyanCat alloc] init];
+
+    Class cls = object_getClass(cat); //NyanCat(Class)
+    class_getName(cls);               //"NyanCat"
+    class_isMetaClass(cls);           //NO
+
+    Class meta = object_getClass(cls); //NyanCat(meta-class)
+    class_getName(meta);               //"NyanCat"
+    class_isMetaClass(cls);            //YES
+
+    Class meta_meta = object_getClass(meta); //NSObject(meta-class)
+    class_getName(meta_meta);                //"NSObject"
+    class_isMetaClass(meta_meta);            //YES
+}
+</code></pre>
+
+<hr />
+
+<h5>类的成员变量</h5>
+
+<p>如果把类的实例看成一个C语言的结构体（struct），上面说的isa指针就是这个结构体的第一个成员变量，而类的其它成员变量依次排列在结构体中。排列顺序如下图所示（图片来自《iOS 6 Programming Pushing the Limits》）：
+<img src="http://blog.devtang.com/images/class-member.jpg" alt="" /></p>
+
+<p>为了验证该说法，我们在XCode中新建一个工程，在main.m中运行如下代码：</p>
+
+<pre><code>#import &lt;UIKit/UIKit.h&gt;
+
+@interface Father : NSObject {
+    int _father;
+}
+
+@end
+
+@implementation Father
+
+@end
+
+@interface Child : Father {
+    int _child;
+}
+
+@end
+
+@implementation Child
+
+@end
+
+
+int main(int argc, char * argv[])
+{
+
+  Child * child = [[Child alloc] init];
+  @autoreleasepool {
+      // ...
+  }
+}
+</code></pre>
+
+<p>我们将断点下在 @autoreleasepool 处，然后在Console中输入p *child,则可以看到Xcode输出如下内容，这与我们上面的说法一致。</p>
+
+<pre><code>(lldb) p *child
+(Child) $0 = {
+  (Father) Father = {
+    (NSObject) NSObject = {
+      (Class) isa = Child
+    }
+    (int) _father = 0
+  }
+  (int) _child = 0
+}
+</code></pre>
+
+<hr />
+
+<h5>可变与不可变</h5>
+
+<p>因为对象在内存中的排布可以看成一个结构体，该结构体的大小并不能动态变化。所以无法在运行时动态给对象增加成员变量。</p>
+
+<p>相对的，对象的方法定义都保存在类的可变区域中。Objective-C 2.0并未在头文件中将实现暴露出来，但在Objective-C 1.0中，我们可以看到方法的定义列表是一个名为 methodLists的指针的指针（如下图所示）。通过修改该指针指向的指针的值，就可以实现动态地为某一个类增加成员方法。这也是Category实现的原理。同时也说明了为什么Category只可为对象增加成员方法，却不能增加成员变量。</p>
+
+<p>需要特别说明一下，通过objc_setAssociatedObject 和 objc_getAssociatedObject方法可以变相地给对象增加成员变量，但由于实现机制不一样，所以并不是真正改变了对象的内存结构。</p>
+
+<p>除了对象的方法可以动态修改，因为isa本身也只是一个指针，所以我们也可以在运行时动态地修改isa指针的值，达到替换对象整个行为的目的。不过该应用场景较少。</p>
+
+<hr />
+
+<h5>系统相关API及应用</h5>
+
+<p><strong>isa swizzling的应用</strong></p>
+
+<p>系统提供的KVO的实现，就利用了动态地修改isa指针的值的技术。在<a href="https://developer.apple.com/library/ios/documentation/cocoa/conceptual/KeyValueObserving/Articles/KVOImplementation.html">苹果的文档</a>中可以看到如下描述：</p>
+
+<blockquote><p>Key-Value Observing Implementation Details</p>
+
+<p>Automatic key-value observing is implemented using a technique called
+isa-swizzling.</p>
+
+<p>The isa pointer, as the name suggests, points to the object’s class
+which maintains a dispatch table. This dispatch table essentially
+contains pointers to the methods the class implements, among other
+data.</p>
+
+<p>When an observer is registered for an attribute of an object the isa
+pointer of the observed object is modified, pointing to an
+intermediate class rather than at the true class. As a result the
+value of the isa pointer does not necessarily reflect the actual class
+of the instance.</p>
+
+<p>You should never rely on the isa pointer to determine class
+membership. Instead, you should use the class method to determine the
+class of an object instance.</p></blockquote>
+
+<p>KVO的内部实现，请看<a href="http://www.cocoachina.com/applenews/devnews/2014/0107/7667.html">这里</a></p>
+
+<p><strong>Method Swizzling API说明</strong></p>
+
+<p>Objective-C提供了以下API来动态替换类方法或实例方法的实现：</p>
+
+<ul>
+<li>class_replaceMethod 替换类方法的定义</li>
+<li>method_exchangeImplementations 交换2个方法的实现</li>
+<li>method_setImplementation 设置1个方法的实现</li>
+</ul>
+
+
+<p>这3个方法有一些细微的差别，给大家介绍如下：</p>
+
+<ul>
+<li>class_replaceMethod在苹果的文档（如下图所示）中能看到，它有两种不同的行为。当类中没有想替换的原方法时，该方法会调用class_addMethod来为该类增加一个新方法，也因为如此，class_replaceMethod在调用时需要传入types参数，而method_exchangeImplementations和method_setImplementation却不需要。</li>
+</ul>
+
+
+<p><img src="http://blog.devtang.com/images/class-replace-method.jpg" alt="" /></p>
+
+<ul>
+<li>method_exchangeImplementations 的内部实现其实是调用了2次method_setImplementation方法，从苹果的文档中能清晰地了解到（如下图所示）</li>
+</ul>
+
+
+<p><img src="http://blog.devtang.com/images/class-method-exchange-imp.jpg" alt="" /></p>
+
+<p>从以上的区别我们可以总结出这3个API的使用场景:</p>
+
+<ul>
+<li>class_replaceMethod, 当需要替换的方法可能有不存在的情况时，可以考虑使用该方法。</li>
+<li>method_exchangeImplementations，当需要交换2个方法的实现时使用。</li>
+<li>method_setImplementation 最简单的用法，当仅仅需要为一个方法设置其实现方式时使用。</li>
+</ul>
+
+
+<p>使用示例</p>
+
+<p>iOS6.0.2系统下，系统提供的UIImagePickerController在iPad横屏下有转屏的Bug，造成其方向错误。具体的Bug详情可以见<a href="http://stackoverflow.com/questions/12522491/crash-on-presenting-uiimagepickercontroller-under-ios-6-0">这里</a>。</p>
+
+<p>为了修复该Bug，我们需要替换UIImagePickerController的如下2个方法</p>
+
+<pre><code>- (BOOL)shouldAutorotate;
+- (UIInterfaceOrientation)preferredInterfaceOrientationForPresentation;
+</code></pre>
+
+<p>我们先实现了一个名为ImagePickerReplaceMethodsHolder的类，用于定义替换后的方法和实现。如下所示：</p>
+
+<pre><code>// ImagePickerReplaceMethodsHolder.h
+@interface ImagePickerReplaceMethodsHolder : NSObject
+
+- (BOOL)shouldAutorotate;
+- (UIInterfaceOrientation)preferredInterfaceOrientationForPresentation;
+
+@end
+
+// ImagePickerReplaceMethodsHolder.m
+@implementation ImagePickerReplaceMethodsHolder
+
+- (BOOL)shouldAutorotate {
+    return NO;
+}
+
+- (UIInterfaceOrientation)preferredInterfaceOrientationForPresentation {
+    return UIInterfaceOrientationPortrait;
+}
+
+
+@end
+</code></pre>
+
+<p>然后，我们在调用处，判断当前的iOS版本，对于[iOS6.0, iOS6.1)之间的版本，我们将UIImagePickerController的有问题的方法替换。具体代码如下：</p>
+
+<pre><code>#define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
+#define SYSTEM_VERSION_LESS_THAN(v)                 ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedAscending)
+
++ (void)load {
+    static dispatch_once_t onceToken;
+    dispatch_once(&amp;onceToken, ^{
+        [self hackForImagePicker];
+    });
+}
+
++ (void)hackForImagePicker {
+    // fix bug of image picker under iOS 6.0
+    // http://stackoverflow.com/questions/12522491/crash-on-presenting-uiimagepickercontroller-under-ios-6-0
+    if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"6.0")
+        &amp;&amp; SYSTEM_VERSION_LESS_THAN(@"6.1")) {
+        Method oldMethod1 = class_getInstanceMethod([UIImagePickerController class], @selector(shouldAutorotate));
+        Method newMethod1 = class_getInstanceMethod([ImagePickerReplaceMethodsHolder class], @selector(shouldAutorotate));
+        method_setImplementation(oldMethod1, method_getImplementation(newMethod1));
+
+        Method oldMethod2 = class_getInstanceMethod([UIImagePickerController class], @selector(preferredInterfaceOrientationForPresentation));
+        Method newMethod2 = class_getInstanceMethod([ImagePickerReplaceMethodsHolder class], @selector(preferredInterfaceOrientationForPresentation));
+        method_setImplementation(oldMethod2, method_getImplementation(newMethod2));
+    }
+}
+</code></pre>
+
+<p>通过如上代码，我们就针对iOS特定版本的有问题的系统库函数打了Patch，使问题得到解决。</p>
+
+<hr />
+
+<h5>开源界的使用</h5>
+
+<p>有少量不明真相的同学以为苹果在审核时会拒绝App使用以上API，这其实是对苹果的误解。使用如上API是安全的。另外，开源界也对以上方法都适当的使用。例如：</p>
+
+<ul>
+<li>著名的网络库<a href="https://github.com/AFNetworking/AFNetworking">AFNetworking</a>。AFNetworking网络库(v1.x版本)使用了class_replaceMethod方法（AFHTTPRequestOperation.m文件第105行）</li>
+<li>Nimbus。Nimbus是著名的工具类库，它在其core模块中提供了NIRuntimeClassModifications.h文件，用于提供上述API的封装。</li>
+<li>国内的大众点评iOS客户端。该客户端使用了他们自己开发的基于Wax修改而来的WaxPatch，WaxPatch可以实现通过服务器更新来动态修改客户端的逻辑。而WaxPatch主要是修改了wax中的wax_instance.m文件，在其中加入了class_replaceMethod来替换原始实现，从而实现修改客户端的原有行为。</li>
+</ul>
+
+
+<hr />
+
+<p>文章转自<a href="http://blog.devtang.com/blog/2013/10/15/objective-c-object-model/">唐巧的技术博客</a>&amp;&amp;<a href="http://blog.ibireme.com/2013/11/25/objc-object/">ibireme</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Objective-C中Block的使用]]></title>
+    <link href="http://jackyzonewen.github.io/blog/2014/04/03/objective-czhong-blockde-shi-yong/"/>
+    <updated>2014-04-03T17:20:00+08:00</updated>
+    <id>http://jackyzonewen.github.io/blog/2014/04/03/objective-czhong-blockde-shi-yong</id>
+    <content type="html"><![CDATA[<blockquote><p>看了几篇关于block的不错的博文，记录下来，方便查阅。</p></blockquote>
+
+<h4>Block简介</h4>
+
+<blockquote><p>Block作为C语言的扩展，并不是高新技术，和其他语言的闭包或lambda表达式是一回事。需要注意的是由于Objective-C在iOS中不支持GC机制，使用Block必须自己管理内存，而内存管理正是使用Block坑最多的地方，错误的内存管理 要么导致retain cycle内存泄漏,要么内存被提前释放导致crash。 Block的使用很像函数指针，不过与函数最大的不同是：Block可以访问函数以外、词法作用域以内的外部变量的值，函数不可以；另外一个不同：Block是一个“仿”对象，可以使用自动释放池管理管理内存。Object-C中的对象都是继承自NSObject对象，NSObject对象的实现中有一个isa指针，是一个objc_class指针，指向Class的property；block对象中也有一个isa指针，指向的是_NSConcrete*Block对象，用于指明这个block的类型。</p></blockquote>
+
+<hr />
+
+<h4>Block语法</h4>
+
+<p>一图一世界：</p>
+
+<p><img src="http://beyondvincent.com/wp-content/uploads/2013/07/blocks_2x.png" alt="" /></p>
+
+<p>声明block变量:</p>
+
+<p>As a local variable:</p>
+
+<pre><code>returnType (^blockName)(parameterTypes) = ^returnType(parameters) {...};
+</code></pre>
+
+<p>As a property:</p>
+
+<pre><code>@property (nonatomic, copy) returnType (^blockName)(parameterTypes);
+</code></pre>
+
+<p>As a method parameter:</p>
+
+<pre><code>- (void)someMethodThatTakesABlock:(returnType (^)(parameterTypes))blockName;
+</code></pre>
+
+<p>As an argument to a method call:</p>
+
+<pre><code>[someObject someMethodThatTakesABlock: ^returnType (parameters) {...}];
+</code></pre>
+
+<p>As a typedef:</p>
+
+<pre><code>typedef returnType (^TypeName)(parameterTypes);
+TypeName blockName = ^returnType(parameters) {...};
+</code></pre>
+
+<hr />
+
+<h4>Block数据格式</h4>
+
+<p>如下图:</p>
+
+<p><img src="http://www.galloway.me.uk/media/images/2013-05-26-a-look-inside-blocks-episode-3-block-copy/block_layout.png" alt="" /></p>
+
+<pre><code>struct Block_descriptor {
+    unsigned long int reserved;
+    unsigned long int size;
+    void (*copy)(void *dst, void *src);
+    void (*dispose)(void *);
+};
+
+struct Block_layout {
+    void *isa;
+    int flags;
+    int reserved;
+    void (*invoke)(void *, ...);
+    struct Block_descriptor *descriptor;
+    /* Imported variables. */
+};
+</code></pre>
+
+<p>一个block实例实际上由6部分构成：</p>
+
+<ul>
+<li>isa指针，所有对象都有该指针，用于实现对象相关的功能。</li>
+<li>flags，用于按bit位表示一些block的附加信息，本文后面介绍block copy的实现代码可以看到对该</li>
+<li>变量的使用。</li>
+<li>reserved，保留变量。</li>
+<li>invoke，函数指针，指向具体的block实现的函数调用地址。</li>
+<li>descriptor， 表示该block的附加描述信息，主要是size大小，以及copy和dispose函数的指针。</li>
+<li>variables，capture过来的变量，block能够访问它外部的局部变量，就是因为将这些变量（或变量的地址）复制到了结构体中。</li>
+</ul>
+
+
+<hr />
+
+<h4>Block类型</h4>
+
+<p>1._NSConcreteGlobalBlock 保存在代码段(类似于函数)，不会访问任何外部变量。</p>
+
+<pre><code>{
+    //create a NSGlobalBlock
+    float (^sum)(float, float) = ^(float a, float b){
+        return a + b;
+    };
+    NSLog(@"block is %@", sum); //block is &lt;__NSGlobalBlock__: 0x&gt;
+}
+</code></pre>
+
+<p>2._NSConcreteStackBlock 保存在栈中的block，当函数返回时会被销毁。</p>
+
+<pre><code>{
+    NSArray *testArr = @[@"1", @"2"];
+
+    NSLog(@"block is %@", ^{
+
+        NSLog(@"test Arr :%@", testArr);
+    });
+    // block is &lt;__NSStackBlock__: 0x&gt;
+    // 打印可看出block是一个 NSStackBlock, 即在栈上, 当函数返回时block将无效
+}
+</code></pre>
+
+<p>3.<em>NSConcreteMallocBlock 保存在堆中的block，当引用计数为0时会被销毁，对</em>NSConcreteStackBlock进行copy操作。</p>
+
+<pre><code>{
+    NSArray *testArr = @[@"1", @"2"];   
+
+    void (^TestBlock)(void) = ^{
+
+        NSLog(@"testArr :%@", testArr);
+    }; 
+    NSLog(@"block is %@", TestBlock);
+    // block is &lt;__NSMallocBlock__: 0x&gt;
+    // 上面这句在非arc中打印是 NSStackBlock, 但是在arc中就是NSMallocBlock
+    // 区别就是ARC下strong指针过了一趟手，block被copy到堆上了
+}
+</code></pre>
+
+<p>4.<em>NSConcreteWeakBlockVariable<br/>
+5.</em>NSConcreteAutoBlock<br/>
+6._NSConcreteFinalizingBlock<br/>
+后三种用于GC，不做讨论。</p>
+
+<hr />
+
+<h4>Block的生命周期</h4>
+
+<p>Block的isa指针指向的是_NSConcreteStackBlock，这个prototype重新定义了一下咱们熟悉(NSObject所定义的)的retain/copy/release等函数。</p>
+
+<p><strong>非ARC环境下:</strong></p>
+
+<p>测试代码:</p>
+
+<pre><code>NSLog(@"_NSConcreteStackBlock %@", [_NSConcreteStackBlock class]); // _NSConcreteStackBlock __NSStackBlock__
+
+__block int val = 10;
+blk stackBlock = ^{NSLog(@"val = %d", ++val);};
+NSLog(@"stackBlock: %@", stackBlock); // stackBlock: &lt;__NSStackBlock__: 0xbfffdb28&gt;
+
+tempBlock = [stackBlock copy];
+NSLog(@"tempBlock: %@", tempBlock); // tempBlock: &lt;__NSMallocBlock__: 0x756bf20&gt;
+
+// 结果: 经过copy之后，对象的类型从__NSStackBlock__变为了__NSMallocBlock__
+</code></pre>
+
+<p>得出的结论:</p>
+
+<p><img src="http://t37-2.yunpan.360.cn/s1/800-600.6506c8bc9a41c7903ada460b991e19ef10025d59.e6cf84.jpg?st=ffQPGCYeGEZ0DgdpnJfU7Q&amp;e=1396627200&amp;mt=png" alt="" /></p>
+
+<ul>
+<li><p>NSGlobalBlock类型(理解为静态block)：retain、copy、release都不会影响block的生命周期。</p></li>
+<li><p>当一个block对象在堆上了，生命周期和普通的NSObject对象的管理一样，copy和release一一对应，不然会存在系统级别的内存泄露，在Instruments里跟不到问题触发点。</p></li>
+<li><p>NSMallocBlock支持retain、release，虽然retainCount始终是1，但内存管理器中仍然会增加、减少计数。copy之后不会生成新的对象，只是增加了一次引用，类似NSObject的retain操作，多个block指针指向的是heap中的同一块内存，<a href="http://www.cnblogs.com/studentdeng/archive/2012/02/03/2336863.html">图解</a>；</p></li>
+<li><p>NSStackBlock：NSStackBlock在函数返回后，Block内存将被回收，即使retain也没用，容易犯的错误是[[mutableAarry addObject:stackBlock]，在函数出栈后，从数组中取到的stackBlock已经被回收，变成了野指针。正确的做法是先将stackBlock copy到堆上，然后加入数组：[mutableAarry addObject:[[stackBlock copy] autorelease]]。如果要长期持有block对象请把她移到堆上。</p></li>
+<li><p>在向外传递block的时候参考类似NSObject的规则，一定要传递一个autorelease的__NSMallocBlock__对象，类似于return [[stackBlock copy] autorelease];</p></li>
+</ul>
+
+
+<p><strong>ARC环境下：</strong></p>
+
+<p>测试代码:</p>
+
+<pre><code>__block int val = 10;
+__strong blk strongPointerBlock = ^{NSLog(@"val = %d", ++val);};
+NSLog(@"strongPointerBlock: %@", strongPointerBlock); 
+// strongPointerBlock: &lt;__NSMallocBlock__: 0x7625120&gt; strong指针指向的block已经放到堆上
+
+__weak blk weakPointerBlock = ^{NSLog(@"val = %d", ++val);};
+NSLog(@"weakPointerBlock: %@", weakPointerBlock); 
+// weakPointerBlock: &lt;__NSStackBlock__: 0xbfffdb30&gt; weak指针指向的block还在栈上
+
+NSLog(@"mallocBlock: %@", [weakPointerBlock copy]); 
+// mallocBlock: &lt;__NSMallocBlock__: 0x714ce60&gt; copy会将block从栈移动到堆上
+
+NSLog(@"test %@", ^{NSLog(@"val = %d", ++val);}); 
+// test &lt;__NSStackBlock__: 0xbfffdb18&gt; 匿名的block在栈上
+</code></pre>
+
+<p>得出的结论:</p>
+
+<ul>
+<li>只要block在strong指针底下过一道都会放到堆上，变成NSMallocBlock类型。</li>
+<li>匿名block和weak指针指向的block在栈上。</li>
+<li>block做为函数返回参数时，block也会自动被移到堆上，所以无需非ARC的规则。</li>
+<li>ARC下的注意事项，block指针过一下strong指针，他好，我也好。</li>
+</ul>
+
+
+<hr />
+
+<h4>Block对外部变量的管理</h4>
+
+<h5>1、基本类型变量</h5>
+
+<p><strong>局部自动变量</strong>：Block<strong>定义</strong>时copy变量的值，在Block中作为常量使用，所以即使变量的值在Block外改变，也不影响在Block中的值(根本不是一个变量)。</p>
+
+<pre><code>{
+    int base = 100;
+    long (^sum)(int, int) = ^ long (int a, int b) {
+
+        return base + a + b;
+    };
+
+    base = 0;
+    printf("%ld\n",sum(1,2));
+    // 这里输出是103，而不是3, 因为块内base为拷贝的常量 100
+}
+</code></pre>
+
+<p><strong>STATIC修饰符的全局变量</strong>:全局变量或静态变量在内存中的地址是固定的，Block在读取该变量值的时候是直接从其所在内存读出，获取到的是最新值，而不是在定义时copy的常量.</p>
+
+<pre><code>{
+    static int base = 100;
+    long (^sum)(int, int) = ^ long (int a, int b) {
+        base++;
+        return base + a + b;
+    };
+
+    base = 0;
+    printf("%ld\n",sum(1,2));
+    // 这里输出是4，而不是103, 因为base被设置为了0
+    printf("%d\n", base);
+    // 这里输出1， 因为sum中将base++了
+}
+</code></pre>
+
+<p><strong>__BLOCK修饰的变量</strong>:被__block修饰的变量称作Block变量，基本类型的Block变量等效于全局变量、或静态变量(同一个变量)，当存在NSMallocBlock类型的block和NSStackBlock类型的block同时引用__block变量，__block变量将会被移到heap中。</p>
+
+<h5>2、对象</h5>
+
+<p>block对于objc对象的内存管理较为复杂，这里要分static变量、global变量、local变量、block变量分析、还要分非arc和arc分析。</p>
+
+<h6>2.1、非ARC中的对象</h6>
+
+<pre><code>@interface MyClass : NSObject {
+    NSObject* _instanceObj;
+}
+@end
+
+@implementation MyClass
+
+NSObject* __globalObj = nil;
+
+- (id) init {
+    if (self = [super init]) {
+        _instanceObj = [[NSObject alloc] init];
+    }
+    return self;
+}
+
+- (void) test {
+    static NSObject* __staticObj = nil;
+    __globalObj = [[NSObject alloc] init];
+    __staticObj = [[NSObject alloc] init];
+
+    NSObject* localObj = [[NSObject alloc] init];
+    __block NSObject* blockObj = [[NSObject alloc] init];
+
+    typedef void (^MyBlock)(void) ;
+    MyBlock aBlock = ^{
+        NSLog(@"%@", __globalObj);
+        NSLog(@"%@", __staticObj);
+        NSLog(@"%@", _instanceObj);
+        NSLog(@"%@", localObj);
+        NSLog(@"%@", blockObj);
+    };
+    aBlock = [[aBlock copy] autorelease];
+    aBlock();
+
+    NSLog(@"%d", [__globalObj retainCount]);
+    NSLog(@"%d", [__staticObj retainCount]);
+    NSLog(@"%d", [_instanceObj retainCount]);
+    NSLog(@"%d", [localObj retainCount]);
+    NSLog(@"%d", [blockObj retainCount]);
+}
+@end
+
+int main(int argc, char *argv[]) {
+    @autoreleasepool {
+        MyClass* obj = [[[MyClass alloc] init] autorelease];
+        [obj test];
+        return 0;
+    }
+}
+
+// 执行结果:1 1 1 2 1
+</code></pre>
+
+<p>得出的结论：</p>
+
+<ul>
+<li><strong>globalObj和</strong>staticObj在内存中的位置是确定的，所以Block copy时不会retain对象。</li>
+<li><em>instanceObj在Block copy时也没有直接retain </em>instanceObj对象本身，但会retain self。所以在Block中可以直接读写_instanceObj变量。</li>
+<li>localObj在Block copy时，系统自动retain对象，增加其引用计数。</li>
+<li>blockObj在Block copy时也不会retain。</li>
+</ul>
+
+
+<h6>2.2、ARC中的对象</h6>
+
+<p>由于arc中没有retain，retainCount的概念。只有强引用和弱引用的概念。当一个变量没有__strong的指针指向它时，就会被系统释放。因此我们可以通过下面的代码来测试。</p>
+
+<pre><code>NSString *__globalString = nil;
+
+- (void)testGlobalObj
+{
+    __globalString = @"1";
+    void (^TestBlock)(void) = ^{
+
+        NSLog(@"string is :%@", __globalString); 
+    };
+
+    __globalString = nil;
+
+    TestBlock(); // 结果：string is null
+}
+
+- (void)testStaticObj
+{
+    static NSString *__staticString = nil;
+    __staticString = @"1";
+
+    printf("static address: %p\n", &amp;__staticString);    //static address: 0x6a8c
+
+    void (^TestBlock)(void) = ^{
+
+        printf("static address: %p\n", &amp;__staticString); //static address: 0x6a8c
+
+        NSLog(@"string is : %@", __staticString); //string is null
+    };
+
+    __staticString = nil;
+
+    TestBlock();
+}
+
+- (void)testLocalObj
+{
+    NSString *__localString = nil;
+    __localString = @"1";
+
+    printf("local address: %p\n", &amp;__localString); //local address: 0xbfffd9c0
+
+    void (^TestBlock)(void) = ^{
+
+        printf("local address: %p\n", &amp;__localString); //local address: 0x71723e4
+
+        NSLog(@"string is : %@", __localString); //string is : 1
+    };
+
+    __localString = nil;
+
+    TestBlock();
+}
+
+- (void)testBlockObj
+{
+    __block NSString *_blockString = @"1";
+
+    void (^TestBlock)(void) = ^{
+
+        NSLog(@"string is : %@", _blockString); // string is null
+    };
+
+    _blockString = nil;
+
+    TestBlock();
+}
+
+- (void)testWeakObj
+{
+    NSString *__localString = @"1";
+
+    __weak NSString *weakString = __localString;
+
+    printf("weak address: %p\n", &amp;weakString);  //weak address: 0xbfffd9c4
+    printf("weak str address: %p\n", weakString); //weak str address: 0x684c
+
+    void (^TestBlock)(void) = ^{
+
+        printf("weak address: %p\n", &amp;weakString); //weak address: 0x7144324
+        printf("weak str address: %p\n", weakString); //weak str address: 0x684c
+
+        NSLog(@"string is : %@", weakString); //string is :1
+    };
+
+    __localString = nil;
+
+    TestBlock();
+}
+</code></pre>
+
+<p>得出的结论：</p>
+
+<ul>
+<li>只有在使用local变量时，block会复制指针，且强引用指针指向的对象一次。其它如全局变量、static变量、block变量等，block不会拷贝指针,只会强引用指针指向的对象一次。</li>
+<li>即使标记了为<strong>weak或</strong>unsafe_unretained的local变量。block仍会强引用指针对象一次。（这个不太明白，因为这种写法可在后面避免循环引用的问题）</li>
+<li>用NSString *<strong>localString = @”1″;分配的1是在静态存储区，所以在Block中打印printf(“weak str address: %p\n”, weakString);也会输出，测试对象的时候最好不要用NSString，应为它很特别，最好用UILabel，UIView等，</strong>block是复制了内容的；而__weak在block是空的</li>
+</ul>
+
+
+<hr />
+
+<h4>Block引用不当导致的回环retain cycle</h4>
+
+<p>block在拷贝到堆上的时候，会retain其引用的外部变量，那么如果block中如果引用了他的宿主对象，那很有可能引起循环引用，如：</p>
+
+<pre><code>self.myblock = ^{
+
+    [self doSomething];
+};
+</code></pre>
+
+<p>ARC环境测试代码如下：</p>
+
+<pre><code>- (void)dealloc
+{
+
+    NSLog(@"no cycle retain");
+}
+
+- (id)init
+{
+    self = [super init];
+    if (self) {
+
+#if TestCycleRetainCase1
+
+        //会循环引用
+        self.myblock = ^{
+
+            [self doSomething];
+        };
+#elif TestCycleRetainCase2
+
+        //会循环引用
+        __block TestCycleRetain *weakSelf = self;
+        self.myblock = ^{
+
+            [weakSelf doSomething];
+        };
+
+#elif TestCycleRetainCase3
+
+        //不会循环引用
+        __weak TestCycleRetain *weakSelf = self;
+        self.myblock = ^{
+
+            [weakSelf doSomething];
+        };
+
+#elif TestCycleRetainCase4
+
+        //不会循环引用
+        __unsafe_unretained TestCycleRetain *weakSelf = self;
+        self.myblock = ^{
+
+            [weakSelf doSomething];
+        };
+
+#endif
+
+        NSLog(@"myblock is %@", self.myblock);
+
+    }
+    return self;
+}
+
+- (void)doSomething
+{
+    NSLog(@"do Something");
+}
+
+int main(int argc, char *argv[]) {
+    @autoreleasepool {
+        TestCycleRetain* obj = [[TestCycleRetain alloc] init];
+        obj = nil;
+        return 0;
+    }
+}
+</code></pre>
+
+<p>在加了<strong>weak和</strong>unsafe_unretained的变量引入后，TestCycleRetain方法可以正常执行dealloc方法，而不转换和用<strong>block转换的变量都会引起循环引用。
+因此防止循环引用的方法如下：
+</strong>unsafe_unretained TestCycleRetain *weakSelf = self;</p>
+
+<hr />
+
+<h4>参考文章</h4>
+
+<p><a href="http://www.cnblogs.com/biosli/archive/2013/05/29/iOS_Objective-C_Block.html">1、对Objective-C中Block的追探</a><br/>
+<a href="http://www.cnbluebox.com/?p=255">2、block使用小结、在arc中使用block、如何防止循环引用</a><br/>
+<a href="http://blog.devtang.com/blog/2013/07/28/a-look-inside-blocks/">3、谈Objective-C Block的实现</a><br/>
+<a href="http://www.galloway.me.uk/2012/10/a-look-inside-blocks-episode-1/">4、A look inside blocks: Episode 1</a>  <a href="http://beyondvincent.com/blog/2013/07/09/99/">中文</a><br/>
+<a href="http://www.galloway.me.uk/2012/10/a-look-inside-blocks-episode-2/">5、A look inside blocks: Episode 2</a>  <a href="http://beyondvincent.com/blog/2013/07/10/100/">中文</a><br/>
+<a href="http://www.galloway.me.uk/2013/05/a-look-inside-blocks-episode-3-block-copy/">6、A look inside blocks: Episode 3 (Block_copy)</a>  <a href="http://beyondvincent.com/blog/2013/07/11/101/">中文</a> <br/>
+<a href="http://blog.sina.com.cn/s/blog_7b9d64af0101c4sh.html">7、iOS Block -浅析</a>
+<a href="http://tanqisen.github.io/blog/2013/04/19/gcd-block-cycle-retain/">8、正确使用Block避免Cycle Retain和Crash</a>
+<a href="http://beyondvincent.com/blog/2013/07/08/98/">9、初识block</a>
+<a href="http://blog.ibireme.com/2013/11/27/objc-block/">10、objc中的block</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[MarkDown使用]]></title>
+    <link href="http://jackyzonewen.github.io/blog/2014/04/03/markdownshi-yong/"/>
+    <updated>2014-04-03T11:42:00+08:00</updated>
+    <id>http://jackyzonewen.github.io/blog/2014/04/03/markdownshi-yong</id>
+    <content type="html"><![CDATA[<blockquote><p><p>Markdown 语法的目标是：成为一种适用于网络的书写语言。Markdown不是想要取代 HTML，甚至也没有要和它相近，它的语法种类很少，只对应 HTML 标记的一小部分。不在 Markdown 涵盖范围之内的标签，都可以直接在文档里面用 HTML 撰写。不需要额外标注这是 HTML 或是 Markdown；只要直接加标签就可以了。</p></blockquote>
+
+<hr />
+
+<h4> 1.标题 </h4>
+
+
+<p>使用<code>&lt;h4&gt; 形式 &lt;/h4&gt;</code>或者<code>#### 标题</code>的形式来表示四级标题，总共支持6级标题。<br/>
+注：标题文字前后留一个空格，标准的mardDown语法</p>
+
+<hr />
+
+<h4>2.列表</h4>
+
+<p>无序列表写法</p>
+
+<ul>
+<li>列表1
+
+<ul>
+<li>子列表1</li>
+<li>子列表2</li>
+<li>子列表3</li>
+</ul>
+</li>
+<li>列表2</li>
+<li>列表3</li>
+<li>列表4</li>
+</ul>
+
+
+<p>有序列表的写法</p>
+
+<ol>
+<li>列表1</li>
+<li>列表2</li>
+<li>列表3</li>
+<li>列表4</li>
+</ol>
+
+
+<p>注意：-(*或者+)、1. 和列表之间保留一个字符的空格</p>
+
+<hr />
+
+<h4>链接和图片</h4>
+
+<p>在 Markdown 中，插入链接不需要其他按钮，你只需要使用 <code>[显示文本](链接地址)</code> 或者在文章最后给上索引，<code>[显示文本][1]</code> ，例如：</p>
+
+<pre><code>[我的博客](http://jackyzonewen.github.io/)
+或者
+[我的博客][1]
+[1]:(http://jackyzonewen.github.io/)
+</code></pre>
+
+<p>在 Markdown 中，插入图片不需要其他按钮，你只需要使用 <code>![](图片链接地址)</code> 这样的语法即可，例如：</p>
+
+<pre><code>![](http://ww4.sinaimg.cn/bmiddle/aa397b7fjw1dzplsgpdw5j.jpg)
+</code></pre>
+
+<hr />
+
+<h4>引用</h4>
+
+<p>只需要在你希望引用的文字前面加上 > 就好了，例如：</p>
+
+<pre><code>&gt; 一盏灯， 一片昏黄； 一简书， 一杯淡茶。 守着那一份淡定， 品读属于自己的寂寞。 保持淡定， 才能欣赏到最美丽的风景！ 保持淡定， 人生从此不再寂寞。
+</code></pre>
+
+<p>效果如下:</p>
+
+<blockquote><p>一盏灯， 一片昏黄； 一简书， 一杯淡茶。 守着那一份淡定， 品读属于自己的寂寞。 保持淡定， 才能欣赏到最美丽的风景！ 保持淡定， 人生从此不再寂寞。</p></blockquote>
+
+<hr />
+
+<h4>粗体和斜体</h4>
+
+<p>Markdown 的粗体和斜体也非常简单，用两个 * 包含一段文本就是粗体的语法，用一个 * 包含一段文本就是斜体的语法。例如：</p>
+
+<p><em>一盏灯</em>， 一片昏黄；<strong>一简书</strong>， 一杯淡茶。 守着那一份淡定， 品读属于自己的寂寞。 保持淡定， 才能欣赏到最美丽的风景！ 保持淡定， 人生从此不再寂寞。</p>
+
+<hr />
+
+<h4>代码</h4>
+
+<p>行开头空4格空格，或者一个Tab来表示程序代码，例如:</p>
+
+<pre><code>//这里显示一些代码，在正文显示中会自动识别语言，进行代码染色，这是一段C#代码
+public class Blog
+{
+     public int Id { get; set; }
+     public string Subject { get; set; }
+}
+</code></pre>
+
+<hr />
+
+<h4>其它</h4>
+
+<pre><code>单个回车：空格
+连续回车：分段
+行尾连续两个空格：段内换行
+</code></pre>
+
+<hr />
+
+<p>介绍markdown的教程很多，提供几个供大家参考:</p>
+
+<ul>
+<li><a href="http://lutaf.com/markdown-simple-usage.htm">鲁塔弗：markdown 简明语法</a></li>
+<li><a href="http://www.ituring.com.cn/article/23">图灵社区：怎样使用Markdown</a></li>
+<li><a href="http://jianshu.io/p/q81RER">简书：献给写作者的 Markdown 新手指南</a></li>
+<li><a href="http://wowubuntu.com/markdown/#p">官方文档(中文版)：Markdown 语法说明</a></li>
+<li><a href="http://upwith.me/?p=503">用Markdown来书写你的博客</a></li>
+</ul>
+
+
+<p>编辑工具:</p>
+
+<ul>
+<li><a href="http://jianshu.io/">简书</a></li>
+<li><a href="https://chrome.google.com/webstore/detail/made/oknndfeeopgpibecfjljjfanledpbkog">MaDe (Chrome插件)</a></li>
+<li><a href="http://dillinger.io/">dillinger</a></li>
+<li><a href="https://stackedit.io/">StackEdit</a></li>
+<li><a href="http://www.zybuluo.com/mdeditor">Cmd</a></li>
+</ul>
+
+
+<h4>参考教程：</h4>
+
+<ul>
+<li><a href="http://lutaf.com/markdown-simple-usage.htm">鲁塔弗：markdown 简明语法</a></li>
+<li><a href="http://www.ituring.com.cn/article/23">图灵社区：怎样使用Markdown</a></li>
+</ul>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[使用git和svn管理android和iOS工程]]></title>
@@ -657,38 +1983,13 @@ git pull origin master  # update the local master branch
 
 <hr />
 
-<h3>Mardown指南</h3>
-
-<p>介绍markdown的教程很多，提供几个供大家参考:</p>
-
-<ul>
-<li><a href="http://lutaf.com/markdown-simple-usage.htm">鲁塔弗：markdown 简明语法</a></li>
-<li><a href="http://www.ituring.com.cn/article/23">图灵社区：怎样使用Markdown</a></li>
-<li><a href="http://jianshu.io/p/q81RER">简书：献给写作者的 Markdown 新手指南</a></li>
-<li><a href="http://wowubuntu.com/markdown/#p">官方文档(中文版)：Markdown 语法说明</a></li>
-<li><a href="http://upwith.me/?p=503">用Markdown来书写你的博客</a></li>
-</ul>
-
-
-<p>编辑工具:</p>
-
-<ul>
-<li><a href="http://jianshu.io/">简书</a></li>
-<li><a href="https://chrome.google.com/webstore/detail/made/oknndfeeopgpibecfjljjfanledpbkog">MaDe (Chrome插件)</a></li>
-<li><a href="http://dillinger.io/">dillinger</a></li>
-<li><a href="https://stackedit.io/">StackEdit</a></li>
-<li><a href="http://www.zybuluo.com/mdeditor">Cmd</a></li>
-</ul>
-
-
-<hr />
-
 <h3>参考</h3>
 
 <ul>
 <li><a href="http://blog.devtang.com/blog/2012/02/10/setup-blog-based-on-github/">devtang</a></li>
 <li><a href="http://beyondvincent.com/blog/2013/08/03/108-creating-a-github-blog-using-octopress/">破船</a></li>
 <li><a href="http://rogerdudler.github.io/git-guide/index.zh.html">Git 简易指南</a></li>
+<li><a href="http://blog.csdn.net/jackystudio/article/details/16117585">像黑客一样写博客</a></li>
 </ul>
 
 ]]></content>
