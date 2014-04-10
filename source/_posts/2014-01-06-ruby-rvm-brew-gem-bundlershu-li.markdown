@@ -3,7 +3,7 @@ layout: post
 title: "ruby rvm brew gem bundler梳理"
 date: 2014-01-06 16:07
 comments: true
-categories: 
+categories: other
 ---
 
 

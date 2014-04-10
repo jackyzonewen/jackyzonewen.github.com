@@ -3,7 +3,7 @@ layout: post
 title: "Objective-C 对象模型及应用"
 date: 2014-04-03 21:37
 comments: true
-categories: 
+categories: iOS
 ---
 
 Objective-C的运行时runtime开源的，源码可以到[苹果官网][1]下载，在objc4-532.2以后，苹果把NSObject的实现也开源了。
