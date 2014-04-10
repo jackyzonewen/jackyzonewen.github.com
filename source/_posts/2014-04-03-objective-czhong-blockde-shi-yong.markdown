@@ -4,6 +4,7 @@ title: "Objective-C中Block的使用"
 date: 2014-04-03 17:20
 comments: true
 categories: iOS
+tags: [block]
 ---
 
 > 看了几篇关于block的不错的博文，记录下来，方便查阅。

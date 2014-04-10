@@ -4,6 +4,7 @@ title: "一步一步教你搭建基于OctoPress+Github的个人博客"
 date: 2013-10-30 17:47
 comments: true
 categories: other
+tags: [OctoPress, Github]
 ---
 ---------------------
 ![enter image description here][1]

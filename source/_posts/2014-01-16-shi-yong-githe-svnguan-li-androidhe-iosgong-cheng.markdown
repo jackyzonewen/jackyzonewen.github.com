@@ -4,6 +4,7 @@ title: "使用git和svn管理android和iOS工程"
 date: 2014-01-16 19:32
 comments: true
 categories: other
+tags: [Git, SVN, Github]
 ---
 
 **背景**

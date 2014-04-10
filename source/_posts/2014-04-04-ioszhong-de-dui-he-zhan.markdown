@@ -4,6 +4,7 @@ title: "iOS中的堆和栈"
 date: 2014-04-04 14:11
 comments: true
 categories: iOS
+tags: [stack, heap]
 ---
 
 iOS 内存布局如下图所示：

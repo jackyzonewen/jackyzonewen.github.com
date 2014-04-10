@@ -4,6 +4,7 @@ title: "iOS屏幕旋转"
 date: 2014-04-09 21:07
 comments: true
 categories: iOS
+tags: [Orientation]
 ---
 
 ##### 屏幕旋转背后做了什么？

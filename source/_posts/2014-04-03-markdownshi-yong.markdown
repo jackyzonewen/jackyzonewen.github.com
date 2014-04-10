@@ -4,6 +4,7 @@ title: "MarkDown使用"
 date: 2014-04-03 11:42
 comments: true
 categories: other
+tags: [markdown]
 ---
 
 > <p>Markdown 语法的目标是：成为一种适用于网络的书写语言。Markdown不是想要取代 HTML，甚至也没有要和它相近，它的语法种类很少，只对应 HTML 标记的一小部分。不在 Markdown 涵盖范围之内的标签，都可以直接在文档里面用 HTML 撰写。不需要额外标注这是 HTML 或是 Markdown；只要直接加标签就可以了。
