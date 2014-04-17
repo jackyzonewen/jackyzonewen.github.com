@@ -40,7 +40,7 @@ tags: [Orientation]
 
 可以看到代码支持四个方向的旋转，并且在旋转之后打印了相关的信息如下：
     
-![](http://d.pcs.baidu.com/thumbnail/faed6e1e60ff30793b5cd76f10d75de9?fid=386723132-250528-1120313597896127&time=1397107931&rt=pr&sign=FDTAER-DCb740ccc5511e5e8fedcff06b081203-IqxHQ54PoAfY7TcPpahKtmw85is%3D&expires=8h&prisign=RK9dhfZlTqV5TuwkO5ihMSi9urWA6/WDVOZJjW161c97pPFvBnDjJvo8Gcuo6pQpSURrTDQGP5T27k9J0e2dzkmye5j3Whl2FUBatugDm4Hnjds9K4Te4F7rrSoMdSR+fLytI2YxlwkNZGewx9i+PzTP2T+5KhLfN0fBGRIdEQImVDevvKfjRDlDZ5A8/SpsBV0kJzJEDGqVFhLOY+LAdoIwmjCxaZTv/0yr9wbLcRRh6VcOWpx+1YAZpk+OcSyIdEz+yXh+/hM=&r=578764644&size=c850_u580&quality=100)
+{% img /images/log.jpeg %} 
 
 设备的初始方向是UIInterfaceOrientationPortrait的，然后顺时针依次经过UIInterfaceOrientationLandscapeLeft，UIInterfaceOrientationPortraitUpsideDown，UIInterfaceOrientationLandscapeRight，最后再回到UIInterfaceOrientationPortrait方向，在旋转的过程中，frame没有变化，Transform一直在变化，因此我们可以怀疑屏幕旋转是通过变化Transform实现的，不用怀疑，其实就是通过view的transform属性实现的。
 
@@ -48,13 +48,13 @@ tags: [Orientation]
 
 Transform(变化矩阵)是一种3×3的矩阵，如下图所示：
 
-![](http://d.pcs.baidu.com/thumbnail/6c06211c8a7ac9ef11a7bb4894627c14?fid=386723132-250528-750632315492794&time=1397107931&rt=pr&sign=FDTAER-DCb740ccc5511e5e8fedcff06b081203-ovm9vUuh6lVRltv9CSArcUVpfqk%3D&expires=8h&prisign=RK9dhfZlTqV5TuwkO5ihMSi9urWA6/WDVOZJjW161c97pPFvBnDjJvo8Gcuo6pQpSURrTDQGP5T27k9J0e2dzkmye5j3Whl2FUBatugDm4Hnjds9K4Te4F7rrSoMdSR+fLytI2YxlwkNZGewx9i+PzTP2T+5KhLfN0fBGRIdEQImVDevvKfjRDlDZ5A8/SpsBV0kJzJEDGqVFhLOY+LAdoIwmjCxaZTv/0yr9wbLcRRh6VcOWpx+1YAZpk+OcSyIdEz+yXh+/hM=&r=826446576&size=c850_u580&quality=100)
+{% img /images/juzhen.jpeg %} 
 
 通过这个矩阵我们可以对一个坐标系统进行缩放，平移，旋转以及这两者的任意组着操作。而且矩阵的操作不具备交换律，即矩阵的操作的顺序不同会导致不同的结果。UIView有个transform的属性，通过设置该属性，我们可以实现调整该view在其superView中的大小和位置。
 
 矩阵实现坐标变化背后的数学知识：  
 
-![](http://d.pcs.baidu.com/thumbnail/46d78f094b9e319dd7c85f030f4d78e7?fid=386723132-250528-934605093236919&time=1397107931&rt=pr&sign=FDTAER-DCb740ccc5511e5e8fedcff06b081203-QKWQTV7htBFWrT4G7w6JrdhzuxQ%3D&expires=8h&prisign=RK9dhfZlTqV5TuwkO5ihMSi9urWA6/WDVOZJjW161c97pPFvBnDjJvo8Gcuo6pQpSURrTDQGP5T27k9J0e2dzkmye5j3Whl2FUBatugDm4Hnjds9K4Te4F7rrSoMdSR+fLytI2YxlwkNZGewx9i+PzTP2T+5KhLfN0fBGRIdEQImVDevvKfjRDlDZ5A8/SpsBV0kJzJEDGqVFhLOY+LAdoIwmjCxaZTv/0yr9wbLcRRh6VcOWpx+1YAZpk+OcSyIdEz+yXh+/hM=&r=153538295&size=c850_u580&quality=100)
+{% img /images/gongshi.jpeg %} 
 
 　　设x，y分别代表在原坐标系统中的位置，x'，y'代表通过矩阵变化以后在新的系统中的位置。其中式1就是矩阵变化的公式，对式1进行展开以后就可以得到式2。从式2我们可以清楚的看到（x，y）到（x'，y'）的变化关系。
 
@@ -66,7 +66,7 @@ Transform(变化矩阵)是一种3×3的矩阵，如下图所示：
 
 　　假设不做平移和缩放操作，那么从原坐标系中的一点(x，y)旋转α°以后到了新的坐标系中的一点(x'，y')，那么旋转矩阵如下：
 
-![](http://d.pcs.baidu.com/thumbnail/1359d435f16ee4633d0be8fef0e3b9d6?fid=386723132-250528-194371989477123&time=1397107931&rt=pr&sign=FDTAER-DCb740ccc5511e5e8fedcff06b081203-AevV69eMB%2F58INJHzA4bb2SelWs%3D&expires=8h&prisign=RK9dhfZlTqV5TuwkO5ihMSi9urWA6/WDVOZJjW161c97pPFvBnDjJvo8Gcuo6pQpSURrTDQGP5T27k9J0e2dzkmye5j3Whl2FUBatugDm4Hnjds9K4Te4F7rrSoMdSR+fLytI2YxlwkNZGewx9i+PzTP2T+5KhLfN0fBGRIdEQImVDevvKfjRDlDZ5A8/SpsBV0kJzJEDGqVFhLOY+LAdoIwmjCxaZTv/0yr9wbLcRRh6VcOWpx+1YAZpk+OcSyIdEz+yXh+/hM=&r=591660481&size=c850_u580&quality=100)
+{% img /images/jiaodu.jpeg %} 
 
 展开以后就是x' = xcosα - ysinα，y' = xsinα + ycosα；
 
