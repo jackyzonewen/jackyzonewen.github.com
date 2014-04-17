@@ -1,0 +1,815 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: other | 挡不住的君文]]></title>
+  <link href="http://jackyzonewen.github.io/blog/categories/other/atom.xml" rel="self"/>
+  <link href="http://jackyzonewen.github.io/"/>
+  <updated>2014-04-17T19:34:45+08:00</updated>
+  <id>http://jackyzonewen.github.io/</id>
+  <author>
+    <name><![CDATA[jackyzonewen]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[MarkDown使用]]></title>
+    <link href="http://jackyzonewen.github.io/blog/2014/04/03/markdownshi-yong/"/>
+    <updated>2014-04-03T11:42:00+08:00</updated>
+    <id>http://jackyzonewen.github.io/blog/2014/04/03/markdownshi-yong</id>
+    <content type="html"><![CDATA[<blockquote><p><p>Markdown 语法的目标是：成为一种适用于网络的书写语言。Markdown不是想要取代 HTML，甚至也没有要和它相近，它的语法种类很少，只对应 HTML 标记的一小部分。不在 Markdown 涵盖范围之内的标签，都可以直接在文档里面用 HTML 撰写。不需要额外标注这是 HTML 或是 Markdown；只要直接加标签就可以了。</p></blockquote>
+
+<hr />
+
+<h4> 1.标题 </h4>
+
+
+<p>使用<code>&lt;h4&gt; 形式 &lt;/h4&gt;</code>或者<code>#### 标题</code>的形式来表示四级标题，总共支持6级标题。<br/>
+注：标题文字前后留一个空格，标准的mardDown语法</p>
+
+<hr />
+
+<h4>2.列表</h4>
+
+<p>无序列表写法</p>
+
+<ul>
+<li>列表1
+
+<ul>
+<li>子列表1</li>
+<li>子列表2</li>
+<li>子列表3</li>
+</ul>
+</li>
+<li>列表2</li>
+<li>列表3</li>
+<li>列表4</li>
+</ul>
+
+
+<p>有序列表的写法</p>
+
+<ol>
+<li>列表1</li>
+<li>列表2</li>
+<li>列表3</li>
+<li>列表4</li>
+</ol>
+
+
+<p>注意：-(*或者+)、1. 和列表之间保留一个字符的空格</p>
+
+<hr />
+
+<h4>链接和图片</h4>
+
+<p>在 Markdown 中，插入链接不需要其他按钮，你只需要使用 <code>[显示文本](链接地址)</code> 或者在文章最后给上索引，<code>[显示文本][1]</code> ，例如：</p>
+
+<pre><code>[我的博客](http://jackyzonewen.github.io/)
+或者
+[我的博客][1]
+[1]:(http://jackyzonewen.github.io/)
+</code></pre>
+
+<p>在 Markdown 中，插入图片不需要其他按钮，你只需要使用 <code>![](图片链接地址)</code> 这样的语法即可，例如：</p>
+
+<pre><code>![](http://ww4.sinaimg.cn/bmiddle/aa397b7fjw1dzplsgpdw5j.jpg)
+</code></pre>
+
+<hr />
+
+<h4>引用</h4>
+
+<p>只需要在你希望引用的文字前面加上 > 就好了，例如：</p>
+
+<pre><code>&gt; 一盏灯， 一片昏黄； 一简书， 一杯淡茶。 守着那一份淡定， 品读属于自己的寂寞。 保持淡定， 才能欣赏到最美丽的风景！ 保持淡定， 人生从此不再寂寞。
+</code></pre>
+
+<p>效果如下:</p>
+
+<blockquote><p>一盏灯， 一片昏黄； 一简书， 一杯淡茶。 守着那一份淡定， 品读属于自己的寂寞。 保持淡定， 才能欣赏到最美丽的风景！ 保持淡定， 人生从此不再寂寞。</p></blockquote>
+
+<hr />
+
+<h4>粗体和斜体</h4>
+
+<p>Markdown 的粗体和斜体也非常简单，用两个 * 包含一段文本就是粗体的语法，用一个 * 包含一段文本就是斜体的语法。例如：</p>
+
+<p><em>一盏灯</em>， 一片昏黄；<strong>一简书</strong>， 一杯淡茶。 守着那一份淡定， 品读属于自己的寂寞。 保持淡定， 才能欣赏到最美丽的风景！ 保持淡定， 人生从此不再寂寞。</p>
+
+<hr />
+
+<h4>代码</h4>
+
+<p>行开头空4格空格，或者一个Tab来表示程序代码，例如:</p>
+
+<pre><code>//这里显示一些代码，在正文显示中会自动识别语言，进行代码染色，这是一段C#代码
+public class Blog
+{
+     public int Id { get; set; }
+     public string Subject { get; set; }
+}
+</code></pre>
+
+<hr />
+
+<h4>其它</h4>
+
+<pre><code>单个回车：空格
+连续回车：分段
+行尾连续两个空格：段内换行
+</code></pre>
+
+<hr />
+
+<p>介绍markdown的教程很多，提供几个供大家参考:</p>
+
+<ul>
+<li><a href="http://lutaf.com/markdown-simple-usage.htm">鲁塔弗：markdown 简明语法</a></li>
+<li><a href="http://www.ituring.com.cn/article/23">图灵社区：怎样使用Markdown</a></li>
+<li><a href="http://jianshu.io/p/q81RER">简书：献给写作者的 Markdown 新手指南</a></li>
+<li><a href="http://wowubuntu.com/markdown/#p">官方文档(中文版)：Markdown 语法说明</a></li>
+<li><a href="http://upwith.me/?p=503">用Markdown来书写你的博客</a></li>
+</ul>
+
+
+<p>编辑工具:</p>
+
+<ul>
+<li><a href="http://jianshu.io/">简书</a></li>
+<li><a href="https://chrome.google.com/webstore/detail/made/oknndfeeopgpibecfjljjfanledpbkog">MaDe (Chrome插件)</a></li>
+<li><a href="http://dillinger.io/">dillinger</a></li>
+<li><a href="https://stackedit.io/">StackEdit</a></li>
+<li><a href="http://www.zybuluo.com/mdeditor">Cmd</a></li>
+</ul>
+
+
+<h4>参考教程：</h4>
+
+<ul>
+<li><a href="http://lutaf.com/markdown-simple-usage.htm">鲁塔弗：markdown 简明语法</a></li>
+<li><a href="http://www.ituring.com.cn/article/23">图灵社区：怎样使用Markdown</a></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[使用git和svn管理android和iOS工程]]></title>
+    <link href="http://jackyzonewen.github.io/blog/2014/01/16/shi-yong-githe-svnguan-li-androidhe-iosgong-cheng/"/>
+    <updated>2014-01-16T19:32:00+08:00</updated>
+    <id>http://jackyzonewen.github.io/blog/2014/01/16/shi-yong-githe-svnguan-li-androidhe-iosgong-cheng</id>
+    <content type="html"><![CDATA[<p><strong>背景</strong></p>
+
+<ol>
+<li>公司为了保护"知识产权"，对于源码的权限控制比较严格，所以工作大多使用的是SVN版本管理。</li>
+<li>移动开发很多优秀的开源第三方库都是用git管理源代码，并且放在开源的托管网站。</li>
+<li>git处理分支管理非常方便，速度比小李飞刀还快··········非常强大。</li>
+<li>管理自己源码，防止硬盘崩溃了或者电脑丢了导致所有源码全部丢失。</li>
+</ol>
+
+
+<hr />
+
+<p><strong>免费的git代码托管服务</strong></p>
+
+<ul>
+<li><a href="https://github.com/">Github</a>非常多著名的开源项目</li>
+<li><a href="http://git.oschina.net/">OsChina</a> 国产的，你懂的</li>
+<li><a href="https://bitbucket.org/">Bitbucket</a> 支持Git、Mercurial，免费版有5个用户限制，公有和私有仓库都可以无限制创建，有协作工具(Issue tracker，Wiki)。</li>
+<li><a href="http://www.assembla.com/">Assembla</a>支持SVN、Git、Mercurial，免费版，无用户限制，无仓库限制，存储空间1G，没有协作工具(Issue tracker，Wiki等),考虑先使用 Bitbucket, 当用户不够用的时候再迁移到 Assembla。</li>
+</ul>
+
+
+<hr />
+
+<p><strong>使用</strong></p>
+
+<p>Git的操作流程如下图所示：</p>
+
+<p><img src="http://i.stack.imgur.com/MgaV9.png" alt="enter image description here" /></p>
+
+<p><strong>学习Git的资源</strong></p>
+
+<ul>
+<li><a href="http://rogerdudler.github.io/git-guide/index.zh.html">Git大白话</a> 大白话讲解Git，博客最后也提供了一些资源</li>
+<li><a href="http://marklodato.github.io/visual-git-guide/index-en.html">A Visual Git Reference</a>图形化Git使用指南。<a href="http://marklodato.github.io/visual-git-guide/index-zh-cn.html">翻译版本</a></li>
+<li><a href="http://www-cs-students.stanford.edu/~blynn/gitmagic/intl/zh_cn/">Git Magic</a> 很通俗的一本介绍Git的书</li>
+<li><a href="http://git-scm.com/book/zh">Pro Git</a>  全面介绍Git的书，非常详细。</li>
+<li><a href="http://www.worldhello.net/">Git权威指南</a> 适合作为参考手册，<a href="http://www.worldhello.net/">国人</a>写的一本非常好的Git参考书</li>
+<li><a href="http://git.or.cz/course/svn.html">Git &ndash; SVN Crash Course</a> 从SVN过度到Git手册</li>
+<li><a href="https://help.github.com/articles/generating-ssh-keys">Github帮助文档</a> 如何创建SSH Key</li>
+<li><a href="http://www.cnblogs.com/zhangjing230/archive/2012/05/09/2489745.html">Git教程</a> 翻译国外的一篇简单的Git教程</li>
+<li><a href="http://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000">Git教程</a> 非常不错的Git系列教程</li>
+<li><a href="http://danielxu.github.io/blog/2013/02/18/git-simple-workflow/">项目中git管理源码流程</a></li>
+<li><a href="http://ihower.tw/blog/archives/5140">Git flow 开发流程</a></li>
+<li><a href="http://www.yangzhiping.com/tech/github.html">如何高效利用GitHub</a></li>
+<li><a href="http://www.worldhello.net/gotgithub/04-work-with-others/010-fork-and-pull.html">Github中使用Fork + Pull模式</a></li>
+</ul>
+
+
+<p><strong>SVN相关的资源</strong></p>
+
+<ul>
+<li><a href="http://www.cocoachina.com/bbs/read.php?tid=112069">SVN使用详解</a></li>
+<li><a href="http://www.cnblogs.com/onlyfu/archive/2012/05/08/2489814.html">Mac下面如何配置SVN服务器</a></li>
+<li><a href="http://subgit.com/documentation/index.html">SubGit</a>一个智能的将版本控制系统从 SVN 移植到 Git 的工具</li>
+<li><a href="https://github.com/nirvdrum/svn2git">svn2git</a>ruby实现的从svn移至到git得工具</li>
+<li><a href="http://www.cnblogs.com/chencidi/articles/1904781.html">Eclipse下配置SVN插件教程</a></li>
+<li><a href="http://blog.csdn.net/luckarecs/article/details/7427605">Eclipse下配置EGit插件教程</a></li>
+</ul>
+
+
+<p><strong>Git图形客户端</strong></p>
+
+<ul>
+<li><a href="http://sourcetreeapp.com/">Source Tree</a> Windows 和 OS X 下免费的 Git 和 Hg 客户端</li>
+<li><a href="http://www.git-tower.com/">Tower</a> OSX下面收费的客户端，很清新</li>
+<li><a href="http://mac.github.com/">Github for mac</a>Github提供的客户端，有windows和OSX版本</li>
+<li><a href="http://gitx.laullon.com/">GitX</a>OSX下的开源的客户端</li>
+<li><a href="https://itunes.apple.com/gb/app/gitbox/id403388357?mt=12">GitBox</a>OSX下的客户端</li>
+</ul>
+
+
+<p><strong>配置忽略文件</strong></p>
+
+<p>开发android和iOS项目使用的集成开发环境Xcode和Eclipse默认生成的工程有很多文件都不应该加入到版本控制中，因为这些文件是个人生成的，每台电脑都可能不一样，所以如果加入到版本控制之中，有时候会经常发生冲突，非常恼火。</p>
+
+<p><strong>Git配置</strong></p>
+
+<p>在Git的版本控制中，如果需要忽略某些文件，不加入版本控制，有三种方法能达到目的，只不过适用情景不一样:</p>
+
+<p>(1).针对单一工程设置忽略文件，这种方式会让这个工程的所有修改者在克隆代码的同时，也能克隆到过滤规则，而不用自己再写一份，能保证所有修改者应用的都是同一份规则，而不是张三有一套过滤规则，李四又使用另一套过滤规则，个人比较喜欢这种方式，在工程目录下建立.gitignore文件，然后将这个文件也加入版本控制，我一般将这个文件保存我的一个目录中，每次使用cp命令复制到工程目录下面,例如：</p>
+
+<pre><code>$cd myproject
+$cp ~/back/.gitignore . # 将用户back目录的.gitignore文件拷贝到当前工程目录下
+</code></pre>
+
+<p>(2).全局设置忽略配置文件，在全局起作用，只要是Git管理的工程，都会忽略不在控制范围内的文件或目录。这种方法对开发者来说，比较省事，只要一次全局配置，不用每次建立工程都要配置一遍过滤规则。但是这不保证其他的开发者在克隆你的代码后，他们那边的规则跟你的是一样的，这就带来了代码提交过程中的各种冲突问题。在用户目录下创建.gitignoreglobal 文件，将要忽略的配置写入该文件:</p>
+
+<pre><code>vi ~/.gitignoreglobal # 然后写入需要忽略的文件列表
+</code></pre>
+
+<p>(3). 单个工程设置排除(权限最高，只能对自己本地仓库有作用，其他人没办法通过这种方式来共享忽略规则，除非他人也修改其本地仓库的该文件)，在工程目录下找到.git/info/exclude，不建议使用。</p>
+
+<pre><code>$cd myproject
+$vi .git/info/exclude # 然后写入需要忽略的文件列表
+</code></pre>
+
+<p><a href="https://gist.github.com/jackyzonewen/7262190">我的Git配置</a>忽略文件列表如下:</p>
+
+<pre><code># Xcode 
+############
+.DS_Store
+build/*
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+xcuserdata
+profile
+*.moved-aside
+DerivedData
+.idea/
+*.hmap
+*.xccheckout
+
+#CocoaPods
+##########
+Pods
+
+# Textmate -
+############
+*.tm_build_errors
+
+# Subversion
+############
+.svn
+
+# Android
+############
+# built application files
+*.apk
+*.ap_
+
+# files for the dex VM
+*.dex
+
+# Java class files
+*.class
+
+# generated files
+bin/
+gen/
+
+# Local configuration file (sdk path, etc)
+local.properties
+
+# Eclipse project files
+.classpath
+.project
+
+# Proguard folder generated by Eclipse
+proguard/
+
+# Intellij project files
+*.iml
+*.ipr
+*.iws
+.idea/
+</code></pre>
+
+<p><strong>SVN配置</strong></p>
+
+<p>同理svn也需要设置忽略列表，svn全局忽略配置文件位于用户根目录下:  ~/.subversion/config，如果不存在config文件，新建一个config文件，然后再config文件设置中加入忽略文件列表，<a href="https://gist.github.com/jackyzonewen/8119689/edit">我的svn配置</a>忽略文件列表如下：</p>
+
+<pre><code>global-ignores = *~.nib *.so *.pbxuser *.mode *.perspective* *.o *.lo *.la #*# .*.rej *.rej .*~ *~ .#* .DS_Store *.modee1v3 build xcuserdata/* *.xcuserdatad *.xcuserstate *.xccheckout .gitignore .git
+enable-auto-props = yes
+*.mode* = svn:mime-type=text/X-xcode
+*.pbxuser = svn:mime-type=text/X-xcode
+*.perspective* = svn:mime-type=text/X-xcode
+*.pbxproj = svn:mime-type=text/X-xcode
+*.xccheckout = svn:mime-type=text/X-xcode
+</code></pre>
+
+<p>ps：这里注意，如果你需要设置的忽略的某些文件已经加入了版本控制，这个时候你添加.gitignore文件或者配置svn的config文件，是不起作用的，这个时候你需要使用git rm命令或者svn rm命令将该文件剔除版本管理，提交后忽略文件列表设置才生效。</p>
+
+<p><strong>如何同时使用svn和git来管理项目?</strong></p>
+
+<p>我目前的项目是这么处理的:</p>
+
+<ol>
+<li>先从公司的svn服务器上面拉出项目，设置svn的忽略文件列表(上面已经列出)，我加入了git相关的，例如.gitignore、.git等。</li>
+<li>进入项目根目录，使用git init命令初始化git仓库，然后加入.gitignore配置文件。(这个时候你使用svn
+status发现svn是未检测到有变化的) 通过git add命令和git commit命令提交版本。</li>
+<li>然后新建dev或者feature分支来进行开发。</li>
+<li>如果需要提交代码到svn，切回master分支，将dev分支或者feature分支合并到master分支，然后提交svn。</li>
+<li>提交完成后再切回到你的工作分支进行工作，如此反复····</li>
+</ol>
+
+
+<p>所有的小的改动都是在git中进行管理，或者新的想法新建一个分支去实现，完成一个功能或者修复一个bug，然后提交到svn中。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[ruby rvm brew gem bundler梳理]]></title>
+    <link href="http://jackyzonewen.github.io/blog/2014/01/06/ruby-rvm-brew-gem-bundlershu-li/"/>
+    <updated>2014-01-06T16:07:00+08:00</updated>
+    <id>http://jackyzonewen.github.io/blog/2014/01/06/ruby-rvm-brew-gem-bundlershu-li</id>
+    <content type="html"><![CDATA[<p><strong>Ruby</strong>是日本人发明的一种脚本语言。</p>
+
+<hr />
+
+<p><strong><a href="https://github.com/Homebrew/homebrew/wiki">Brew</a></strong>是OS X上提供软件包的管理。Homebrew将软件包安装到单独的目录，然后符号链接到/usr/local 中，完全基于git和ruby。使用gem来安装你的gems，用brew来搞定他们的依赖包。</p>
+
+<p>Mac OS X是基于Unix的操作系统，可以安装大部分为Unix/Linux开发的软件。如果只是以使用为目的，对每个软件都进行手工编译不是很方便，也不利于管理已安装的软件，于是出现了类似于Linux中APT、Yum等类似的软件包管理系统，Mac下比较著名的有MacPorts、Fink、Homebrew等。</p>
+
+<p>MacPorts有个原则，对于软件包之间的依赖，都在MacPorts内部解决（/opt/local），无论系统本身是否包含了需要的库，都不会重用。这使得MacPorts过分的庞大臃肿，导致系统出现大量软件包的冗余，占用不小的磁盘空间，同时稍大型一点的软件编译时间都会难以忍受。</p>
+
+<p>Homebrew恰恰相反，它尽可能地利用系统自带的各种库，使得软件包的编译时间大为缩短；同时由于几乎不会造成冗余，软件包的管理也清晰、灵活了许多。Homebrew的另一个特点是使用Ruby定义软件包安装配置(formula)，定制非常简单。</p>
+
+<p>Fink暂不讨论。</p>
+
+<p>首先确保你的系统满足如下要求：
+ 1. 基于Intel CPU
+ 2. 操作系统为Mac OS X 10.5 Leopard或更高版本
+ 3. 已安装版本管理工具Git（Mac OS X 10.7 Lion已经预安装
+ 4. 已安装Xcode开发工具1(Command Line Tools)
+ 5. 已安装Java Developer Update2</p>
+
+<p>注1：Xcode 4.3中，命令行编译工具是可选安装，需要在Preferences > Downloads中激活。<br>
+注2：可选，Homebrew本身不依赖于Java，只有部分软件包的安装需要Java支持。</p>
+
+<p>Homebrew的安装:</p>
+
+<pre><code>ruby -e "$(curl -fsSL https://raw.github.com/mxcl/homebrew/go)"
+</code></pre>
+
+<p>或者</p>
+
+<pre><code>ruby -e "$(curl -fsSL https://raw.github.com/Homebrew/homebrew/go/install)" 
+</code></pre>
+
+<p>由于Homebrew的安装地址可能变化，请到<a href="https://github.com/Homebrew/homebrew/wiki">官方网站</a>查看最新的安装方法。</p>
+
+<p>Homebrew的使用: Homebrew的可执行命令是brew，其基本使用方法如下（以软件包wget为例）。</p>
+
+<p>查找软件包</p>
+
+<pre><code>brew search wget
+</code></pre>
+
+<p>安装软件包</p>
+
+<pre><code>brew install wget
+</code></pre>
+
+<p>列出已安装的软件包</p>
+
+<pre><code>brew list
+</code></pre>
+
+<p>删除软件包</p>
+
+<pre><code>brew remove wget
+</code></pre>
+
+<p>查看软件包信息</p>
+
+<pre><code>brew info wget
+</code></pre>
+
+<p>列出软件包的依赖关系</p>
+
+<pre><code>brew deps wget
+</code></pre>
+
+<p>更新brew</p>
+
+<pre><code>brew update
+</code></pre>
+
+<p>列出过时的软件包（已安装但不是最新版本）</p>
+
+<pre><code>brew outdated
+</code></pre>
+
+<p>更新过时的软件包（全部或指定）</p>
+
+<pre><code>brew upgrade 或 brew upgrade wget
+</code></pre>
+
+<p>定制自己的软件包（假定软件包名称是bar，来自foo站点）。</p>
+
+<p>首先找到待安装软件的源码下载地址
+<a href="http://foo.com/bar-1.0.tgz">http://foo.com/bar-1.0.tgz</a></p>
+
+<p>建立自己的formula
+brew create <a href="http://foo.com/bar-1.0.tgz">http://foo.com/bar-1.0.tgz</a></p>
+
+<p>编辑formula，上一步建立成功后，Homebrew会自动打开新建的formula进行编辑，也可用如下命令打开formula进行编辑:</p>
+
+<pre><code>brew edit bar
+</code></pre>
+
+<p>Homebrew自动建立的formula已经包含了基本的configure和make install命令，对于大部分软件，不需要进行修改，退出编辑即可。</p>
+
+<p>输入以下命令安装自定义的软件包</p>
+
+<pre><code>brew install bar
+</code></pre>
+
+<hr />
+
+<p><strong><a href="http://rubygems.org/">RubyGems</a></strong>是一个包管理框架，提供了ruby社区gem的托管服务，用于方便地下载、安装和使用ruby软件包(gem)，包含了ruby应用或库,要升级到最新的RubyGems，运行：</p>
+
+<pre><code>$ gem update --system
+</code></pre>
+
+<p>如果没有安装RubyGems，则需要先下载安装包，然后解压开后运行：</p>
+
+<pre><code>ruby setup.rb
+</code></pre>
+
+<hr />
+
+<p><strong>Gem</strong>也是Ruby软件包管理工具,如果要看安装的gem文档，一是可以用ri，二是可以gem server启动一个web服务。详细的帮助参见<a href="http://guides.rubygems.org/">RubyGems Guides</a>。</p>
+
+<p>brew和gem不同，brew用于操作系统层面上软件包的安装，而gem只是管理ruby软件,gem常用命令如下:</p>
+
+<pre><code>gem -v #gem版本
+gem update #更新所有包 
+gem update --system #更新RubyGems软件 
+gem install rake #安装rake,从本地或远程服务器 
+gem install rake --remote #安装rake,从远程服务器 
+gem install watir -v(或者--version) 1.6.2#指定安装版本的 
+gem uninstall rake #卸载rake包 
+gem list d #列出本地以d打头的包
+gem list --local | grep cocoapods #列出cocoapods相关的set 
+gem query -n ''[0-9]'' --local #查找本地含有数字的包 
+gem search log --both #从本地和远程服务器上查找含有log字符串的包 
+gem search log --remoter #只从远程服务器上查找含有log字符串的包 
+gem search -r log #只从远程服务器上查找含有log字符串的包 
+gem help #提醒式的帮助 
+gem help install #列出install命令 帮助 
+gem help examples #列出gem命令使用一些例子 
+gem build rake.gemspec #把rake.gemspec编译成rake.gem 
+gem check -v pkg/rake-0.4.0.gem #检测rake是否有效 
+gem cleanup #清除所有包旧版本，保留最新版本 
+gem contents rake #显示rake包中所包含的文件 
+gem dependency rails -v 0.10.1 #列出与rails相互依赖的包 
+gem environment #查看gem的环境
+</code></pre>
+
+<p>注意：安装的时候不要使用sudo，默认的Mac OS安装了Ruby，所以这个时候如果使用sudo，更新的是系统版本的ruby对应的gems。</p>
+
+<hr />
+
+<p><strong><a href="https://rvm.io/">RVM</a></strong>（Ruby enVironment Version  ) Manager）是一个命令行工具，提供在多个ruby环境中方便的安装、管理和工作，包括解释器和gem集合。rvm自己的安装通过curl命令执行，如：curl -L <a href="https://get.rvm.io">https://get.rvm.io</a> | bash。</p>
+
+<p>RVM有一个非常灵活的gem管理系统，称为Gem Sets。RVM的’gemsets’管理横跨多个Ruby版本的gems包。</p>
+
+<p>这里所有的命令都是再用户权限下操作的，任何命令最好都不要用sudo.</p>
+
+<p>rvm安装:</p>
+
+<pre><code>bash -s stable &lt; &lt;(curl -s https://raw.github.com/wayneeseguin/rvm/master/binscripts/rvm-installer)
+</code></pre>
+
+<p>设置环境变量:</p>
+
+<pre><code>echo '[[ -s "$HOME/.rvm/scripts/rvm" ]] &amp;&amp; . "$HOME/.rvm/scripts/rvm" # Load RVM function' &gt;&gt; ~/.bash_profile
+source ~/.bash_profile
+</code></pre>
+
+<p>修改 RVM 的 Ruby 安装源到国内的 淘宝镜像服务器，这样能提高安装速度</p>
+
+<pre><code>sed -i -e 's/ftp\.ruby-lang\.org\/pub\/ruby/ruby\.taobao\.org\/mirrors\/ruby/g' ~/.rvm/config/db
+</code></pre>
+
+<p>列出已知的ruby版本</p>
+
+<pre><code>rvm list known
+</code></pre>
+
+<p>安装一个ruby版本</p>
+
+<pre><code>rvm install 1.9.3
+</code></pre>
+
+<p>这里安装了最新的1.9.3, rvm list known列表里面的都可以拿来安装。</p>
+
+<p>使用一个ruby版本</p>
+
+<pre><code>rvm use 1.9.3
+</code></pre>
+
+<p>如果想设置为默认版本，可以这样</p>
+
+<pre><code>rvm use 1.9.3 --default 
+</code></pre>
+
+<p>查询已经安装的ruby</p>
+
+<pre><code>rvm list
+</code></pre>
+
+<p>卸载一个已安装版本</p>
+
+<pre><code>rvm remove 1.9.2
+</code></pre>
+
+<p>rvm连同ruby一起卸载调</p>
+
+<pre><code>rvm implode
+</code></pre>
+
+<p>一键将rvm,Ruby连同bundler一起装好</p>
+
+<pre><code>curl -L https://get.rvm.io | bash -s stable --ruby
+</code></pre>
+
+<hr />
+
+<p><strong><a href="http://bundler.io/">Bundler</a></strong>为ruby维持一个一致性的环境，跟踪应用代码和所需要的ruby gems，这样一个应用可以有所需要的精确的gems（和版本）安装通过如下命令：</p>
+
+<pre><code>$ gem install bundler
+</code></pre>
+
+<hr />
+
+<p>安装的顺序，先安装rvm，之后选择安装一个ruby版本，就可以提供一个完整的ruby运行环境。之后可以安装brew（brew虽然是管理os的，但基于ruby）和gem，分别管理操作系统和ruby的软件包。之后ruby重新编译的时候所依赖的包可以使用brew安装。有了gem之后，bundler只不过就是一个gem，直接通过gem install 即可。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[一步一步教你搭建基于OctoPress+Github的个人博客]]></title>
+    <link href="http://jackyzonewen.github.io/blog/2013/10/30/yi-bu-yi-bu-jiao-ni-da-jian-ji-yu-octopress-plus-githubde-ge-ren-bo-ke/"/>
+    <updated>2013-10-30T17:47:00+08:00</updated>
+    <id>http://jackyzonewen.github.io/blog/2013/10/30/yi-bu-yi-bu-jiao-ni-da-jian-ji-yu-octopress-plus-githubde-ge-ren-bo-ke</id>
+    <content type="html"><![CDATA[<hr />
+
+<p><img src="http://beyondvincent.com/images/2013/08/github_page_and-octopress.png" alt="enter image description here" /></p>
+
+<hr />
+
+<h4>最近看了很多博客，然后想尝试着搭建一个属于自己的博客，所以搜集了网上一些教程，然后针对于自己在搭建过程中出  现的问题记录下来，希望大家可以照着教程更方便的搭建属于自己的博客并且熟悉如何来管理自己的博客，如有什么错误之处，还望指正。</h4>
+
+<hr />
+
+<h3>目录</h3>
+
+<ul>
+<li>安装Ruby环境</li>
+<li>设置Github账号</li>
+<li>安装OctoPress</li>
+<li>配置</li>
+<li>管理博客</li>
+<li>同步</li>
+<li>Mardown指南</li>
+<li>参考</li>
+</ul>
+
+
+<hr />
+
+<h3>安装Ruby环境</h3>
+
+<p>如果你的电脑已经安装Ruby-1.9.3及以上的版本，那么直接跳过这一步骤，OSX现在一般都自带Ruby环境，自带的Ruby环境目录为/usr/local/rvm和/usr/bin/ruby</p>
+
+<p><strong>安装Ruby版本管理RVM:</strong></p>
+
+<pre><code>bash -s stable &lt; &lt;(curl -s https://raw.github.com/wayneeseguin/rvm/master/binscripts/rvm-installer)
+</code></pre>
+
+<p><strong>设置环境变量:</strong></p>
+
+<pre><code>echo '[[ -s "$HOME/.rvm/scripts/rvm" ]] &amp;&amp; . "$HOME/.rvm/scripts/rvm" # Load RVM function' &gt;&gt; ~/.bash_profile
+source ~/.bash_profile
+</code></pre>
+
+<p><strong>安装ruby</strong><br/>
+最新的必须使用ruby-1.9.3的环境，否则的话会提示rdiscount2.7.0.3安装失败</p>
+
+<pre><code>rvm install 1.9.3 &amp;&amp; rvm use 1.9.3
+rvm rubygems latest
+</code></pre>
+
+<hr />
+
+<h3>设置Github账号</h3>
+
+<p>首先你需要有一个Github的账号，Github账号的注册地址是：<a href="https://github.com/signup/free">https://github.com/signup/free</a>。<br/>
+然后，你需要新建一个仓库，如果你有自己的域名的话，那么Respository的名称可以随便取，否则的话，将你的Respository的名称设置为:YourAccountName.github.com。</p>
+
+<hr />
+
+<h3>安装Octopress</h3>
+
+<p><strong>这里我认为你是第一次安装Octopress，你可以克隆已经修改的博客源码，我们这里基于Octopress大师的源码，参考<a href="http://octopress.org/docs/setup/">http://octopress.org/docs/setup/</a>。</strong></p>
+
+<pre><code>git clone git://github.com/imathis/octopress.git octopress
+cd octopress    # If you use RVM, You'll be asked if you trust the .rvmrc file (say yes).
+ruby --version  # Should report Ruby 1.9.3
+</code></pre>
+
+<p><strong>安装相关依赖项：</strong></p>
+
+<pre><code># 更换源
+gem sources -a http://ruby.taobao.org/  
+gem sources -r http://rubygems.org/  
+gem sources -l  
+
+# 安装依赖
+gem install bundler
+#rbenv rehash    # If you use rbenv, rehash to be able to run the bundle command
+bundle install
+</code></pre>
+
+<p><strong>安装默认的Octopress 主题</strong></p>
+
+<pre><code>rake install
+</code></pre>
+
+<hr />
+
+<h3>配置Octopress</h3>
+
+<p>关于<em>config.yml文件中的更多内容，请看这里的内容：<a href="http://octopress.org/docs/configuring/">Configuring Octopress</a><br/>
+最好把里面的twitter相关的信息全部删掉，否则在国内加载会很慢；同理，修改定制文件/source/</em>includes/custom/head.html 把google的自定义字体去掉。</p>
+
+<p><strong>配置评论和分享到微博功能：</strong></p>
+
+<ul>
+<li>在_config.yml中增加一项： weibo_share: true</li>
+<li><p>修改 source/_includes/post/sharing.html ，增加如下代码(注意圆角)：</p>
+
+<p>  ｛% if site.weibo_share %｝<br/>
+  ｛% include post/weibo.html %｝<br/>
+  ｛% endif %｝</p></li>
+<li>增加文件：source/_includes/post/weibo.html</li>
+<li>访问 <a href="http://www.jiathis.com/">http://www.jiathis.com/</a> ，获取分享的代码</li>
+<li>访问 <a href="http://uyan.cc/">http://uyan.cc/</a> ，获得评论的代码</li>
+<li>将上面2步的代码都加入到weibo.html中即可</li>
+<li>增加 source/_includes/post/copyright.html，加入以下内容：<br/>
+  原创&amp;整理的文章，版权声明:自由转载-非商用&amp;衍生-保持署名 | <a herf="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh">Creative Commons BY-NC-ND 3.0</a></li>
+<li>修改 source/_layouts/post.html，在标签下增加如下代码:</li>
+</ul>
+
+
+<p>``<footer></p>
+
+<pre><code>&lt;p class="meta"&gt;  
+  ……省略代码  
+  ｛% include post/categories.html %}  
+&lt;/p&gt;  
+&lt;!-- begin 这里是增加的 --&gt;  
+&lt;p class="meta"&gt;  
+  ｛% include post/copyright.html %}  
+&lt;/p&gt;  
+&lt;!-- end 这里是增加的 --&gt;  
+……省略代码  
+</code></pre>
+
+<p>  </footer>  ``</p>
+
+<h3>管理博客</h3>
+
+<p><strong>部署博客到Github</strong></p>
+
+<pre><code>rake setup_github_pages
+</code></pre>
+
+<p>系统新增了一个文件夹_deploy，其实这个文件夹本身也是一个git代码库，你可以使用ls -a命令,目录用来存放部署到master分支的内容。期间会要求你输入仓库的url，根据提示，进行输入即可。</p>
+
+<pre><code>rake generate
+rake deploy
+</code></pre>
+
+<p>生成博客文件，并将生成的博客文件拷贝到_deploy/目录下，然后将这些内容添加到git中，并commit和push到仓库的master分支，如果提示git push成功的话，你可以访问你的博客了，第一次可能需要多等几分钟。</p>
+
+<p>方便我们多台电脑同步写博客，并且更好的管理博客，最后别忘了提交源代码，这里是将源码提交到source分支：</p>
+
+<pre><code>git add .
+git commit -a -m 'comment'
+git push origin source
+</code></pre>
+
+<p><strong>开始写博客</strong></p>
+
+<p>Octopress为我们提供了一些task来创建博文和页面。博文必须存储在source/_posts目录下，并且需要按照Jekyll的命名规范对文章进行命名：YYYY-MM-DD-post-title.markdown。文章的名字会被当做url的一部分，而其中的日期用于对博文的区分和排序。
+通过Octopress提供的task可以正确的按照命名规范创建一个博文，并且在博文中会附带常用的一些yaml元数据。创建并部署博文的一个完整过程：</p>
+
+<pre><code>rake new_post["New Post"]
+# 进入source/_posts目录下面编辑博客内容，期间可以使用rake preview进行预览
+rake generate # 重新生成页面
+# 预览效果
+rake preview
+# 发布到Github上面
+rake deploy
+
+# 保存源文件
+git add .
+git commit -am "Some comment here." 
+git push origin source
+</code></pre>
+
+<hr />
+
+<h3>同步</h3>
+
+<p>你的Github仓库现在有两个分支，分别是master和source。master存储的是博客网站本身，而source存储的是生成博客的源文件。master的内容放在根目录的_deploy文件夹内，当你push源文件时会忽略，它使用的是rake deploy命令来更新的。</p>
+
+<p>首先将博客的源文件clone到本地的myblog文件夹内</p>
+
+<pre><code>git clone -b source git@github.com:username/username.github.com.git myblog
+</code></pre>
+
+<p>当需要从另外一台机器来编写博客时，如果机子未配置ruby环境，参考上面教程进行配置，如果未配置过Octopress环境，执行下面操作：</p>
+
+<pre><code>cd myblog  
+ruby --version # Should report Ruby 1.9.3  
+gem install bundler  
+bundle install  
+rake install  
+</code></pre>
+
+<p>如果已经配置过Octopress环境，那么执行下面的操作:
+将博客文件clone到octopress的<em>deploy文件夹内，或者可以重新用rake setup_github_pages初始化</em>deploy目录。</p>
+
+<pre><code>cd myblog
+git clone git@github.com:username/username.github.com.git _deploy 
+</code></pre>
+
+<p>这一步必须要，否则rake deploy会因为找不到_deploy目录而失败。</p>
+
+<p>如果几台电脑上面都配置好了Otcopress，要在其中一台上写博客需要进行同步，更新source仓库即可，更新master并不是必须的，因为更改源文件之后还是需要rake generate，这个时候会自动进行 master更新。</p>
+
+<pre><code>cd myblog  
+git pull origin source  # update the local source branch  
+cd ./_deploy  
+git pull origin master  # update the local master branch 
+</code></pre>
+
+<hr />
+
+<h3>参考</h3>
+
+<ul>
+<li><a href="http://blog.devtang.com/blog/2012/02/10/setup-blog-based-on-github/">devtang</a></li>
+<li><a href="http://beyondvincent.com/blog/2013/08/03/108-creating-a-github-blog-using-octopress/">破船</a></li>
+<li><a href="http://rogerdudler.github.io/git-guide/index.zh.html">Git 简易指南</a></li>
+<li><a href="http://blog.csdn.net/jackystudio/article/details/16117585">像黑客一样写博客</a></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

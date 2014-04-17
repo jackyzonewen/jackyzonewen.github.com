@@ -1,100 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
 
-<!DOCTYPE html>
-<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
-<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
-<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
-<head>
-  <meta charset="utf-8">
-  <title>使用git和svn管理android和iOS工程 - 挡不住的君文</title>
-  <meta name="author" content="jackyzonewen">
-
-  
-  <meta name="description" content="背景 公司为了保护&#8221;知识产权&#8221;，对于源码的权限控制比较严格，所以工作大多使用的是SVN版本管理。
-移动开发很多优秀的开源第三方库都是用git管理源代码，并且放在开源的托管网站。
-git处理分支管理非常方便，速度比小李飞刀还快··········非常强大。
-管理自己源码， &hellip;">
-  
-
-  <!-- http://t.co/dKP3o1e -->
-  <meta name="HandheldFriendly" content="True">
-  <meta name="MobileOptimized" content="320">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  
-  <link rel="canonical" href="http://jackyzonewen.github.io/blog/2014/01/16/shi-yong-githe-svnguan-li-androidhe-iosgong-cheng">
-  <link href="/favicon.png" rel="icon">
-  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <link href="/atom.xml" rel="alternate" title="挡不住的君文" type="application/atom+xml">
-  <script src="/javascripts/modernizr-2.0.js"></script>
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
-  <script src="/javascripts/octopress.js" type="text/javascript"></script>
-  
-  
-
-</head>
-
-<body   >
-  <header role="banner"><hgroup>
-  <h1><a href="/">挡不住的君文</a></h1>
-  
-    <h2>专注于移动互联</h2>
-  
-</hgroup>
-
-</header>
-  <nav role="navigation"><ul class="subscription" data-subscription="rss">
-  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
-  
-</ul>
-  
-<form action="http://google.com/search" method="get">
-  <fieldset role="search">
-    <input type="hidden" name="q" value="site:jackyzonewen.github.io" />
-    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
-  </fieldset>
-</form>
-  
-<ul class="main-navigation">
-  <li><a href="/">Blog</a></li>
-  <li><a href="/blog/archives">Archives</a></li>
-</ul>
-
-</nav>
-  <div id="main">
-    <div id="content">
-      <div>
-<article class="hentry" role="article">
-  
-  <header>
+  <title><![CDATA[Tag: SVN | 挡不住的君文]]></title>
+  <link href="http://jackyzonewen.github.io/tags/svn/atom.xml" rel="self"/>
+  <link href="http://jackyzonewen.github.io/"/>
+  <updated>2014-04-17T19:34:45+08:00</updated>
+  <id>http://jackyzonewen.github.io/</id>
+  <author>
+    <name><![CDATA[jackyzonewen]]></name>
     
-      <h1 class="entry-title">使用git和svn管理android和iOS工程</h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
 
   
-
-
-<time datetime="2014-01-16T19:32:00+08:00" pubdate data-updated="true">Jan 16<span>th</span>, 2014</time>
-        
-      </p>
-    
-  </header>
-
-
-<div class="entry-content"><p><strong>背景</strong></p>
+  <entry>
+    <title type="html"><![CDATA[使用git和svn管理android和iOS工程]]></title>
+    <link href="http://jackyzonewen.github.io/blog/2014/01/16/shi-yong-githe-svnguan-li-androidhe-iosgong-cheng/"/>
+    <updated>2014-01-16T19:32:00+08:00</updated>
+    <id>http://jackyzonewen.github.io/blog/2014/01/16/shi-yong-githe-svnguan-li-androidhe-iosgong-cheng</id>
+    <content type="html"><![CDATA[<p><strong>背景</strong></p>
 
 <ol>
-<li>公司为了保护&#8221;知识产权&#8221;，对于源码的权限控制比较严格，所以工作大多使用的是SVN版本管理。</li>
+<li>公司为了保护"知识产权"，对于源码的权限控制比较严格，所以工作大多使用的是SVN版本管理。</li>
 <li>移动开发很多优秀的开源第三方库都是用git管理源代码，并且放在开源的托管网站。</li>
 <li>git处理分支管理非常方便，速度比小李飞刀还快··········非常强大。</li>
 <li>管理自己源码，防止硬盘崩溃了或者电脑丢了导致所有源码全部丢失。</li>
@@ -285,173 +212,7 @@ status发现svn是未检测到有变化的) 通过git add命令和git commit命�
 
 
 <p>所有的小的改动都是在git中进行管理，或者新的想法新建一个分支去实现，完成一个功能或者修复一个bug，然后提交到svn中。</p>
-</div>
-
-
-  <footer>
-    <p class="meta">
-      
+]]></content>
+  </entry>
   
-
-<span class="byline author vcard">Posted by <span class="fn">jackyzonewen</span></span>
-
-      
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-01-16T19:32:00+08:00" pubdate data-updated="true">Jan 16<span>th</span>, 2014</time>
-      
-
-<span class="categories">
-  
-    <a class='category' href='/blog/categories/other/'>other</a>
-  
-</span>
-
-
-    </p>
-    <p class="meta">
-      原创&amp;整理的文章，版权声明:自由转载-非商用&amp;衍生-保持署名
-    </p>
-    
-      <div class="sharing">
-  
-  
-  
-  
-     <!-- JiaThis Button BEGIN -->
-<div class="jiathis_style_32x32">
-	<a class="jiathis_button_qzone"></a>
-	<a class="jiathis_button_tsina"></a>
-	<a class="jiathis_button_tqq"></a>
-	<a class="jiathis_button_weixin"></a>
-	<a class="jiathis_button_renren"></a>
-	<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
-	<a class="jiathis_counter_style"></a>
-</div>
-<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
-<!-- JiaThis Button END -->
-
-<!-- UY BEGIN -->
-<div id="uyan_frame"></div>
-<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js"></script>
-<!-- UY END -->
-  
-</div>
-
-    
-    <p class="meta">
-      
-        <a class="basic-alignment left" href="/blog/2014/01/06/ruby-rvm-brew-gem-bundlershu-li/" title="Previous Post: ruby rvm brew gem bundler梳理">&laquo; ruby rvm brew gem bundler梳理</a>
-      
-      
-        <a class="basic-alignment right" href="/blog/2014/04/03/markdownshi-yong/" title="Next Post: MarkDown使用">MarkDown使用 &raquo;</a>
-      
-    </p>
-  </footer>
-</article>
-
-</div>
-
-<aside class="sidebar">
-  
-    <section>
-  <h1>Recent Posts</h1>
-  <ul id="recent_posts">
-    
-      <li class="post">
-        <a href="/blog/2014/04/09/iosping-mu-xuan-zhuan/">iOS屏幕旋转</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/04/04/ioszhong-de-dui-he-zhan/">iOS中的堆和栈</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/04/03/objective-c-dui-xiang-mo-xing-ji-ying-yong/">Objective-C 对象模型及应用</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/04/03/objective-czhong-blockde-shi-yong/">Objective-C中Block的使用</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/04/03/markdownshi-yong/">MarkDown使用</a>
-      </li>
-    
-  </ul>
-</section>
-
-
-
-
-<section>  
-  <h1>Categories</h1>  
-  <ul id="categories">  
-    <li class='category'><a href='/blog/categories/ios/'>iOS (4)</a></li>
-<li class='category'><a href='/blog/categories/other/'>other (4)</a></li>
-  
-  </ul>  
-</section>  <section>  
-  <h1>Tags</h1>  
-  <ul class="tag-cloud">  
-    <a style="font-size: 90%" href="/tags/git/">Git</a>
-<a style="font-size: 210%" href="/tags/github/">Github</a>
-<a style="font-size: 90%" href="/tags/octopress/">OctoPress</a>
-<a style="font-size: 90%" href="/tags/orientation/">Orientation</a>
-<a style="font-size: 90%" href="/tags/svn/">SVN</a>
-<a style="font-size: 90%" href="/tags/block/">block</a>
-<a style="font-size: 90%" href="/tags/heap/">heap</a>
-<a style="font-size: 90%" href="/tags/markdown/">markdown</a>
-<a style="font-size: 90%" href="/tags/object/">object</a>
-<a style="font-size: 90%" href="/tags/ruby/">ruby</a>
-<a style="font-size: 90%" href="/tags/runtime/">runtime</a>
-<a style="font-size: 90%" href="/tags/stack/">stack</a>
-<a style="font-size: 90%" href="/tags/swizzling/">swizzling</a>
-  
-  </ul>  
-</section>  
-<section>  
-<h1>Visitor</h1>  
-<div>  
-    <p></p>  
-    <center>  
-    <a href="http://info.flagcounter.com/3pF8"><img src="http://s08.flagcounter.com/count/3pF8/bg_FFFFFF/txt_000000/border_CCCCCC/columns_3/maxflags_12/viewers_3/labels_0/pageviews_1/flags_0/" alt="Flag Counter" border="0"></a>  
-    </center>  
-</div>  
-</section>  
-  
-  
-</aside>
-
-
-    </div>
-  </div>
-  <footer role="contentinfo"><p>
-  Copyright &copy; 2014 - jackyzonewen -
-  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
-</p>
-
-</footer>
-  
-
-
-
-
-
-
-
-
-
-
-
-</body>
-</html>
+</feed>

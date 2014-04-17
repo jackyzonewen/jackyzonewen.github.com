@@ -4,7 +4,7 @@
   <title><![CDATA[挡不住的君文]]></title>
   <link href="http://jackyzonewen.github.io/atom.xml" rel="self"/>
   <link href="http://jackyzonewen.github.io/"/>
-  <updated>2014-04-09T23:20:17+08:00</updated>
+  <updated>2014-04-17T19:34:45+08:00</updated>
   <id>http://jackyzonewen.github.io/</id>
   <author>
     <name><![CDATA[jackyzonewen]]></name>
@@ -52,7 +52,7 @@
 
 <p>可以看到代码支持四个方向的旋转，并且在旋转之后打印了相关的信息如下：</p>
 
-<p><img src="http://t24-3.yunpan.360.cn/s1/800-600.5a11fd226044451b94ebd42dce6d3b4218cb6eb6.e1185e.jpg?st=qxasF8uZc_UuuEvq02Y-Ig&amp;e=1397145600&amp;mt=png" alt="" /></p>
+<p><img src="http://jackyzonewen.github.io/images/log.jpeg"></p>
 
 <p>设备的初始方向是UIInterfaceOrientationPortrait的，然后顺时针依次经过UIInterfaceOrientationLandscapeLeft，UIInterfaceOrientationPortraitUpsideDown，UIInterfaceOrientationLandscapeRight，最后再回到UIInterfaceOrientationPortrait方向，在旋转的过程中，frame没有变化，Transform一直在变化，因此我们可以怀疑屏幕旋转是通过变化Transform实现的，不用怀疑，其实就是通过view的transform属性实现的。</p>
 
@@ -60,13 +60,13 @@
 
 <p>Transform(变化矩阵)是一种3×3的矩阵，如下图所示：</p>
 
-<p><img src="http://t24-2.yunpan.360.cn/s1/800-600.3bb75da0f1354777f4478ab6b274eedc559d3961.ff3cfb.jpg?st=l8oTD-_7ITsFHopIApxDxQ&amp;e=1397145600&amp;mt=png" alt="" /></p>
+<p><img src="http://jackyzonewen.github.io/images/juzhen.jpeg"></p>
 
 <p>通过这个矩阵我们可以对一个坐标系统进行缩放，平移，旋转以及这两者的任意组着操作。而且矩阵的操作不具备交换律，即矩阵的操作的顺序不同会导致不同的结果。UIView有个transform的属性，通过设置该属性，我们可以实现调整该view在其superView中的大小和位置。</p>
 
 <p>矩阵实现坐标变化背后的数学知识：</p>
 
-<p><img src="http://t24-3.yunpan.360.cn/s1/800-600.956929f992b1307f0b88b44b27bc63f72a37c283.271f70.jpg?st=QGkHkxEHhXzBhyxPub_Qnw&amp;e=1397145600&amp;mt=png" alt="" /></p>
+<p><img src="http://jackyzonewen.github.io/images/gongshi.jpeg"></p>
 
 <p>　　设x，y分别代表在原坐标系统中的位置，x&#8217;，y&#8217;代表通过矩阵变化以后在新的系统中的位置。其中式1就是矩阵变化的公式，对式1进行展开以后就可以得到式2。从式2我们可以清楚的看到（x，y）到（x&#8217;，y&#8217;）的变化关系。</p>
 
@@ -78,7 +78,7 @@
 
 <p>　　假设不做平移和缩放操作，那么从原坐标系中的一点(x，y)旋转α°以后到了新的坐标系中的一点(x&#8217;，y&#8217;)，那么旋转矩阵如下：</p>
 
-<p><img src="http://t24-2.yunpan.360.cn/s1/800-600.f6d0ed5cafa6f3cf0dd84cd97644bb6148dec169.6359ee.jpg?st=ipP20LvB1LrUn88ffSG9Cg&amp;e=1397145600&amp;mt=png" alt="" /></p>
+<p><img src="http://jackyzonewen.github.io/images/jiaodu.jpeg"></p>
 
 <p>展开以后就是x&#8217; = xcosα &ndash; ysinα，y&#8217; = xsinα + ycosα；</p>
 
@@ -335,7 +335,7 @@ typedef struct objc_object *id;   //对象 (instance of class)
 </ol>
 
 
-<p><img src="http://blog.devtang.com/images/class-diagram.jpg" alt="" /></p>
+<p><img src="http://jackyzonewen.github.io/images/object-tree.jpeg"></p>
 
 <h5>实例说明</h5>
 
@@ -840,7 +840,7 @@ NSLog(@"tempBlock: %@", tempBlock); // tempBlock: &lt;__NSMallocBlock__: 0x756bf
 
 <p>得出的结论:</p>
 
-<p><img src="http://t37-2.yunpan.360.cn/s1/800-600.6506c8bc9a41c7903ada460b991e19ef10025d59.e6cf84.jpg?st=ffQPGCYeGEZ0DgdpnJfU7Q&amp;e=1396627200&amp;mt=png" alt="" /></p>
+<p><img src="http://d.pcs.baidu.com/thumbnail/038e5a164b087797ec0f9ff7b8a0eb6f?fid=386723132-250528-245398273586421&amp;time=1397108279&amp;rt=pr&amp;sign=FDTAER-DCb740ccc5511e5e8fedcff06b081203-n2TuffcO2HknTBFem%2FTUE0hAnNQ%3D&amp;expires=8h&amp;prisign=RK9dhfZlTqV5TuwkO5ihMSi9urWA6/WDVOZJjW161c97pPFvBnDjJvo8Gcuo6pQpSURrTDQGP5T27k9J0e2dzkmye5j3Whl2FUBatugDm4Hnjds9K4Te4F7rrSoMdSR+fLytI2YxlwkNZGewx9i+PzTP2T+5KhLfN0fBGRIdEQImVDevvKfjRDlDZ5A8/SpsBV0kJzJEDGqVFhLOY+LAdoIwmjCxaZTv/0yr9wbLcRRh6VcOWpx+1UQ20lir1JEVx6Xw601OiSo=&amp;r=945854669&amp;size=c850_u580&amp;quality=100" alt="" /></p>
 
 <ul>
 <li><p>NSGlobalBlock类型(理解为静态block)：retain、copy、release都不会影响block的生命周期。</p></li>

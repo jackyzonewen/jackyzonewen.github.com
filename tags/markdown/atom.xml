@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: markdown | 挡不住的君文]]></title>
+  <link href="http://jackyzonewen.github.io/tags/markdown/atom.xml" rel="self"/>
+  <link href="http://jackyzonewen.github.io/"/>
+  <updated>2014-04-17T19:34:45+08:00</updated>
+  <id>http://jackyzonewen.github.io/</id>
+  <author>
+    <name><![CDATA[jackyzonewen]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[MarkDown使用]]></title>
+    <link href="http://jackyzonewen.github.io/blog/2014/04/03/markdownshi-yong/"/>
+    <updated>2014-04-03T11:42:00+08:00</updated>
+    <id>http://jackyzonewen.github.io/blog/2014/04/03/markdownshi-yong</id>
+    <content type="html"><![CDATA[<blockquote><p><p>Markdown 语法的目标是：成为一种适用于网络的书写语言。Markdown不是想要取代 HTML，甚至也没有要和它相近，它的语法种类很少，只对应 HTML 标记的一小部分。不在 Markdown 涵盖范围之内的标签，都可以直接在文档里面用 HTML 撰写。不需要额外标注这是 HTML 或是 Markdown；只要直接加标签就可以了。</p></blockquote>
+
+<hr />
+
+<h4> 1.标题 </h4>
+
+
+<p>使用<code>&lt;h4&gt; 形式 &lt;/h4&gt;</code>或者<code>#### 标题</code>的形式来表示四级标题，总共支持6级标题。<br/>
+注：标题文字前后留一个空格，标准的mardDown语法</p>
+
+<hr />
+
+<h4>2.列表</h4>
+
+<p>无序列表写法</p>
+
+<ul>
+<li>列表1
+
+<ul>
+<li>子列表1</li>
+<li>子列表2</li>
+<li>子列表3</li>
+</ul>
+</li>
+<li>列表2</li>
+<li>列表3</li>
+<li>列表4</li>
+</ul>
+
+
+<p>有序列表的写法</p>
+
+<ol>
+<li>列表1</li>
+<li>列表2</li>
+<li>列表3</li>
+<li>列表4</li>
+</ol>
+
+
+<p>注意：-(*或者+)、1. 和列表之间保留一个字符的空格</p>
+
+<hr />
+
+<h4>链接和图片</h4>
+
+<p>在 Markdown 中，插入链接不需要其他按钮，你只需要使用 <code>[显示文本](链接地址)</code> 或者在文章最后给上索引，<code>[显示文本][1]</code> ，例如：</p>
+
+<pre><code>[我的博客](http://jackyzonewen.github.io/)
+或者
+[我的博客][1]
+[1]:(http://jackyzonewen.github.io/)
+</code></pre>
+
+<p>在 Markdown 中，插入图片不需要其他按钮，你只需要使用 <code>![](图片链接地址)</code> 这样的语法即可，例如：</p>
+
+<pre><code>![](http://ww4.sinaimg.cn/bmiddle/aa397b7fjw1dzplsgpdw5j.jpg)
+</code></pre>
+
+<hr />
+
+<h4>引用</h4>
+
+<p>只需要在你希望引用的文字前面加上 > 就好了，例如：</p>
+
+<pre><code>&gt; 一盏灯， 一片昏黄； 一简书， 一杯淡茶。 守着那一份淡定， 品读属于自己的寂寞。 保持淡定， 才能欣赏到最美丽的风景！ 保持淡定， 人生从此不再寂寞。
+</code></pre>
+
+<p>效果如下:</p>
+
+<blockquote><p>一盏灯， 一片昏黄； 一简书， 一杯淡茶。 守着那一份淡定， 品读属于自己的寂寞。 保持淡定， 才能欣赏到最美丽的风景！ 保持淡定， 人生从此不再寂寞。</p></blockquote>
+
+<hr />
+
+<h4>粗体和斜体</h4>
+
+<p>Markdown 的粗体和斜体也非常简单，用两个 * 包含一段文本就是粗体的语法，用一个 * 包含一段文本就是斜体的语法。例如：</p>
+
+<p><em>一盏灯</em>， 一片昏黄；<strong>一简书</strong>， 一杯淡茶。 守着那一份淡定， 品读属于自己的寂寞。 保持淡定， 才能欣赏到最美丽的风景！ 保持淡定， 人生从此不再寂寞。</p>
+
+<hr />
+
+<h4>代码</h4>
+
+<p>行开头空4格空格，或者一个Tab来表示程序代码，例如:</p>
+
+<pre><code>//这里显示一些代码，在正文显示中会自动识别语言，进行代码染色，这是一段C#代码
+public class Blog
+{
+     public int Id { get; set; }
+     public string Subject { get; set; }
+}
+</code></pre>
+
+<hr />
+
+<h4>其它</h4>
+
+<pre><code>单个回车：空格
+连续回车：分段
+行尾连续两个空格：段内换行
+</code></pre>
+
+<hr />
+
+<p>介绍markdown的教程很多，提供几个供大家参考:</p>
+
+<ul>
+<li><a href="http://lutaf.com/markdown-simple-usage.htm">鲁塔弗：markdown 简明语法</a></li>
+<li><a href="http://www.ituring.com.cn/article/23">图灵社区：怎样使用Markdown</a></li>
+<li><a href="http://jianshu.io/p/q81RER">简书：献给写作者的 Markdown 新手指南</a></li>
+<li><a href="http://wowubuntu.com/markdown/#p">官方文档(中文版)：Markdown 语法说明</a></li>
+<li><a href="http://upwith.me/?p=503">用Markdown来书写你的博客</a></li>
+</ul>
+
+
+<p>编辑工具:</p>
+
+<ul>
+<li><a href="http://jianshu.io/">简书</a></li>
+<li><a href="https://chrome.google.com/webstore/detail/made/oknndfeeopgpibecfjljjfanledpbkog">MaDe (Chrome插件)</a></li>
+<li><a href="http://dillinger.io/">dillinger</a></li>
+<li><a href="https://stackedit.io/">StackEdit</a></li>
+<li><a href="http://www.zybuluo.com/mdeditor">Cmd</a></li>
+</ul>
+
+
+<h4>参考教程：</h4>
+
+<ul>
+<li><a href="http://lutaf.com/markdown-simple-usage.htm">鲁塔弗：markdown 简明语法</a></li>
+<li><a href="http://www.ituring.com.cn/article/23">图灵社区：怎样使用Markdown</a></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

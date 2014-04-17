@@ -1,97 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
 
-<!DOCTYPE html>
-<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
-<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
-<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
-<head>
-  <meta charset="utf-8">
-  <title>iOS屏幕旋转 - 挡不住的君文</title>
-  <meta name="author" content="jackyzonewen">
-
-  
-  <meta name="description" content="屏幕旋转背后做了什么？ 先来看一段简单的代码： // iOS5以前支持
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
-{ return YES;
-} // &hellip;">
-  
-
-  <!-- http://t.co/dKP3o1e -->
-  <meta name="HandheldFriendly" content="True">
-  <meta name="MobileOptimized" content="320">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  
-  <link rel="canonical" href="http://jackyzonewen.github.io/blog/2014/04/09/iosping-mu-xuan-zhuan">
-  <link href="/favicon.png" rel="icon">
-  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <link href="/atom.xml" rel="alternate" title="挡不住的君文" type="application/atom+xml">
-  <script src="/javascripts/modernizr-2.0.js"></script>
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
-  <script src="/javascripts/octopress.js" type="text/javascript"></script>
-  
-  
-
-</head>
-
-<body   >
-  <header role="banner"><hgroup>
-  <h1><a href="/">挡不住的君文</a></h1>
-  
-    <h2>专注于移动互联</h2>
-  
-</hgroup>
-
-</header>
-  <nav role="navigation"><ul class="subscription" data-subscription="rss">
-  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
-  
-</ul>
-  
-<form action="http://google.com/search" method="get">
-  <fieldset role="search">
-    <input type="hidden" name="q" value="site:jackyzonewen.github.io" />
-    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
-  </fieldset>
-</form>
-  
-<ul class="main-navigation">
-  <li><a href="/">Blog</a></li>
-  <li><a href="/blog/archives">Archives</a></li>
-</ul>
-
-</nav>
-  <div id="main">
-    <div id="content">
-      <div>
-<article class="hentry" role="article">
-  
-  <header>
+  <title><![CDATA[Tag: Orientation | 挡不住的君文]]></title>
+  <link href="http://jackyzonewen.github.io/tags/orientation/atom.xml" rel="self"/>
+  <link href="http://jackyzonewen.github.io/"/>
+  <updated>2014-04-17T19:34:45+08:00</updated>
+  <id>http://jackyzonewen.github.io/</id>
+  <author>
+    <name><![CDATA[jackyzonewen]]></name>
     
-      <h1 class="entry-title">iOS屏幕旋转</h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
 
   
-
-
-<time datetime="2014-04-09T21:07:00+08:00" pubdate data-updated="true">Apr 9<span>th</span>, 2014</time>
-        
-      </p>
-    
-  </header>
-
-
-<div class="entry-content"><h5>屏幕旋转背后做了什么？</h5>
+  <entry>
+    <title type="html"><![CDATA[iOS屏幕旋转]]></title>
+    <link href="http://jackyzonewen.github.io/blog/2014/04/09/iosping-mu-xuan-zhuan/"/>
+    <updated>2014-04-09T21:07:00+08:00</updated>
+    <id>http://jackyzonewen.github.io/blog/2014/04/09/iosping-mu-xuan-zhuan</id>
+    <content type="html"><![CDATA[<h5>屏幕旋转背后做了什么？</h5>
 
 <p>先来看一段简单的代码：</p>
 
@@ -141,21 +68,21 @@
 
 <p><img src="/images/gongshi.jpeg"></p>
 
-<p>　　设x，y分别代表在原坐标系统中的位置，x&#8217;，y&#8217;代表通过矩阵变化以后在新的系统中的位置。其中式1就是矩阵变化的公式，对式1进行展开以后就可以得到式2。从式2我们可以清楚的看到（x，y）到（x&#8217;，y&#8217;）的变化关系。</p>
+<p>　　设x，y分别代表在原坐标系统中的位置，x'，y'代表通过矩阵变化以后在新的系统中的位置。其中式1就是矩阵变化的公式，对式1进行展开以后就可以得到式2。从式2我们可以清楚的看到（x，y）到（x'，y'）的变化关系。</p>
 
-<p>　　1）当c，b，tx，ty都为零时，x&#8217; = ax，y&#8217; = dy；即a，d就分别代表代表x，y方向上放大的比例；当a，d都为1时，x&#8217; = x，y&#8217; = y；这个时候这个矩阵也就是传说中的CGAffineTransformIdentity(标准矩阵)。</p>
+<p>　　1）当c，b，tx，ty都为零时，x' = ax，y' = dy；即a，d就分别代表代表x，y方向上放大的比例；当a，d都为1时，x' = x，y' = y；这个时候这个矩阵也就是传说中的CGAffineTransformIdentity(标准矩阵)。</p>
 
-<p>　　2）当a，d为1，c，b为零的时候，x&#8217; = x + tx，y&#8217; = y + ty；即tx，ty分别代表x，y方向上的平移距离。</p>
+<p>　　2）当a，d为1，c，b为零的时候，x' = x + tx，y' = y + ty；即tx，ty分别代表x，y方向上的平移距离。</p>
 
 <p>　　3）前面两种情况就可以实现缩放和平移了，那么旋转如何表示呢？</p>
 
-<p>　　假设不做平移和缩放操作，那么从原坐标系中的一点(x，y)旋转α°以后到了新的坐标系中的一点(x&#8217;，y&#8217;)，那么旋转矩阵如下：</p>
+<p>　　假设不做平移和缩放操作，那么从原坐标系中的一点(x，y)旋转α°以后到了新的坐标系中的一点(x'，y')，那么旋转矩阵如下：</p>
 
 <p><img src="/images/jiaodu.jpeg"></p>
 
-<p>展开以后就是x&#8217; = xcosα &ndash; ysinα，y&#8217; = xsinα + ycosα；</p>
+<p>展开以后就是x' = xcosα &ndash; ysinα，y' = xsinα + ycosα；</p>
 
-<p>回过头来看看前面设备旋转时的输出日志，当设备位于Portrait方向的时候由于矩阵是标准矩阵，所以没有进行打印。当转到UIInterfaceOrientationLandscapeLeft方向的时候，我们的设备是顺时针转了90°(逆时针为正，顺时针为负)，这个时候矩阵应该是（cos-90°，sin-90°，-sin-90°，cos-90°，tx，ty），由于未进行平移操作所以tx，ty都为0，刚好可以跟我们控制台输出：&#8221;UIViewController didRotateFromInterfaceOrientation, view ：&lt;UIView: 0x10922cf40; frame = (0 0; 320 568); transform = [0, -1, 1, 0, 0, 0]; autoresize = RM+BM; layer = &lt;CALayer: 0x10924cd60>>&ldquo;一致。观察其他两个方向的输出，发现结果均和分析一致。</p>
+<p>回过头来看看前面设备旋转时的输出日志，当设备位于Portrait方向的时候由于矩阵是标准矩阵，所以没有进行打印。当转到UIInterfaceOrientationLandscapeLeft方向的时候，我们的设备是顺时针转了90°(逆时针为正，顺时针为负)，这个时候矩阵应该是（cos-90°，sin-90°，-sin-90°，cos-90°，tx，ty），由于未进行平移操作所以tx，ty都为0，刚好可以跟我们控制台输出："UIViewController didRotateFromInterfaceOrientation, view ：&lt;UIView: 0x10922cf40; frame = (0 0; 320 568); transform = [0, -1, 1, 0, 0, 0]; autoresize = RM+BM; layer = &lt;CALayer: 0x10924cd60>>&ldquo;一致。观察其他两个方向的输出，发现结果均和分析一致。</p>
 
 <p>由此可以发现屏幕旋转其实就是通过view的矩阵变化实现，当设备监测到旋转的时候，会通知当前程序，当前程序再通知程序中的window，window会通知它的rootViewController的，rootViewController对其view的transform进行设置，最终完成旋转。<br/>
 　　
@@ -229,7 +156,7 @@
 <ul>
 <li><p>iOS6使用supportedInterfaceOrientations 和 shouldAutorotate 2个方法来代替shouldAutorotateToInterfaceOrientation(deprecated)。注意：为了向后兼容iOS 4 and 5，还是需要在你的app里保留shouldAutorotateToInterfaceOrientation。</p></li>
 <li><p>iOS5和以前SDK, 如果没有重写shouldAutorotateToInterfaceOrientation，那么对于iphone来讲，默认是只支持portrait，不能旋转,iPad默认支持所有方向。</p></li>
-<li><p>iOS6之后如果没有重写shouldAutorotate和supportedInterfaceOrientations,默认 iphone则是&#8221;可以旋转，支持非upside down的方向&#8221;， iPad默认支持所有方向。</p></li>
+<li><p>iOS6之后如果没有重写shouldAutorotate和supportedInterfaceOrientations,默认 iphone则是"可以旋转，支持非upside down的方向"， iPad默认支持所有方向。</p></li>
 <li><p>在iOS 4 and 5，都是由具体的view controller来决定对应的view的orientation设置；而在iOS 6,则是由top-most controller来决定view的orientation设置。</p></li>
 <li><p>当我们的view controller隐藏的时候，设备方向也可能发生变化。例如view Controller A弹出一个全屏的view controller B的时候，由于A完全不可见，所以就接收不到屏幕旋转消息。这个时候如果屏幕方向发生变化，再dismiss B的时候，A的方向就会不正确。我们可以通过在view controller A的viewWillAppear中更新方向来修正这个问题。</p></li>
 <li><p>屏幕旋转时的一些建议</p>
@@ -244,7 +171,7 @@
 </ul>
 
 
-<p>举个例子：app的rootViewController是navigation controller &ldquo;nav&rdquo;, 在”nav&#8221;里的stack依次是：main view &ndash;> first view > second view，而main view里有一个button会present modal view &ldquo;modal view&rdquo;.<br/>
+<p>举个例子：app的rootViewController是navigation controller &ldquo;nav&rdquo;, 在”nav"里的stack依次是：main view &ndash;> first view > second view，而main view里有一个button会present modal view &ldquo;modal view&rdquo;.<br/>
 那么for ios 4 and 5，在ipad里，如果你要上述view都仅支持横屏orientation，你需要在上面的main view, first view, second view, model view里都添加下面代码：</p>
 
 <pre><code>- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {  
@@ -264,7 +191,7 @@
 }
 </code></pre>
 
-<p>你需要自定义一个UINavigationController的子类for &ldquo;nav controller&#8221;，这样才可以添加上述代码。和navigation controller类似，tab controller里的各个view的orientation设置应该放在tab controller里。</p>
+<p>你需要自定义一个UINavigationController的子类for &ldquo;nav controller"，这样才可以添加上述代码。和navigation controller类似，tab controller里的各个view的orientation设置应该放在tab controller里。</p>
 
 <p>对于ios6的top-most controller决定orientation设置，导致这样一个问题：在 top-most controller里的views无法拥有不相同的orientation设置。例如：对于 iphone, 在nav controller里，你有main view, first view 和 second view，前2个都只能打竖，而second view是用来播放video，可以打横打竖。那么在ios 4 and 5里可以通过在main view 和 first view的shouldAutorotateToInterfaceOrientation里设置只能打竖，而在second view的shouldAutorotateToInterfaceOrientation设置打竖打横即可。而在ios 6里则无法实现这种效果，因为在main view, first view和 second view的orientation设置是无效的，只能够在nav controller里设置。那么你可能想着用下列代码在nav controller里控制哪个view打竖，哪个view打横。</p>
 
@@ -297,171 +224,7 @@
 <li><a href="http://blog.csdn.net/jaywon/article/details/8208991">jaywon</a></li>
 </ul>
 
-</div>
-
-
-  <footer>
-    <p class="meta">
-      
+]]></content>
+  </entry>
   
-
-<span class="byline author vcard">Posted by <span class="fn">jackyzonewen</span></span>
-
-      
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-04-09T21:07:00+08:00" pubdate data-updated="true">Apr 9<span>th</span>, 2014</time>
-      
-
-<span class="categories">
-  
-    <a class='category' href='/blog/categories/ios/'>iOS</a>
-  
-</span>
-
-
-    </p>
-    <p class="meta">
-      原创&amp;整理的文章，版权声明:自由转载-非商用&amp;衍生-保持署名
-    </p>
-    
-      <div class="sharing">
-  
-  
-  
-  
-     <!-- JiaThis Button BEGIN -->
-<div class="jiathis_style_32x32">
-	<a class="jiathis_button_qzone"></a>
-	<a class="jiathis_button_tsina"></a>
-	<a class="jiathis_button_tqq"></a>
-	<a class="jiathis_button_weixin"></a>
-	<a class="jiathis_button_renren"></a>
-	<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
-	<a class="jiathis_counter_style"></a>
-</div>
-<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
-<!-- JiaThis Button END -->
-
-<!-- UY BEGIN -->
-<div id="uyan_frame"></div>
-<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js"></script>
-<!-- UY END -->
-  
-</div>
-
-    
-    <p class="meta">
-      
-        <a class="basic-alignment left" href="/blog/2014/04/04/ioszhong-de-dui-he-zhan/" title="Previous Post: iOS中的堆和栈">&laquo; iOS中的堆和栈</a>
-      
-      
-    </p>
-  </footer>
-</article>
-
-</div>
-
-<aside class="sidebar">
-  
-    <section>
-  <h1>Recent Posts</h1>
-  <ul id="recent_posts">
-    
-      <li class="post">
-        <a href="/blog/2014/04/09/iosping-mu-xuan-zhuan/">iOS屏幕旋转</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/04/04/ioszhong-de-dui-he-zhan/">iOS中的堆和栈</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/04/03/objective-c-dui-xiang-mo-xing-ji-ying-yong/">Objective-C 对象模型及应用</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/04/03/objective-czhong-blockde-shi-yong/">Objective-C中Block的使用</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/04/03/markdownshi-yong/">MarkDown使用</a>
-      </li>
-    
-  </ul>
-</section>
-
-
-
-
-<section>  
-  <h1>Categories</h1>  
-  <ul id="categories">  
-    <li class='category'><a href='/blog/categories/ios/'>iOS (4)</a></li>
-<li class='category'><a href='/blog/categories/other/'>other (4)</a></li>
-  
-  </ul>  
-</section>  <section>  
-  <h1>Tags</h1>  
-  <ul class="tag-cloud">  
-    <a style="font-size: 90%" href="/tags/git/">Git</a>
-<a style="font-size: 210%" href="/tags/github/">Github</a>
-<a style="font-size: 90%" href="/tags/octopress/">OctoPress</a>
-<a style="font-size: 90%" href="/tags/orientation/">Orientation</a>
-<a style="font-size: 90%" href="/tags/svn/">SVN</a>
-<a style="font-size: 90%" href="/tags/block/">block</a>
-<a style="font-size: 90%" href="/tags/heap/">heap</a>
-<a style="font-size: 90%" href="/tags/markdown/">markdown</a>
-<a style="font-size: 90%" href="/tags/object/">object</a>
-<a style="font-size: 90%" href="/tags/ruby/">ruby</a>
-<a style="font-size: 90%" href="/tags/runtime/">runtime</a>
-<a style="font-size: 90%" href="/tags/stack/">stack</a>
-<a style="font-size: 90%" href="/tags/swizzling/">swizzling</a>
-  
-  </ul>  
-</section>  
-<section>  
-<h1>Visitor</h1>  
-<div>  
-    <p></p>  
-    <center>  
-    <a href="http://info.flagcounter.com/3pF8"><img src="http://s08.flagcounter.com/count/3pF8/bg_FFFFFF/txt_000000/border_CCCCCC/columns_3/maxflags_12/viewers_3/labels_0/pageviews_1/flags_0/" alt="Flag Counter" border="0"></a>  
-    </center>  
-</div>  
-</section>  
-  
-  
-</aside>
-
-
-    </div>
-  </div>
-  <footer role="contentinfo"><p>
-  Copyright &copy; 2014 - jackyzonewen -
-  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
-</p>
-
-</footer>
-  
-
-
-
-
-
-
-
-
-
-
-
-</body>
-</html>
+</feed>

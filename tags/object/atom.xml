@@ -1,94 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
 
-<!DOCTYPE html>
-<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
-<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
-<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
-<head>
-  <meta charset="utf-8">
-  <title>Objective-C 对象模型及应用 - 挡不住的君文</title>
-  <meta name="author" content="jackyzonewen">
-
-  
-  <meta name="description" content="Objective-C的运行时runtime开源的，源码可以到苹果官网下载，在objc4-532.2以后，苹果把NSObject的实现也开源了。 isa指针 Objective-C是一门面向对象的编程语言。每一个对象都是一个类的实例。在Objective-C语言的内部， &hellip;">
-  
-
-  <!-- http://t.co/dKP3o1e -->
-  <meta name="HandheldFriendly" content="True">
-  <meta name="MobileOptimized" content="320">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  
-  <link rel="canonical" href="http://jackyzonewen.github.io/blog/2014/04/03/objective-c-dui-xiang-mo-xing-ji-ying-yong">
-  <link href="/favicon.png" rel="icon">
-  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <link href="/atom.xml" rel="alternate" title="挡不住的君文" type="application/atom+xml">
-  <script src="/javascripts/modernizr-2.0.js"></script>
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
-  <script src="/javascripts/octopress.js" type="text/javascript"></script>
-  
-  
-
-</head>
-
-<body   >
-  <header role="banner"><hgroup>
-  <h1><a href="/">挡不住的君文</a></h1>
-  
-    <h2>专注于移动互联</h2>
-  
-</hgroup>
-
-</header>
-  <nav role="navigation"><ul class="subscription" data-subscription="rss">
-  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
-  
-</ul>
-  
-<form action="http://google.com/search" method="get">
-  <fieldset role="search">
-    <input type="hidden" name="q" value="site:jackyzonewen.github.io" />
-    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
-  </fieldset>
-</form>
-  
-<ul class="main-navigation">
-  <li><a href="/">Blog</a></li>
-  <li><a href="/blog/archives">Archives</a></li>
-</ul>
-
-</nav>
-  <div id="main">
-    <div id="content">
-      <div>
-<article class="hentry" role="article">
-  
-  <header>
+  <title><![CDATA[Tag: object | 挡不住的君文]]></title>
+  <link href="http://jackyzonewen.github.io/tags/object/atom.xml" rel="self"/>
+  <link href="http://jackyzonewen.github.io/"/>
+  <updated>2014-04-17T19:34:45+08:00</updated>
+  <id>http://jackyzonewen.github.io/</id>
+  <author>
+    <name><![CDATA[jackyzonewen]]></name>
     
-      <h1 class="entry-title">Objective-C 对象模型及应用</h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
 
   
-
-
-<time datetime="2014-04-03T21:37:00+08:00" pubdate data-updated="true">Apr 3<span>rd</span>, 2014</time>
-        
-      </p>
-    
-  </header>
-
-
-<div class="entry-content"><p>Objective-C的运行时runtime开源的，源码可以到<a href="http://www.opensource.apple.com/tarballs/objc4/">苹果官网</a>下载，在objc4-532.2以后，苹果把NSObject的实现也开源了。</p>
+  <entry>
+    <title type="html"><![CDATA[Objective-C 对象模型及应用]]></title>
+    <link href="http://jackyzonewen.github.io/blog/2014/04/03/objective-c-dui-xiang-mo-xing-ji-ying-yong/"/>
+    <updated>2014-04-03T21:37:00+08:00</updated>
+    <id>http://jackyzonewen.github.io/blog/2014/04/03/objective-c-dui-xiang-mo-xing-ji-ying-yong</id>
+    <content type="html"><![CDATA[<p>Objective-C的运行时runtime开源的，源码可以到<a href="http://www.opensource.apple.com/tarballs/objc4/">苹果官网</a>下载，在objc4-532.2以后，苹果把NSObject的实现也开源了。</p>
 
 <h5>isa指针</h5>
 
@@ -464,173 +394,7 @@ class of an object instance.</p></blockquote>
 <hr />
 
 <p>文章转自<a href="http://blog.devtang.com/blog/2013/10/15/objective-c-object-model/">唐巧的技术博客</a>&amp;&amp;<a href="http://blog.ibireme.com/2013/11/25/objc-object/">ibireme</a></p>
-</div>
-
-
-  <footer>
-    <p class="meta">
-      
+]]></content>
+  </entry>
   
-
-<span class="byline author vcard">Posted by <span class="fn">jackyzonewen</span></span>
-
-      
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-04-03T21:37:00+08:00" pubdate data-updated="true">Apr 3<span>rd</span>, 2014</time>
-      
-
-<span class="categories">
-  
-    <a class='category' href='/blog/categories/ios/'>iOS</a>
-  
-</span>
-
-
-    </p>
-    <p class="meta">
-      原创&amp;整理的文章，版权声明:自由转载-非商用&amp;衍生-保持署名
-    </p>
-    
-      <div class="sharing">
-  
-  
-  
-  
-     <!-- JiaThis Button BEGIN -->
-<div class="jiathis_style_32x32">
-	<a class="jiathis_button_qzone"></a>
-	<a class="jiathis_button_tsina"></a>
-	<a class="jiathis_button_tqq"></a>
-	<a class="jiathis_button_weixin"></a>
-	<a class="jiathis_button_renren"></a>
-	<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
-	<a class="jiathis_counter_style"></a>
-</div>
-<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
-<!-- JiaThis Button END -->
-
-<!-- UY BEGIN -->
-<div id="uyan_frame"></div>
-<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js"></script>
-<!-- UY END -->
-  
-</div>
-
-    
-    <p class="meta">
-      
-        <a class="basic-alignment left" href="/blog/2014/04/03/objective-czhong-blockde-shi-yong/" title="Previous Post: Objective-C中Block的使用">&laquo; Objective-C中Block的使用</a>
-      
-      
-        <a class="basic-alignment right" href="/blog/2014/04/04/ioszhong-de-dui-he-zhan/" title="Next Post: iOS中的堆和栈">iOS中的堆和栈 &raquo;</a>
-      
-    </p>
-  </footer>
-</article>
-
-</div>
-
-<aside class="sidebar">
-  
-    <section>
-  <h1>Recent Posts</h1>
-  <ul id="recent_posts">
-    
-      <li class="post">
-        <a href="/blog/2014/04/09/iosping-mu-xuan-zhuan/">iOS屏幕旋转</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/04/04/ioszhong-de-dui-he-zhan/">iOS中的堆和栈</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/04/03/objective-c-dui-xiang-mo-xing-ji-ying-yong/">Objective-C 对象模型及应用</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/04/03/objective-czhong-blockde-shi-yong/">Objective-C中Block的使用</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/04/03/markdownshi-yong/">MarkDown使用</a>
-      </li>
-    
-  </ul>
-</section>
-
-
-
-
-<section>  
-  <h1>Categories</h1>  
-  <ul id="categories">  
-    <li class='category'><a href='/blog/categories/ios/'>iOS (4)</a></li>
-<li class='category'><a href='/blog/categories/other/'>other (4)</a></li>
-  
-  </ul>  
-</section>  <section>  
-  <h1>Tags</h1>  
-  <ul class="tag-cloud">  
-    <a style="font-size: 90%" href="/tags/git/">Git</a>
-<a style="font-size: 210%" href="/tags/github/">Github</a>
-<a style="font-size: 90%" href="/tags/octopress/">OctoPress</a>
-<a style="font-size: 90%" href="/tags/orientation/">Orientation</a>
-<a style="font-size: 90%" href="/tags/svn/">SVN</a>
-<a style="font-size: 90%" href="/tags/block/">block</a>
-<a style="font-size: 90%" href="/tags/heap/">heap</a>
-<a style="font-size: 90%" href="/tags/markdown/">markdown</a>
-<a style="font-size: 90%" href="/tags/object/">object</a>
-<a style="font-size: 90%" href="/tags/ruby/">ruby</a>
-<a style="font-size: 90%" href="/tags/runtime/">runtime</a>
-<a style="font-size: 90%" href="/tags/stack/">stack</a>
-<a style="font-size: 90%" href="/tags/swizzling/">swizzling</a>
-  
-  </ul>  
-</section>  
-<section>  
-<h1>Visitor</h1>  
-<div>  
-    <p></p>  
-    <center>  
-    <a href="http://info.flagcounter.com/3pF8"><img src="http://s08.flagcounter.com/count/3pF8/bg_FFFFFF/txt_000000/border_CCCCCC/columns_3/maxflags_12/viewers_3/labels_0/pageviews_1/flags_0/" alt="Flag Counter" border="0"></a>  
-    </center>  
-</div>  
-</section>  
-  
-  
-</aside>
-
-
-    </div>
-  </div>
-  <footer role="contentinfo"><p>
-  Copyright &copy; 2014 - jackyzonewen -
-  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
-</p>
-
-</footer>
-  
-
-
-
-
-
-
-
-
-
-
-
-</body>
-</html>
+</feed>
