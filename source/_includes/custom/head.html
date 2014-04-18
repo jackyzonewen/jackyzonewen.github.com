@@ -1,0 +1,14 @@
+<!-- http://www.blogjava.net/lishunli/archive/2013/01/20/394478.html -->
+<script type="text/javascript">
+
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+
+$(document).bind('DOMNodeInserted', function(event) {
+  addBlankTargetForLinks();
+});
+
+</script>
