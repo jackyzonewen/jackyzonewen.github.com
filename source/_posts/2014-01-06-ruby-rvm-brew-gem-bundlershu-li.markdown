@@ -137,6 +137,8 @@ brew和gem不同，brew用于操作系统层面上软件包的安装，而gem只
 	gem contents rake #显示rake包中所包含的文件 
 	gem dependency rails -v 0.10.1 #列出与rails相互依赖的包 
 	gem environment #查看gem的环境
+	gem sources -l #查看源,可以通过--remove删除一个源，以及-a来添加一个源
+	#https://rubygems.org/ 或者 http://ruby.taobao.org/
 
 注意：安装的时候不要使用sudo，默认的Mac OS安装了Ruby，所以这个时候如果使用sudo，更新的是系统版本的ruby对应的gems。
 
