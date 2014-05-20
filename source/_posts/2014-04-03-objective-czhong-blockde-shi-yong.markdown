@@ -150,7 +150,7 @@ Block的isa指针指向的是_NSConcreteStackBlock，这个prototype重新定义
 
 得出的结论:  
 
-![](http://d.pcs.baidu.com/thumbnail/038e5a164b087797ec0f9ff7b8a0eb6f?fid=386723132-250528-245398273586421&time=1397108279&rt=pr&sign=FDTAER-DCb740ccc5511e5e8fedcff06b081203-n2TuffcO2HknTBFem%2FTUE0hAnNQ%3D&expires=8h&prisign=RK9dhfZlTqV5TuwkO5ihMSi9urWA6/WDVOZJjW161c97pPFvBnDjJvo8Gcuo6pQpSURrTDQGP5T27k9J0e2dzkmye5j3Whl2FUBatugDm4Hnjds9K4Te4F7rrSoMdSR+fLytI2YxlwkNZGewx9i+PzTP2T+5KhLfN0fBGRIdEQImVDevvKfjRDlDZ5A8/SpsBV0kJzJEDGqVFhLOY+LAdoIwmjCxaZTv/0yr9wbLcRRh6VcOWpx+1UQ20lir1JEVx6Xw601OiSo=&r=945854669&size=c850_u580&quality=100)
+{% img /images/mm.jpeg %} 
 
 + NSGlobalBlock类型(理解为静态block)：retain、copy、release都不会影响block的生命周期。
 
@@ -486,9 +486,9 @@ __unsafe_unretained TestCycleRetain *weakSelf = self;
 [4、A look inside blocks: Episode 1][4]  [中文][9]  
 [5、A look inside blocks: Episode 2][5]  [中文][10]  
 [6、A look inside blocks: Episode 3 (Block_copy)][6]  [中文][11]   
-[7、iOS Block -浅析][7]
-[8、正确使用Block避免Cycle Retain和Crash][8]
-[9、初识block][12]
+[7、iOS Block -浅析][7]  
+[8、正确使用Block避免Cycle Retain和Crash][8]  
+[9、初识block][12]  
 [10、objc中的block][13]
 
 [1]:http://www.cnblogs.com/biosli/archive/2013/05/29/iOS_Objective-C_Block.html
