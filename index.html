@@ -29,7 +29,20 @@
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
   <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
   <script src="/javascripts/octopress.js" type="text/javascript"></script>
-  
+  <!-- http://www.blogjava.net/lishunli/archive/2013/01/20/394478.html -->
+<script type="text/javascript">
+
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+
+$(document).bind('DOMNodeInserted', function(event) {
+  addBlankTargetForLinks();
+});
+
+</script>
   
 
 </head>
@@ -56,8 +69,10 @@
 </form>
   
 <ul class="main-navigation">
-  <li><a href="/">Blog</a></li>
-  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/">首页</a></li>
+  <li><a href="/blog/archives">全部文章</a></li>
+  <li><a href="/blog/githublist/index.html">Github库整理</a></li>
+  <li><a href="/blog/about">关于</a></li>
 </ul>
 
 </nav>
@@ -997,7 +1012,7 @@ NSLog(@"tempBlock: %@", tempBlock); // tempBlock: &lt;__NSMallocBlock__: 0x756bf
 
 <p>得出的结论:</p>
 
-<p><img src="http://d.pcs.baidu.com/thumbnail/038e5a164b087797ec0f9ff7b8a0eb6f?fid=386723132-250528-245398273586421&amp;time=1397108279&amp;rt=pr&amp;sign=FDTAER-DCb740ccc5511e5e8fedcff06b081203-n2TuffcO2HknTBFem%2FTUE0hAnNQ%3D&amp;expires=8h&amp;prisign=RK9dhfZlTqV5TuwkO5ihMSi9urWA6/WDVOZJjW161c97pPFvBnDjJvo8Gcuo6pQpSURrTDQGP5T27k9J0e2dzkmye5j3Whl2FUBatugDm4Hnjds9K4Te4F7rrSoMdSR+fLytI2YxlwkNZGewx9i+PzTP2T+5KhLfN0fBGRIdEQImVDevvKfjRDlDZ5A8/SpsBV0kJzJEDGqVFhLOY+LAdoIwmjCxaZTv/0yr9wbLcRRh6VcOWpx+1UQ20lir1JEVx6Xw601OiSo=&amp;r=945854669&amp;size=c850_u580&amp;quality=100" alt="" /></p>
+<p><img src="/images/mm.jpeg"></p>
 
 <ul>
 <li><p>NSGlobalBlock类型(理解为静态block)：retain、copy、release都不会影响block的生命周期。</p></li>
@@ -1346,9 +1361,9 @@ int main(int argc, char *argv[]) {
 <a href="http://www.galloway.me.uk/2012/10/a-look-inside-blocks-episode-1/">4、A look inside blocks: Episode 1</a>  <a href="http://beyondvincent.com/blog/2013/07/09/99/">中文</a><br/>
 <a href="http://www.galloway.me.uk/2012/10/a-look-inside-blocks-episode-2/">5、A look inside blocks: Episode 2</a>  <a href="http://beyondvincent.com/blog/2013/07/10/100/">中文</a><br/>
 <a href="http://www.galloway.me.uk/2013/05/a-look-inside-blocks-episode-3-block-copy/">6、A look inside blocks: Episode 3 (Block_copy)</a>  <a href="http://beyondvincent.com/blog/2013/07/11/101/">中文</a> <br/>
-<a href="http://blog.sina.com.cn/s/blog_7b9d64af0101c4sh.html">7、iOS Block -浅析</a>
-<a href="http://tanqisen.github.io/blog/2013/04/19/gcd-block-cycle-retain/">8、正确使用Block避免Cycle Retain和Crash</a>
-<a href="http://beyondvincent.com/blog/2013/07/08/98/">9、初识block</a>
+<a href="http://blog.sina.com.cn/s/blog_7b9d64af0101c4sh.html">7、iOS Block -浅析</a><br/>
+<a href="http://tanqisen.github.io/blog/2013/04/19/gcd-block-cycle-retain/">8、正确使用Block避免Cycle Retain和Crash</a><br/>
+<a href="http://beyondvincent.com/blog/2013/07/08/98/">9、初识block</a><br/>
 <a href="http://blog.ibireme.com/2013/11/27/objc-block/">10、objc中的block</a></p>
 </div>
   
