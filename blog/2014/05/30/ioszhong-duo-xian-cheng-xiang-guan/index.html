@@ -1,24 +1,109 @@
-<?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: iOS | 挡不住的君文]]></title>
-  <link href="http://jackyzonewen.github.io/blog/categories/ios/atom.xml" rel="self"/>
-  <link href="http://jackyzonewen.github.io/"/>
-  <updated>2014-05-30T21:18:08+08:00</updated>
-  <id>http://jackyzonewen.github.io/</id>
-  <author>
-    <name><![CDATA[jackyzonewen]]></name>
-    
-  </author>
-  <generator uri="http://octopress.org/">Octopress</generator>
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>iOS中多线程相关 - 挡不住的君文</title>
+  <meta name="author" content="jackyzonewen">
 
   
-  <entry>
-    <title type="html"><![CDATA[iOS中多线程相关]]></title>
-    <link href="http://jackyzonewen.github.io/blog/2014/05/30/ioszhong-duo-xian-cheng-xiang-guan/"/>
-    <updated>2014-05-30T17:25:00+08:00</updated>
-    <id>http://jackyzonewen.github.io/blog/2014/05/30/ioszhong-duo-xian-cheng-xiang-guan</id>
-    <content type="html"><![CDATA[<h2>简介</h2>
+  <meta name="description" content="简介 线程，有时被称为轻量级进程(Lightweight Process，LWP），是程序执行流的最小单元。一个标准的线程由线程ID，当前指令指针(PC），寄存器集合和堆栈组成。另外，线程是进程中的一个实体，是被系统独立调度和分派的基本单位，线程自己不拥有系统资源， &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://jackyzonewen.github.io/blog/2014/05/30/ioszhong-duo-xian-cheng-xiang-guan">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="挡不住的君文" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!-- http://www.blogjava.net/lishunli/archive/2013/01/20/394478.html -->
+<script type="text/javascript">
+
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+
+$(document).bind('DOMNodeInserted', function(event) {
+  addBlankTargetForLinks();
+});
+
+</script>
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">挡不住的君文</a></h1>
+  
+    <h2>专注于移动互联</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:jackyzonewen.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">首页</a></li>
+  <li><a href="/blog/archives">全部文章</a></li>
+  <li><a href="/blog/githublist/index.html">Github库整理</a></li>
+  <li><a href="/blog/about">关于</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">iOS中多线程相关</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-05-30T17:25:00+08:00" pubdate data-updated="true">May 30<span>th</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h2>简介</h2>
 
 <blockquote><p>线程，有时被称为轻量级进程(Lightweight Process，LWP），是程序执行流的最小单元。一个标准的线程由线程ID，当前指令指针(PC），寄存器集合和堆栈组成。另外，线程是进程中的一个实体，是被系统独立调度和分派的基本单位，线程自己不拥有系统资源，只拥有一点儿在运行中必不可少的资源，但它可与同属一个进程的其它线程共享进程所拥有的全部资源。一个线程可以创建和撤消另一个线程，同一进程中的多个线程之间可以并发执行。由于线程之间的相互制约，致使线程在运行中呈现出间断性。线程也有就绪、阻塞和运行三种基本状态。每一个程序都至少有一个线程，若程序只有一个线程，那就是程序本身。</p>
 
@@ -899,737 +984,171 @@ NSURLConnection *conn = [[NSURLConnection alloc] initWithRequest:request delegat
 <li><a href="http://objccn.io/issue-2-1/">并发编程：API 及挑战</a></li>
 </ul>
 
-]]></content>
-  </entry>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
   
-  <entry>
-    <title type="html"><![CDATA[iOS中锚点anchorPoint理解]]></title>
-    <link href="http://jackyzonewen.github.io/blog/2014/05/10/at-ioszhong-mao-dian-anchorpointli-jie/"/>
-    <updated>2014-05-10T14:10:00+08:00</updated>
-    <id>http://jackyzonewen.github.io/blog/2014/05/10/at-ioszhong-mao-dian-anchorpointli-jie</id>
-    <content type="html"><![CDATA[<h4>引言</h4>
 
-<p>最近项目中使用到UIBezierPath和CAShapeLayer，发现锚点anchorPoint的概念有点模糊，来捋一捋。</p>
+<span class="byline author vcard">Posted by <span class="fn">jackyzonewen</span></span>
 
-<h4>概念</h4>
+      
 
-<p>UIView内部管理这一个CALayer，这厮才是真正显示的东西。首先要清楚UIView和CALayer它们几何层级关系的表示，我们通常的UIView的通过frame来描述视图在父视图中的位置，其实frame是根据另外两个属性bounds和center计算出来的。而CAlayer也有这几个属性，另外增加了一个anchorPoint属性，同UIView一样，frame属性也是计算出来的，首先记住一个公式，如果脑子转不过来，运算一下：</p>
 
-<pre><code>// UIView的frame计算公式
-frame.origin.x = center.x - 0.5 * bounds.size.width;
-frame.origin.y = center.y - 0.5 *bounds.size.height;
-或者
-center.x = frame.origin.x + 0.5 * bounds.size.width;
-center.y = frame.origin.y + 0.5 *bounds.size.height;
 
-// CALayer的frame的计算公式
-frame.origin.x = position.x - anchorPoint.x * bounds.size.width;
-frame.origin.y = position.y - anchorPoint.x * bounds.size.height;
-或者
-position.x = frame.origin.x + anchorPoint.x * bounds.size.width；  
-position.y = frame.origin.y + anchorPoint.y * bounds.size.height；
-</code></pre>
 
-<p>结论就是：frame.origin由position和anchorPoint共同决定，anchorPoint和position之间互不影响。当你设置图层的frame属性的时候，position点的位置（也就是position坐标）根据锚点（anchorPoint）的值来确定；而当你设置图层的position属性的时候，bounds的位置（也就是frame的orgin坐标）会根据锚点(anchorPoint)来确定。</p>
 
-<p>在实际情况中，可能还有这样一种需求，我需要修改anchorPoint，但又不想要移动layer也就是不想修改frame.origin，那么根据前面的公式，就需要position做相应地修改。简单地推导，可以得到下面的公式：</p>
 
-<pre><code>positionNew.x = positionOld.x + (anchorPointNew.x - anchorPointOld.x)  * bounds.size.width  
-positionNew.y = positionOld.y + (anchorPointNew.y - anchorPointOld.y)  * bounds.size.height
-</code></pre>
 
-<p>但是在实际使用没必要这么麻烦。修改anchorPoint而不想移动layer，在修改anchorPoint后再重新设置一遍frame就可以达到目的，这时position就会自动进行相应的改变。写成函数就是下面这样的：</p>
 
-<pre><code>- (void) setAnchorPoint:(CGPoint)anchorpoint forView:(UIView *)view{
-    CGRect oldFrame = view.frame;
-    view.layer.anchorPoint = anchorpoint;
-    view.frame = oldFrame;
-}
-</code></pre>
-
-<h4>锚点anchoroPoint</h4>
-
-<p>可以理解成变换(平移，缩放，旋转)的支点，锚点也是一个CGPoint，用于描述支点的位置相对视图bounds的比例值，比如anchorPoint = (0.5, 0.5)，锚点位于中心；在左手坐标系(iOS)中，那么anchorPoint（0，1）位于右上角，如下图:</p>
-
-<p><img src="http://wonderffee.github.io/images/anchorPointAndPosition/layer_coords_anchorpoint_position_2x.png" alt="" /></p>
-
-<p><img src="http://wonderffee.github.io/images/anchorPointAndPosition/anchorpoint2.jpg" alt="" /></p>
-
-<p>参考：</p>
-
-<ul>
-<li><a href="http://wonderffee.github.io/blog/2013/10/13/understand-anchorpoint-and-position/">彻底理解position与anchorPoint</a></li>
-</ul>
-
-]]></content>
-  </entry>
   
-  <entry>
-    <title type="html"><![CDATA[iOS屏幕旋转]]></title>
-    <link href="http://jackyzonewen.github.io/blog/2014/04/09/iosping-mu-xuan-zhuan/"/>
-    <updated>2014-04-09T21:07:00+08:00</updated>
-    <id>http://jackyzonewen.github.io/blog/2014/04/09/iosping-mu-xuan-zhuan</id>
-    <content type="html"><![CDATA[<h5>屏幕旋转背后做了什么？</h5>
-
-<p>先来看一段简单的代码：</p>
-
-<pre><code>// iOS5以前支持
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
-{
-    return YES;
-}
-
-// iOS6以后支持
-- (BOOL)shouldAutorotate
-{
-    return YES;
-}
-
-- (NSUInteger)supportedInterfaceOrientations
-{
-    return UIInterfaceOrientationMaskAll;
-}
-
-- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
-{
-    NSLog(@"UIViewController willRotateToInterfaceOrientation : %ld", toInterfaceOrientation);
-}
-
-- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
-{
-    NSLog(@"UIViewController didRotateFromInterfaceOrientation, view ：%@", self.view);
-}
-</code></pre>
-
-<p>可以看到代码支持四个方向的旋转，并且在旋转之后打印了相关的信息如下：</p>
-
-<p><img src="/images/log.jpeg"></p>
-
-<p>设备的初始方向是UIInterfaceOrientationPortrait的，然后顺时针依次经过UIInterfaceOrientationLandscapeLeft，UIInterfaceOrientationPortraitUpsideDown，UIInterfaceOrientationLandscapeRight，最后再回到UIInterfaceOrientationPortrait方向，在旋转的过程中，frame没有变化，Transform一直在变化，因此我们可以怀疑屏幕旋转是通过变化Transform实现的，不用怀疑，其实就是通过view的transform属性实现的。</p>
-
-<h5>什么是Transform？</h5>
-
-<p>Transform(变化矩阵)是一种3×3的矩阵，如下图所示：</p>
-
-<p><img src="/images/juzhen.jpeg"></p>
-
-<p>通过这个矩阵我们可以对一个坐标系统进行缩放，平移，旋转以及这两者的任意组着操作。而且矩阵的操作不具备交换律，即矩阵的操作的顺序不同会导致不同的结果。UIView有个transform的属性，通过设置该属性，我们可以实现调整该view在其superView中的大小和位置。</p>
-
-<p>矩阵实现坐标变化背后的数学知识：</p>
-
-<p><img src="/images/gongshi.jpeg"></p>
-
-<p>　　设x，y分别代表在原坐标系统中的位置，x'，y'代表通过矩阵变化以后在新的系统中的位置。其中式1就是矩阵变化的公式，对式1进行展开以后就可以得到式2。从式2我们可以清楚的看到（x，y）到（x'，y'）的变化关系。</p>
-
-<p>　　1）当c，b，tx，ty都为零时，x' = ax，y' = dy；即a，d就分别代表代表x，y方向上放大的比例；当a，d都为1时，x' = x，y' = y；这个时候这个矩阵也就是传说中的CGAffineTransformIdentity(标准矩阵)。</p>
-
-<p>　　2）当a，d为1，c，b为零的时候，x' = x + tx，y' = y + ty；即tx，ty分别代表x，y方向上的平移距离。</p>
-
-<p>　　3）前面两种情况就可以实现缩放和平移了，那么旋转如何表示呢？</p>
-
-<p>　　假设不做平移和缩放操作，那么从原坐标系中的一点(x，y)旋转α°以后到了新的坐标系中的一点(x'，y')，那么旋转矩阵如下：</p>
-
-<p><img src="/images/jiaodu.jpeg"></p>
-
-<p>展开以后就是x' = xcosα &ndash; ysinα，y' = xsinα + ycosα；</p>
-
-<p>回过头来看看前面设备旋转时的输出日志，当设备位于Portrait方向的时候由于矩阵是标准矩阵，所以没有进行打印。当转到UIInterfaceOrientationLandscapeLeft方向的时候，我们的设备是顺时针转了90°(逆时针为正，顺时针为负)，这个时候矩阵应该是（cos-90°，sin-90°，-sin-90°，cos-90°，tx，ty），由于未进行平移操作所以tx，ty都为0，刚好可以跟我们控制台输出："UIViewController didRotateFromInterfaceOrientation, view ：&lt;UIView: 0x10922cf40; frame = (0 0; 320 568); transform = [0, -1, 1, 0, 0, 0]; autoresize = RM+BM; layer = &lt;CALayer: 0x10924cd60>>&ldquo;一致。观察其他两个方向的输出，发现结果均和分析一致。</p>
-
-<p>由此可以发现屏幕旋转其实就是通过view的矩阵变化实现，当设备监测到旋转的时候，会通知当前程序，当前程序再通知程序中的window，window会通知它的rootViewController的，rootViewController对其view的transform进行设置，最终完成旋转。<br/>
-　　
-如果我们直接将一个view添加到window上，系统将不会帮助我们完成旋操作，这个时候我们就需要自己设置该view的transform来实现旋转了。这种情况虽然比较少，但是也存在的，例如现在很多App做的利用状态栏进行消息提示的功能就是利用自己创建window并且自己设置transform来完成旋转支持。</p>
-
-<p>加速计是整个IOS屏幕旋转的基础，依赖加速计，设备才可以判断出当前的设备方向，IOS系统共定义了以下七种设备方向：<br/>
-　　</p>
-
-<pre><code>typedef NS_ENUM(NSInteger, UIDeviceOrientation) {  
-    UIDeviceOrientationUnknown,  
-    UIDeviceOrientationPortrait,            // Device oriented vertically, home button on the bottom  
-    UIDeviceOrientationPortraitUpsideDown,  // Device oriented vertically, home button on the top  
-    UIDeviceOrientationLandscapeLeft,       // Device oriented horizontally, home button on the right  
-    UIDeviceOrientationLandscapeRight,      // Device oriented horizontally, home button on the left  
-    UIDeviceOrientationFaceUp,              // Device oriented flat, face up  
-    UIDeviceOrientationFaceDown             // Device oriented flat, face down  
-};
-</code></pre>
-
-<p>以及如下四种界面方向：</p>
-
-<pre><code>typedef NS_ENUM(NSInteger, UIInterfaceOrientation) {  
-    UIInterfaceOrientationPortrait           = UIDeviceOrientationPortrait,  
-    UIInterfaceOrientationPortraitUpsideDown = UIDeviceOrientationPortraitUpsideDown,  
-    UIInterfaceOrientationLandscapeLeft      = UIDeviceOrientationLandscapeRight,  
-    UIInterfaceOrientationLandscapeRight     = UIDeviceOrientationLandscapeLeft  
-};
-</code></pre>
-
-<p><img src="https://developer.apple.com/library/ios/featuredarticles/ViewControllerPGforiPhoneOS/Art/view_orientations_2x.png" alt="" /></p>
-
-<p>当加速计检测到方向变化的时候，会发出<a href="https://developer.apple.com/library/ios/featuredarticles/ViewControllerPGforiPhoneOS/RespondingtoDeviceOrientationChanges/RespondingtoDeviceOrientationChanges.html#//apple_ref/doc/uid/TP40007457-CH7-SW1">UIDeviceOrientationDidChangeNotification</a>通知，这样任何关心方向变化的view都可以通过注册该通知，在设备方向变化的时候做出相应的响应，在屏幕旋转的时候，UIKit帮助我们做了很多事情，方便我们完成屏幕旋转。</p>
-
-<p>UIKit的相应屏幕旋转的流程如下：</p>
-
-<ol>
-<li>设备旋转的时候，UIKit接收到旋转事件。</li>
-<li>UIKit通过AppDelegate通知当前程序的window。</li>
-<li>Window会知会它的rootViewController，判断该view controller所支持的旋转方向，完成旋转。</li>
-<li>如果存在弹出的view controller的话，系统则会根据弹出的view controller，来判断是否要进行旋转。</li>
-</ol>
 
 
-<p>在响应设备旋转时，我们可以通过UIViewController的方法实现更细粒度的控制，当view controller接收到window传来的方向变化的时候，流程如下:</p>
+<time datetime="2014-05-30T17:25:00+08:00" pubdate data-updated="true">May 30<span>th</span>, 2014</time>
+      
 
-<ol>
-<li>首先判断当前viewController是否支持旋转到目标方向，如果支持的话进入流程2，否则此次旋转流程直接结束。</li>
-<li>调用 willRotateToInterfaceOrientation:duration: 方法，通知view controller将要旋转到目标方向。如果该viewController是一个container view controller的话，它会继续调用其content view controller的该方法。这个时候我们也可以暂时将一些view隐藏掉，等旋转结束以后在现实出来。</li>
-<li>window调整显示的view controller的bounds，由于view controller的bounds发生变化，将会触发 viewWillLayoutSubviews 方法。这个时候self.interfaceOrientation和statusBarOrientation方向还是原来的方向。</li>
-<li>接着当前view controller的 willAnimateRotationToInterfaceOrientation:duration: 方法将会被调用。系统将会把该方法中执行的所有属性变化放到动animation block中。</li>
-<li>执行方向旋转的动画。</li>
-<li>最后调用 didRotateFromInterfaceOrientation: 方法，通知view controller旋转动画执行完毕。这个时候我们可以将第二部隐藏的view再显示出来。</li>
-</ol>
-
-
-<p>整个响应过程如下图所示：</p>
-
-<p><img src="https://developer.apple.com/library/ios/featuredarticles/ViewControllerPGforiPhoneOS/Art/rotation_onestep_2x.png" alt="" /></p>
-
-<p>iOS横竖屏切换的方案目前有以下几种实现的方法：</p>
-
-<ol>
-<li>通过AutoResizeMask或者AutoLayout来实现界面的适配。比较简单，不够灵活。</li>
-<li>通过代码，在横竖屏切换的时候，重新调整控件的frame。调试比较麻烦，最灵活。</li>
-<li>横竖屏采用不同的界面，当屏幕切换的时候，显示对应的视图。</li>
-</ol>
-
-
-<p>屏幕旋转相关知识点：</p>
-
-<ul>
-<li><p>iOS6使用supportedInterfaceOrientations 和 shouldAutorotate 2个方法来代替shouldAutorotateToInterfaceOrientation(deprecated)。注意：为了向后兼容iOS 4 and 5，还是需要在你的app里保留shouldAutorotateToInterfaceOrientation。</p></li>
-<li><p>iOS5和以前SDK, 如果没有重写shouldAutorotateToInterfaceOrientation，那么对于iphone来讲，默认是只支持portrait，不能旋转,iPad默认支持所有方向。</p></li>
-<li><p>iOS6之后如果没有重写shouldAutorotate和supportedInterfaceOrientations,默认 iphone则是"可以旋转，支持非upside down的方向"， iPad默认支持所有方向。</p></li>
-<li><p>在iOS 4 and 5，都是由具体的view controller来决定对应的view的orientation设置；而在iOS 6,则是由top-most controller来决定view的orientation设置。</p></li>
-<li><p>当我们的view controller隐藏的时候，设备方向也可能发生变化。例如view Controller A弹出一个全屏的view controller B的时候，由于A完全不可见，所以就接收不到屏幕旋转消息。这个时候如果屏幕方向发生变化，再dismiss B的时候，A的方向就会不正确。我们可以通过在view controller A的viewWillAppear中更新方向来修正这个问题。</p></li>
-<li><p>屏幕旋转时的一些建议</p>
-
-<ul>
-<li>在旋转过程中，暂时界面操作的响应。</li>
-<li>旋转前后，尽量当前显示的位置不变。</li>
-<li>对于view层级比较复杂的时候，为了提高效率在旋转开始前使用截图替换当前的view层级，旋转结束后再将原view层级替换回来。</li>
-<li>在旋转后最好强制reload tableview，保证在方向变化以后，新的row能够充满全屏。例如对于有些照片展示界面，竖屏只显示一列，但是横屏的时候显示列表界面，这个时候一个界面就会显示更多的元素，此时reload内容就是很有必要的。</li>
-</ul>
-</li>
-</ul>
-
-
-<p>举个例子：app的rootViewController是navigation controller &ldquo;nav&rdquo;, 在”nav"里的stack依次是：main view &ndash;> first view > second view，而main view里有一个button会present modal view &ldquo;modal view&rdquo;.<br/>
-那么for ios 4 and 5，在ipad里，如果你要上述view都仅支持横屏orientation，你需要在上面的main view, first view, second view, model view里都添加下面代码：</p>
-
-<pre><code>- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {  
-    return (interfaceOrientation == UIInterfaceOrientationLandscapeLeft || interfaceOrientation==UIInterfaceOrientationLandscapeRight);  
-}  
-</code></pre>
-
-<p>对于iOS6, 由于是由top-most controller来设置orientation，因此你在main view, first view, second view里添加下面的代码是没有任何效果的，而应该是在nav controller里添加下列代码。而modal view则不是在nav container里，因此你也需要在modal view里也添加下列代码。</p>
-
-<pre><code>-(NSUInteger)supportedInterfaceOrientations{  
-    return UIInterfaceOrientationMaskLandscape;  
-}  
-
-- (BOOL)shouldAutorotate  
-{  
-    return YES;  
-}
-</code></pre>
-
-<p>你需要自定义一个UINavigationController的子类for &ldquo;nav controller"，这样才可以添加上述代码。和navigation controller类似，tab controller里的各个view的orientation设置应该放在tab controller里。</p>
-
-<p>对于ios6的top-most controller决定orientation设置，导致这样一个问题：在 top-most controller里的views无法拥有不相同的orientation设置。例如：对于 iphone, 在nav controller里，你有main view, first view 和 second view，前2个都只能打竖，而second view是用来播放video，可以打横打竖。那么在ios 4 and 5里可以通过在main view 和 first view的shouldAutorotateToInterfaceOrientation里设置只能打竖，而在second view的shouldAutorotateToInterfaceOrientation设置打竖打横即可。而在ios 6里则无法实现这种效果，因为在main view, first view和 second view的orientation设置是无效的，只能够在nav controller里设置。那么你可能想着用下列代码在nav controller里控制哪个view打竖，哪个view打横。</p>
-
-<pre><code>-(NSUInteger)supportedInterfaceOrientations{  
-    if([[self topViewController] isKindOfClass:[SubSubView class]])  
-        return UIInterfaceOrientationMaskAllButUpsideDown;  
-    else  
-        return UIInterfaceOrientationMaskPortrait;  
-}
-</code></pre>
-
-<p>或者在top-most controller中直接获取顶部的ViewController支持的方向，需要在下面层次的ViewController中都设置支持的方向：</p>
-
-<pre><code>-(NSUInteger)supportedInterfaceOrientations{  
-    return self.topViewController.supportedInterfaceOrientations;
-}
-</code></pre>
-
-<p>这样可以使得在main view 和 first view里无法打横，而second view横竖都行。但问题来了，如果在second view时打横，然后返回到 first view，那么first view是打横显示的！</p>
-
-<p>目前想到的解决方法只能是把second view脱离nav controller，以modal view方式来显示。这样就可以在modal view里设置打横打竖，而在nav controller里设置只打竖。</p>
-
-<p>如果你的app的所有view的orientation的设置是统一的，那么你可以简单的在plist file里设置即可，不用添加上面的代码。而如果你添加了上面的代码，就会覆盖plist里orientation的设置。</p>
-
-<p>参考：</p>
-
-<ul>
-<li><a href="https://developer.apple.com/library/ios/featuredarticles/ViewControllerPGforiPhoneOS/RespondingtoDeviceOrientationChanges/RespondingtoDeviceOrientationChanges.html#//apple_ref/doc/uid/TP40007457-CH7-SW1">苹果官网</a></li>
-<li><a href="http://www.cnblogs.com/smileEvday/archive/2013/04/24/3041407.html">smileEvday</a></li>
-<li><a href="http://blog.csdn.net/jaywon/article/details/8208991">jaywon</a></li>
-</ul>
-
-]]></content>
-  </entry>
+<span class="categories">
   
-  <entry>
-    <title type="html"><![CDATA[iOS中的堆和栈]]></title>
-    <link href="http://jackyzonewen.github.io/blog/2014/04/04/ioszhong-de-dui-he-zhan/"/>
-    <updated>2014-04-04T14:11:00+08:00</updated>
-    <id>http://jackyzonewen.github.io/blog/2014/04/04/ioszhong-de-dui-he-zhan</id>
-    <content type="html"><![CDATA[<p>iOS 内存布局如下图所示：</p>
-
-<p><img src="http://dl.iteye.com/upload/picture/pic/115454/2d89dcdc-0a17-3ac8-afbe-c2782f498cbe.gif" alt="" /></p>
-
-<ul>
-<li><p>在应用程序分配的内存空间里面，最低地址位是固定的代码段和数据段，往上是堆，用来存放全局变量，对于 ObjC 来说，就是alloc出来的变量，都会放进这里，堆不够用的时候就会往上申请空间。最顶部高地址位是栈，局部的基本类型变量都会放进栈里。ObjC的对象都是以指针进行操控的，局部变量的指针都在栈里，全局的变量在堆里，而无论是什么指针，alloc出来的都在堆里，所以alloc出来的变量一定要记得 release。对于 autorelease变量来说，每个函数有一个对应的 autorelease pool，函数出栈的时候pool被销毁，同时调用这个pool里面变量的dealloc函数来实现其内部alloc出来的变量的释放。</p></li>
-<li><p>栈(stack segment)：执行方法时会在栈中创建一个方法栈帧(stack frame)，其中的非对象的局部变量都在栈帧中，方法执行完成返回后，栈帧中的所有局部被清空。栈是后进先出(LIFO)的结构。当函数调用其他的函数时，“stack frame”会被创建；当其他函数退出后，这个“frame ”会自动被破坏。所以如果存在NSStackBlock类型的块，在函数执行完成之后会被销毁。</p></li>
-<li><p>堆(heap segment)：全局和静态变量保存在“heap ”中，直到应用退出。为了访问你创建在heap 中的数据，你最少要求有一个保存在stack 中的指针，因为你的CPU 通过stack 中的指针访问heap 中的数据。你可以认为stack中的一个指针仅仅是一个整型变量，保存了heap 中特定内存地址的数据。简而言之，操作系统使用stack 段中的指针值访问heap 段中的对象。如果stack 对象的指针没有了，则heap 中的对象就不能访问。这也是内存泄露的原因。</p></li>
-<li><p>在iOS操作系统的stack段和heap段中，你都可以创建数据对象。例如：NSString 的对象就是stack中的对象，NSMutableString的对象就是heap中的对象。前者创建时分配的内存长度固定且不可修改；后者是分配内存长度是可变的，可有多个owner, 适用于计数管理内存管理模式。
-两类对象的创建方法也不同，前者直接创建“NSString * str1=@&ldquo;welcome&rdquo;; “，而后者需要先分配再初始化“ NSMutableString * mstr1=[[NSMutableString alloc] initWithString:@&ldquo;welcome&rdquo;]; ”。</p>
-
-<ul>
-<li>stack中对象的优点主要有两点，一是创建速度快，二是管理简单，它有严格的生命周期；stack 对象的缺点是它不灵活，创建时长度是多大就一直是多大，创建时是哪个函数创建的，它的owner 就一直是它。不像heap 对象那样有多个owner，其实多个owner等同于引用计数。只有heap 对象才是采用“引用计数”方法管理它。</li>
-<li>stack对象的创建：只要栈的剩余空间大于stack对象申请创建的空间，操作系统就会为程序提供这段内存空间，否则将报异常提示栈溢出。</li>
-<li>heap 对象的创建：操作系统对于heap段内存是采用链表进行管理。操作系统有一个记录空闲内存地址的链表，当收到程序的申请时，会遍历链表，寻找第一个空间大于所申请的heap节点，然后将该节点从空闲节点链表中删除，并将该节点的空间分配给程序。</li>
-</ul>
-</li>
-<li><p>一般情况下应用程序是不需要考虑堆和栈的大小的，总是当作足够大来使用就能满足一般业务开发。但是事实上堆和栈都不是无上限的，过多的递归会导致栈溢出，过多的 alloc 变量会导致堆溢出。</p></li>
-</ul>
-
-
-<h4>堆和栈的区别</h4>
-
-<p><strong>管理方式：</strong></p>
-
-<ul>
-<li>对于栈来讲，是由编译器自动管理，无需我们手工控制；</li>
-<li>对于堆来说，释放工作由程序员控制，容易产生memory leak。</li>
-</ul>
-
-
-<p><strong>申请大小：</strong></p>
-
-<ul>
-<li>在Windows下,栈是向低地址扩展的数据结构，是一块连续的内存的区域。这句话的意思是栈顶的地址和栈的最大容量是系统预先规定好的，在 WINDOWS下，栈的大小是2M（也有的说是1M，总之是一个编译时就确定的常数），如果申请的空间超过栈的剩余空间时，将提示overflow。因此，能从栈获得的空间较小。</li>
-<li>堆是向高地址扩展的数据结构，是不连续的内存区域。这是由于系统是用链表来存储的空闲内存地址的，自然是不连续的，而链表的遍历方向是由低地址向高地址。堆的大小受限于计算机系统中有效的虚拟内存。由此可见，堆获得的空间比较灵活，也比较大。</li>
-</ul>
-
-
-<p><strong>碎片问题：</strong></p>
-
-<ul>
-<li>对于栈来讲，则不会存在这个问题，因为栈是先进后出的队列，他们是如此的一一对应，以至于永远都不可能有一个内存块从栈中间弹出</li>
-<li>对于堆来讲，频繁的new/delete势必会造成内存空间的不连续，从而造成大量的碎片，使程序效率降低。</li>
-</ul>
-
-
-<p><strong>分配方式：</strong></p>
-
-<ul>
-<li>堆都是动态分配的，没有静态分配的堆。</li>
-<li>栈有2种分配方式：静态分配和动态分配。静态分配是编译器完成的，比如局部变量的分配。动态分配由alloca函数进行分配，但是栈的动态分配和堆是不同的，他的动态分配是由编译器进行释放，无需我们手工实现。</li>
-</ul>
-
-
-<p><strong>分配效率：</strong></p>
-
-<ul>
-<li>栈是机器系统提供的数据结构，计算机会在底层对栈提供支持：分配专门的寄存器存放栈的地址，压栈出栈都有专门的指令执行，这就决定了栈的效率比较高。</li>
-<li>堆则是C/C++函数库提供的，它的机制是很复杂的。</li>
-</ul>
-
-]]></content>
-  </entry>
+    <a class='category' href='/blog/categories/ios/'>iOS</a>
   
-  <entry>
-    <title type="html"><![CDATA[Objective-C 对象模型及应用]]></title>
-    <link href="http://jackyzonewen.github.io/blog/2014/04/03/objective-c-dui-xiang-mo-xing-ji-ying-yong/"/>
-    <updated>2014-04-03T21:37:00+08:00</updated>
-    <id>http://jackyzonewen.github.io/blog/2014/04/03/objective-c-dui-xiang-mo-xing-ji-ying-yong</id>
-    <content type="html"><![CDATA[<p>Objective-C的运行时runtime开源的，源码可以到<a href="http://www.opensource.apple.com/tarballs/objc4/">苹果官网</a>下载，在objc4-532.2以后，苹果把NSObject的实现也开源了。</p>
-
-<h5>isa指针</h5>
-
-<p>Objective-C是一门面向对象的编程语言。每一个对象都是一个类的实例。在Objective-C语言的内部，每一个对象都有一个名为isa的指针，指向该对象的类。每一个类描述了一系列它的实例的特点，包括成员变量的列表，成员函数的列表等。每一个对象都可以接受消息，而对象能够接收的消息列表是保存在它所对应的类中。</p>
-
-<p>id和Class类型的声明：</p>
-
-<pre><code>struct objc_class {
-    struct objc_class *isa;
-};
-struct objc_object {
-    struct objc_class *isa;
-};
-
-typedef struct objc_class *Class; //类  (class object)
-typedef struct objc_object *id;   //对象 (instance of class)
-
-// NSObject的声明
-@interface NSObject &lt;NSObject&gt; {
-    Class isa  OBJC_ISA_AVAILABILITY;
-}
-</code></pre>
-
-<ol>
-<li>在objc中id代表了一个对象，类似于(void *)，凡是首地址是isa的struct指针，都可以被认为是objc中的对象，运行时可以通过isa指针，查找到该对象是属于什么类(Class)。</li>
-<li>在objc中每一个类实际上也是一个对象。每一个类也有一个名为isa的指针。每一个类也可以接受消息，例如[NSObject alloc]，就是向NSObject这个类发送名为alloc消息。</li>
-<li>因为类也是一个对象，那它也必须是另一个类的实列，这个类就是元类(metaclass)。元类保存了类方法的列表。当一个类方法被调用时，元类会首先查找它本身是否有该类方法的实现，如果没有，则该元类会向它的父类查找该方法，直到一直找到继承链的头。</li>
-<li>元类(metaclass)也是一个对象，那么元类的isa指针又指向哪里呢？为了设计上的完整，所有的元类的isa指针都会指向一个根元类(root metaclass)。根元类(root metaclass)本身的isa指针指向自己，这样就行成了一个闭环。上面提到，一个对象能够接收的消息列表是保存在它所对应的类中的。在实际编程中，我们几乎不会遇到向元类发消息的情况，那它的isa指针在实际上很少用到。不过这么设计保证了面向对象的干净，即所有事物都是对象，都有isa指针。</li>
-<li>类方法的定义是保存在元类(metaclass)中，而方法调用的规则是，如果该类没有一个方法的实现，则向它的父类继续查找。所以，为了保证父类的类方法可以在子类中可以被调用，所以子类的元类会继承父类的元类，换而言之，类对象和元类对象有着同样的继承关系。</li>
-</ol>
-
-
-<p><img src="/images/object-tree.jpeg"></p>
-
-<h5>实例说明</h5>
-
-<p>写一个简单的类NyanCat，并且用C重写一遍，看看编译器在底层到底是如何实现的。</p>
-
-<pre><code>// 有两个实例变量，有一个类方法、一个实例方法
-@interface NyanCat : NSObject {
-    int age;
-    NSString *name;
-}
-- (void)nyan;
-+ (void)nyan;
-@end
-
-@implementation NyanCat
-- (void)nyan1 {
-    printf("instance nyan~");
-}
-+ (void)nyan2 {
-    printf("class nyan~");
-}
-@end
-</code></pre>
-
-<p>使用clang工具重写这个类：</p>
-
-<pre><code>clang -rewrite-objc NyanCat.m
-</code></pre>
-
-<p>对重写后的代码进行整理，包含下面的信息:</p>
-
-<pre><code>//Class的实际结构
-struct _class_t {
-    struct _class_t *isa;        //isa指针
-    struct _class_t *superclass; //父类
-    void *cache;
-    void *vtable;
-    struct _class_ro_t *ro;     //Class包含的信息
-};
-
-//Class包含的信息
-struct _class_ro_t {
-    unsigned int flags;
-    unsigned int instanceStart;
-    unsigned int instanceSize;
-    unsigned int reserved;
-    const unsigned char *ivarLayout;
-    const char *name;                                 //类名
-    const struct _method_list_t *baseMethods;         //方法列表
-    const struct _objc_protocol_list *baseProtocols;  //协议列表
-    const struct _ivar_list_t *ivars;                 //ivar列表
-    const unsigned char *weakIvarLayout;
-    const struct _prop_list_t *properties;            //属性列表
-};
-
- //NyanCat(meta-class)
-struct _class_t OBJC_METACLASS_$_NyanCat  = {
-    .isa        = &amp;OBJC_METACLASS_$_NSObject,
-    .superclass = &amp;OBJC_METACLASS_$_NSObject,
-    .cache      = (void *)&amp;_objc_empty_cache,
-    .vtable     = (void *)&amp;_objc_empty_vtable,
-    .ro         = &amp;_OBJC_METACLASS_RO_$_NyanCat, //包含了类方法等
-};
-
-//NyanCat(Class)
-struct _class_t OBJC_CLASS_$_NyanCat = {
-    .isa        = &amp;OBJC_METACLASS_$_NyanCat,   //此处isa指向meta-class
-    .superclass = &amp;OBJC_CLASS_$_NSObject,
-    .superclass = (void *)&amp;_objc_empty_cache,
-    .vtable     = (void *)&amp;_objc_empty_vtable,
-    .ro         = &amp;_OBJC_CLASS_RO_$_NyanCat,   //包含了实例方法 ivar信息等
-};
-
-typedef struct objc_object NyanCat;   //定义NyanCat类型
-//更详细的不贴代码了..
-</code></pre>
-
-<ul>
-<li>所有NyanCat的实例的isa都指向了NyanCat(Class)。</li>
-<li>NyanCat(Class)是一个全局变量，其中记录了类名、成员变量信息、property信息、protocol信息和实例方法列表等。</li>
-<li>NyanCat(Class)的isa指向了全局变量NyanCat(meta-class)，meta-class里只记录了类名、类方法列表等。</li>
-<li>在_class_t里面，第二个成员是superclass，很明显这个指针指向了它的父类。运行时可以通过isa和superclass获取一个类在继承树上的完整信息。</li>
-</ul>
-
-
-<p>例如：<br/>
-向cat (instance) 发送消息nyan1时，运行时会通过isa指针查找到NyanCat(Class)，这里保存着本类中定义的实例方法的指针。
-向NyanCat(Class)发送消息nyan2时，运行时会通过isa查找到NyanCat(meta-class)，这里保存着本类中定义的类方法的指针。</p>
-
-<p><img src="http://blog.ibireme.com/wp-content/uploads/2013/11/objctree.png" alt="" /></p>
-
-<p>在实现中，Root Class是指NSObject，我们可以从图中看出：</p>
-
-<ol>
-<li>NSObject类包括它的对象实例方法。</li>
-<li>NSObject的元类包括它的类方法，例如alloc方法。</li>
-<li>NSObject的元类继承自NSObject类。</li>
-<li>一个NSObject的类中的方法同时也会被NSObject的子类在查找方法时找到。</li>
-</ol>
-
-
-<p>跟随黑线，可以看到isa的指向，运行时，每个对象的isa都不为空，这样只要是一个id类型的对象，runtime都可以通过访问首地址偏移(isa)来获取该对象的信息了。<br/>
-跟随绿线，可以看到superclass的指向。当运行时在搜寻方法、ivar信息时，如果没有找到信息，则会沿superclass的线查找上去，最终NSObject(根类)的superclass是nil。</p>
-
-<p>为了验证上面的说法，可以敲一下代码看看：</p>
-
-<pre><code>#import "NyanCat.h"
-#import &lt;objc/runtime.h&gt;
-#import &lt;objc/objc.h&gt;
-
-void test() {
-    NyanCat *cat = [[NyanCat alloc] init];
-
-    Class cls = object_getClass(cat); //NyanCat(Class)
-    class_getName(cls);               //"NyanCat"
-    class_isMetaClass(cls);           //NO
-
-    Class meta = object_getClass(cls); //NyanCat(meta-class)
-    class_getName(meta);               //"NyanCat"
-    class_isMetaClass(cls);            //YES
-
-    Class meta_meta = object_getClass(meta); //NSObject(meta-class)
-    class_getName(meta_meta);                //"NSObject"
-    class_isMetaClass(meta_meta);            //YES
-}
-</code></pre>
-
-<hr />
-
-<h5>类的成员变量</h5>
-
-<p>如果把类的实例看成一个C语言的结构体（struct），上面说的isa指针就是这个结构体的第一个成员变量，而类的其它成员变量依次排列在结构体中。排列顺序如下图所示（图片来自《iOS 6 Programming Pushing the Limits》）：
-<img src="http://blog.devtang.com/images/class-member.jpg" alt="" /></p>
-
-<p>为了验证该说法，我们在XCode中新建一个工程，在main.m中运行如下代码：</p>
-
-<pre><code>#import &lt;UIKit/UIKit.h&gt;
-
-@interface Father : NSObject {
-    int _father;
-}
-
-@end
-
-@implementation Father
-
-@end
-
-@interface Child : Father {
-    int _child;
-}
-
-@end
-
-@implementation Child
-
-@end
-
-
-int main(int argc, char * argv[])
-{
-
-  Child * child = [[Child alloc] init];
-  @autoreleasepool {
-      // ...
-  }
-}
-</code></pre>
-
-<p>我们将断点下在 @autoreleasepool 处，然后在Console中输入p *child,则可以看到Xcode输出如下内容，这与我们上面的说法一致。</p>
-
-<pre><code>(lldb) p *child
-(Child) $0 = {
-  (Father) Father = {
-    (NSObject) NSObject = {
-      (Class) isa = Child
-    }
-    (int) _father = 0
-  }
-  (int) _child = 0
-}
-</code></pre>
-
-<hr />
-
-<h5>可变与不可变</h5>
-
-<p>因为对象在内存中的排布可以看成一个结构体，该结构体的大小并不能动态变化。所以无法在运行时动态给对象增加成员变量。</p>
-
-<p>相对的，对象的方法定义都保存在类的可变区域中。Objective-C 2.0并未在头文件中将实现暴露出来，但在Objective-C 1.0中，我们可以看到方法的定义列表是一个名为 methodLists的指针的指针（如下图所示）。通过修改该指针指向的指针的值，就可以实现动态地为某一个类增加成员方法。这也是Category实现的原理。同时也说明了为什么Category只可为对象增加成员方法，却不能增加成员变量。</p>
-
-<p>需要特别说明一下，通过objc_setAssociatedObject 和 objc_getAssociatedObject方法可以变相地给对象增加成员变量，但由于实现机制不一样，所以并不是真正改变了对象的内存结构。</p>
-
-<p>除了对象的方法可以动态修改，因为isa本身也只是一个指针，所以我们也可以在运行时动态地修改isa指针的值，达到替换对象整个行为的目的。不过该应用场景较少。</p>
-
-<hr />
-
-<h5>系统相关API及应用</h5>
-
-<p><strong>isa swizzling的应用</strong></p>
-
-<p>系统提供的KVO的实现，就利用了动态地修改isa指针的值的技术。在<a href="https://developer.apple.com/library/ios/documentation/cocoa/conceptual/KeyValueObserving/Articles/KVOImplementation.html">苹果的文档</a>中可以看到如下描述：</p>
-
-<blockquote><p>Key-Value Observing Implementation Details</p>
-
-<p>Automatic key-value observing is implemented using a technique called
-isa-swizzling.</p>
-
-<p>The isa pointer, as the name suggests, points to the object’s class
-which maintains a dispatch table. This dispatch table essentially
-contains pointers to the methods the class implements, among other
-data.</p>
-
-<p>When an observer is registered for an attribute of an object the isa
-pointer of the observed object is modified, pointing to an
-intermediate class rather than at the true class. As a result the
-value of the isa pointer does not necessarily reflect the actual class
-of the instance.</p>
-
-<p>You should never rely on the isa pointer to determine class
-membership. Instead, you should use the class method to determine the
-class of an object instance.</p></blockquote>
-
-<p>KVO的内部实现，请看<a href="http://www.cocoachina.com/applenews/devnews/2014/0107/7667.html">这里</a></p>
-
-<p><strong>Method Swizzling API说明</strong></p>
-
-<p>Objective-C提供了以下API来动态替换类方法或实例方法的实现：</p>
-
-<ul>
-<li>class_replaceMethod 替换类方法的定义</li>
-<li>method_exchangeImplementations 交换2个方法的实现</li>
-<li>method_setImplementation 设置1个方法的实现</li>
-</ul>
-
-
-<p>这3个方法有一些细微的差别，给大家介绍如下：</p>
-
-<ul>
-<li>class_replaceMethod在苹果的文档（如下图所示）中能看到，它有两种不同的行为。当类中没有想替换的原方法时，该方法会调用class_addMethod来为该类增加一个新方法，也因为如此，class_replaceMethod在调用时需要传入types参数，而method_exchangeImplementations和method_setImplementation却不需要。</li>
-</ul>
-
-
-<p><img src="http://blog.devtang.com/images/class-replace-method.jpg" alt="" /></p>
-
-<ul>
-<li>method_exchangeImplementations 的内部实现其实是调用了2次method_setImplementation方法，从苹果的文档中能清晰地了解到（如下图所示）</li>
-</ul>
-
-
-<p><img src="http://blog.devtang.com/images/class-method-exchange-imp.jpg" alt="" /></p>
-
-<p>从以上的区别我们可以总结出这3个API的使用场景:</p>
-
-<ul>
-<li>class_replaceMethod, 当需要替换的方法可能有不存在的情况时，可以考虑使用该方法。</li>
-<li>method_exchangeImplementations，当需要交换2个方法的实现时使用。</li>
-<li>method_setImplementation 最简单的用法，当仅仅需要为一个方法设置其实现方式时使用。</li>
-</ul>
-
-
-<p>使用示例</p>
-
-<p>iOS6.0.2系统下，系统提供的UIImagePickerController在iPad横屏下有转屏的Bug，造成其方向错误。具体的Bug详情可以见<a href="http://stackoverflow.com/questions/12522491/crash-on-presenting-uiimagepickercontroller-under-ios-6-0">这里</a>。</p>
-
-<p>为了修复该Bug，我们需要替换UIImagePickerController的如下2个方法</p>
-
-<pre><code>- (BOOL)shouldAutorotate;
-- (UIInterfaceOrientation)preferredInterfaceOrientationForPresentation;
-</code></pre>
-
-<p>我们先实现了一个名为ImagePickerReplaceMethodsHolder的类，用于定义替换后的方法和实现。如下所示：</p>
-
-<pre><code>// ImagePickerReplaceMethodsHolder.h
-@interface ImagePickerReplaceMethodsHolder : NSObject
-
-- (BOOL)shouldAutorotate;
-- (UIInterfaceOrientation)preferredInterfaceOrientationForPresentation;
-
-@end
-
-// ImagePickerReplaceMethodsHolder.m
-@implementation ImagePickerReplaceMethodsHolder
-
-- (BOOL)shouldAutorotate {
-    return NO;
-}
-
-- (UIInterfaceOrientation)preferredInterfaceOrientationForPresentation {
-    return UIInterfaceOrientationPortrait;
-}
-
-
-@end
-</code></pre>
-
-<p>然后，我们在调用处，判断当前的iOS版本，对于[iOS6.0, iOS6.1)之间的版本，我们将UIImagePickerController的有问题的方法替换。具体代码如下：</p>
-
-<pre><code>#define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
-#define SYSTEM_VERSION_LESS_THAN(v)                 ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedAscending)
-
-+ (void)load {
-    static dispatch_once_t onceToken;
-    dispatch_once(&amp;onceToken, ^{
-        [self hackForImagePicker];
-    });
-}
-
-+ (void)hackForImagePicker {
-    // fix bug of image picker under iOS 6.0
-    // http://stackoverflow.com/questions/12522491/crash-on-presenting-uiimagepickercontroller-under-ios-6-0
-    if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"6.0")
-        &amp;&amp; SYSTEM_VERSION_LESS_THAN(@"6.1")) {
-        Method oldMethod1 = class_getInstanceMethod([UIImagePickerController class], @selector(shouldAutorotate));
-        Method newMethod1 = class_getInstanceMethod([ImagePickerReplaceMethodsHolder class], @selector(shouldAutorotate));
-        method_setImplementation(oldMethod1, method_getImplementation(newMethod1));
-
-        Method oldMethod2 = class_getInstanceMethod([UIImagePickerController class], @selector(preferredInterfaceOrientationForPresentation));
-        Method newMethod2 = class_getInstanceMethod([ImagePickerReplaceMethodsHolder class], @selector(preferredInterfaceOrientationForPresentation));
-        method_setImplementation(oldMethod2, method_getImplementation(newMethod2));
-    }
-}
-</code></pre>
-
-<p>通过如上代码，我们就针对iOS特定版本的有问题的系统库函数打了Patch，使问题得到解决。</p>
-
-<hr />
-
-<h5>开源界的使用</h5>
-
-<p>有少量不明真相的同学以为苹果在审核时会拒绝App使用以上API，这其实是对苹果的误解。使用如上API是安全的。另外，开源界也对以上方法都适当的使用。例如：</p>
-
-<ul>
-<li>著名的网络库<a href="https://github.com/AFNetworking/AFNetworking">AFNetworking</a>。AFNetworking网络库(v1.x版本)使用了class_replaceMethod方法（AFHTTPRequestOperation.m文件第105行）</li>
-<li>Nimbus。Nimbus是著名的工具类库，它在其core模块中提供了NIRuntimeClassModifications.h文件，用于提供上述API的封装。</li>
-<li>国内的大众点评iOS客户端。该客户端使用了他们自己开发的基于Wax修改而来的WaxPatch，WaxPatch可以实现通过服务器更新来动态修改客户端的逻辑。而WaxPatch主要是修改了wax中的wax_instance.m文件，在其中加入了class_replaceMethod来替换原始实现，从而实现修改客户端的原有行为。</li>
-</ul>
-
-
-<hr />
-
-<p>文章转自<a href="http://blog.devtang.com/blog/2013/10/15/objective-c-object-model/">唐巧的技术博客</a>&amp;&amp;<a href="http://blog.ibireme.com/2013/11/25/objc-object/">ibireme</a></p>
-]]></content>
-  </entry>
+</span>
+
+
+    </p>
+    <p class="meta">
+      原创&amp;整理的文章，版权声明:自由转载-非商用&amp;衍生-保持署名
+    </p>
+    
+      <div class="sharing">
   
-</feed>
+  
+  
+  
+     <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style_32x32">
+	<a class="jiathis_button_qzone"></a>
+	<a class="jiathis_button_tsina"></a>
+	<a class="jiathis_button_tqq"></a>
+	<a class="jiathis_button_weixin"></a>
+	<a class="jiathis_button_renren"></a>
+	<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	<a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+<!-- UY BEGIN -->
+<div id="uyan_frame"></div>
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js"></script>
+<!-- UY END -->
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2014/05/10/at-ioszhong-mao-dian-anchorpointli-jie/" title="Previous Post: iOS中锚点anchorPoint理解">&laquo; iOS中锚点anchorPoint理解</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/05/30/ioszhong-duo-xian-cheng-xiang-guan/">iOS中多线程相关</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/05/10/at-ioszhong-mao-dian-anchorpointli-jie/">iOS中锚点anchorPoint理解</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/04/09/iosping-mu-xuan-zhuan/">iOS屏幕旋转</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/04/04/ioszhong-de-dui-he-zhan/">iOS中的堆和栈</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/04/03/objective-c-dui-xiang-mo-xing-ji-ying-yong/">Objective-C 对象模型及应用</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+<section>  
+  <h1>Categories</h1>  
+  <ul id="categories">  
+    <li class='category'><a href='/blog/categories/ios/'>iOS (6)</a></li>
+<li class='category'><a href='/blog/categories/other/'>other (4)</a></li>
+  
+  </ul>  
+</section>  <section>  
+  <h1>Tags</h1>  
+  <ul class="tag-cloud">  
+    <a style="font-size: 90%" href="/tags/git/">Git</a>
+<a style="font-size: 210%" href="/tags/github/">Github</a>
+<a style="font-size: 90%" href="/tags/octopress/">OctoPress</a>
+<a style="font-size: 90%" href="/tags/orientation/">Orientation</a>
+<a style="font-size: 90%" href="/tags/svn/">SVN</a>
+<a style="font-size: 90%" href="/tags/block/">block</a>
+<a style="font-size: 90%" href="/tags/heap/">heap</a>
+<a style="font-size: 90%" href="/tags/markdown/">markdown</a>
+<a style="font-size: 90%" href="/tags/object/">object</a>
+<a style="font-size: 90%" href="/tags/ruby/">ruby</a>
+<a style="font-size: 90%" href="/tags/runtime/">runtime</a>
+<a style="font-size: 90%" href="/tags/stack/">stack</a>
+<a style="font-size: 90%" href="/tags/swizzling/">swizzling</a>
+  
+  </ul>  
+</section>  
+<section>  
+<h1>Visitor</h1>  
+<div>  
+    <p></p>  
+    <center>  
+    <a href="http://info.flagcounter.com/3pF8"><img src="http://s08.flagcounter.com/count/3pF8/bg_FFFFFF/txt_000000/border_CCCCCC/columns_3/maxflags_12/viewers_3/labels_0/pageviews_1/flags_0/" alt="Flag Counter" border="0"></a>  
+    </center>  
+</div>  
+</section>  
+  
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - jackyzonewen -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

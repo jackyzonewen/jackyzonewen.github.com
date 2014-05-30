@@ -9,10 +9,7 @@
   <meta name="author" content="jackyzonewen">
 
   
-  <meta name="description" content="屏幕旋转背后做了什么？ 先来看一段简单的代码： // iOS5以前支持
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
-{ return YES;
-} // &hellip;">
+  <meta name="description" content="简介 线程，有时被称为轻量级进程(Lightweight Process，LWP），是程序执行流的最小单元。一个标准的线程由线程ID，当前指令指针(PC），寄存器集合和堆栈组成。另外，线程是进程中的一个实体，是被系统独立调度和分派的基本单位，线程自己不拥有系统资源， &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -80,6 +77,1011 @@ $(document).bind('DOMNodeInserted', function(event) {
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/05/30/ioszhong-duo-xian-cheng-xiang-guan/">iOS中多线程相关</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-05-30T17:25:00+08:00" pubdate data-updated="true">May 30<span>th</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>简介</h2>
+
+<blockquote><p>线程，有时被称为轻量级进程(Lightweight Process，LWP），是程序执行流的最小单元。一个标准的线程由线程ID，当前指令指针(PC），寄存器集合和堆栈组成。另外，线程是进程中的一个实体，是被系统独立调度和分派的基本单位，线程自己不拥有系统资源，只拥有一点儿在运行中必不可少的资源，但它可与同属一个进程的其它线程共享进程所拥有的全部资源。一个线程可以创建和撤消另一个线程，同一进程中的多个线程之间可以并发执行。由于线程之间的相互制约，致使线程在运行中呈现出间断性。线程也有就绪、阻塞和运行三种基本状态。每一个程序都至少有一个线程，若程序只有一个线程，那就是程序本身。</p>
+
+<p>并发的概念，就是说同时运行多个任务，如果在单核的CPU上面是通过分时（共享CPU时间片）的形式同时运行，在多核CPU是以真正的并行方式来运行的。</p></blockquote>
+
+<p>苹果为iOS和OSX提供了相同的并发编程API，包括以下技术：pThread、NSThread、GCD、NSOperationQueue，这几种编程方式从左到右，抽象层次从低到高，高层的API是基于底层API的，所以实际开发的过程中，应该尽可能的使用高层API，会为我们省很多事。NSRunLoop(实际它不能真正并行)也可以实现异步执行的功能。</p>
+
+<hr />
+
+<h2>pThread</h2>
+
+<blockquote><p><a href="http://baike.baidu.com/view/974776.htm?fr=aladdin">POSIX线程</a>（POSIX threads），简称Pthreads，是线程的POSIX标准。该标准定义了创建和操纵线程的一整套API。在类Unix操作系统（Unix、Linux、Mac OS X等）中，都使用Pthreads作为操作系统的线程。Windows操作系统也有其移植版pthreads-win32。</p></blockquote>
+
+<p>直接Pass了，开发中还是没必要使用这个。</p>
+
+<hr />
+
+<h2>NSThread</h2>
+
+<p>NSThread是Objective-C对pThread的封装，一般我们iOS开发中也很少直接使用到它，因为需要我们自己来管理线程的声明周期，线程同步等问题，而且线程的创建是需要开销的，每个线程会消耗一定的内存和内核资源。直接使用线程可能引发这样的问题，线程的数量以指数级增长，比如在8核CPU中，创建8个线程可以完全发挥CPU的性能，然而线程中所调用的框架代码中也可能做了同样的事情，这样就很快产生了成百上千个线程。</p>
+
+<p>产生线程的方式可以分为两类，一类是显式调用；另一类则是隐式调用。</p>
+
+<h4>一.显式调用</h4>
+
+<p>显示调用的类就是我们说的NSThread，构建一个NSThread线程对象可以通过两种方式：</p>
+
+<p>1 .初始化线程方法：</p>
+
+<pre><code>[NSThread detachNewThreadSelector:@selector(myThreadMainMethod:) toTarget:self withObject:nil];
+或者
+NSThread* myThread = [[NSThread alloc] initWithTarget:self
+                                    selector:@selector(myThreadMainMethod:)
+                                    object:nil];
+[myThread start];  // Actually create the thread
+</code></pre>
+
+<p>2 .自定义NSThread的子类，然后实现main方法</p>
+
+<pre><code>MyThread *myThread = [[MyThread all] init];
+[myThread start];
+</code></pre>
+
+<p>NSThread没有提供终止线程的API，可以通过cancel标识提前退出线程来实现取消功能；类方法exit是用于立即结束当前线程，无法保证当前行线程对于资源的释放，所以是不安全的，不建议使用。</p>
+
+<pre><code>- (void)main
+{
+    // thread init
+     while (![[NSThread currentThread] isCancelled])
+    {
+        // thread loop
+        [NSThread sleepForTimeInterval:1.0]; //等同于sleep(1);
+    }
+    // release resources of thread
+}
+
+// 这样可以通过[myThread cancel];来终止线程运行
+</code></pre>
+
+<h4>二.隐式调用</h4>
+
+<p>通过NSObject的Category提供的方法可以实现线程的调用：</p>
+
+<pre><code>// 在主线程中运行方法，wait表示是否阻塞这个方法的调用，如果为YES则等待主线程中运行方法结束，通常在子线程中调用这个方法来更新UI
+- (void)performSelectorOnMainThread:(SEL)aSelector withObject:(id)arg waitUntilDone:(BOOL)wait; 
+
+// 在指定线程中执行，但该线程必须具备run loop，通常用于多线程之间通信
+- (void)performSelector:(SEL)aSelector onThread:(NSThread *)thr withObject:(id)arg waitUntilDone:(BOOL)wait; 
+
+// 隐含产生新线程
+- (void)performSelectorInBackground:(SEL)aSelector withObject:(id)arg; 
+</code></pre>
+
+<h4>三、NSThread的其它一些常用的方法</h4>
+
+<p>创建的线程是非关联线程（detached thread），即父线程和子线程没有执行依赖关系，父线程结束并不意味子线程结束。</p>
+
+<pre><code>+ (NSThread *)currentThread; //获得当前线程
+
++ (void)sleepForTimeInterval:(NSTimeInterval)ti; //线程休眠
+
++ (NSThread *)mainThread; //主线程，亦即UI线程了
+
+- (BOOL)isMainThread; + (BOOL)isMainThread; //当前线程是否主线程
+
+- (BOOL)isExecuting; //线程是否正在运行
+
+- (BOOL)isFinished; //线程是否已结束
+</code></pre>
+
+<h4>四、一些非线程调用实现类似于线程后台运行的效果（NSObject的Category方法）</h4>
+
+<p>需要知道的是它们运行当前线程，注意它们会阻塞当前线程(包括UI线程);背后都是run loop在处理这些异步任务。</p>
+
+<pre><code>- (id)performSelector:(SEL)aSelector;
+- (id)performSelector:(SEL)aSelector withObject:(id)object;
+- (id)performSelector:(SEL)aSelector withObject:(id)object1 withObject:(id)object2;
+
+// 调用在当前线程延迟执行，如果当前线程没有显式使用NSRunLoop或已退出就无法执行了，需要注意这点：
+- (void)performSelector:(SEL)aSelector withObject:(id)anArgument afterDelay:(NSTimeInterval)delay inModes:(NSArray *)modes;
+- (void)performSelector:(SEL)aSelector withObject:(id)anArgument afterDelay:(NSTimeInterval)delay;
+
+// 调用以下API终止其运行
++ (void)cancelPreviousPerformRequestsWithTarget:(id)aTarget selector:(SEL)aSelector object:(id)anArgument;
++ (void)cancelPreviousPerformRequestsWithTarget:(id)aTarget;
+</code></pre>
+
+<h4>五、同步</h4>
+
+<p>说到线程，肯定想到的问题就是线程同步问题，根源就是在多个线程中访问共享资源，资源可以是一个属性，一个对象，通用设备，网络设备或一个文件等，那就需要一种机制来确保多线程访问共享资源不出问题，一个基本的解决方法就是使用琐。iOS中提供了多种琐同步的类和方法：</p>
+
+<p>1 .使用NSLock：最基本的同步锁，使用lock来加锁，unlock来解锁。如果其它线程已经使用lock，那么lock方法会阻塞当前线程，直到其它线程unlock解锁为止。一般用于简单的同步算法，例如生产者线程产生数据(product)，消费者线程显示数据(consume),可以如下实现：</p>
+
+<pre><code>- (void)produce
+{
+　　while (1)
+　　{
+　　　　[theLock lock];
+　　　　// create data
+　　　　[theLock unlock];
+　　}
+}
+
+- (void)consume
+{
+　　while (1)
+　　{
+　　　　if ([theLock tryLock])
+　　　　{
+　　　　　　// display data
+　　　　　　[theLock unlock];
+　　　　}
+　　　　sleep(1.0); //sleep a while
+　　}
+}
+
+// NSLock的tryLock方法可以避免阻塞当前线程，如果不能获得锁则返回NO。也可使用以下方法设置超时返回时间：
+- (BOOL)lockBeforeDate:(NSDate *)limit;
+</code></pre>
+
+<p>2 .NSConditionLock，即条件锁，可以设置自定义的条件来获得锁。比如上面的例子可以这样改用条件锁实现：</p>
+
+<pre><code>- (void)produce
+{
+　　while (1)
+　　{
+　　　　[theLock lockWhenCondition:NO_DATA];
+　　　　// create data
+　　　　[theLock unlockWithCondition:HAS_DATA];
+　　}
+}
+
+- (void)consume
+{
+　　while (1)
+　　{
+　　　　if ([theLock tryLockWhenCondition:HAS_DATA])
+　　　　{
+　　　　　　// display data
+　　　　　　[theLock unlockWithCondition:NO_DATA];
+　　　　}
+　　　　sleep(1.0); //sleep a while
+　　}
+}
+</code></pre>
+
+<p>3 . NSCondition：条件（一种信号量），类似Java中的Condition，但有所不同的是NSCondition是锁和条件的组合实现。wait方法用于线程的等待（相当于Java Condition的await())，然后通过signal方法通知等待线程（相当于Java Condition的signal())，或者broadcast通知所有等待的线程相当于Java Condition的signalAll())。一个简单生产消费同步例子：</p>
+
+<pre><code>- (void)produce
+{
+　　[theLock lock];
+　　// create data
+　　hasData = YES;
+　　[theLock signal]; //这时通知调用wait的线程结束等待并返回
+　　[theLock unlock];
+}
+
+- (void)consume
+{
+　　[theLock lock];
+　　while (!hasData)
+　　　　[theLock wait]; //注意：这时其它线程的lock调用会成功返回
+　　//display data
+　　hasData = NO;
+　　[theLock unlock];
+}
+</code></pre>
+
+<p>4 . NSRecursiveLock：递归锁，顾名思义一般用于递归程序。它可以让同一线程多次获得锁，解锁次数也必须相同，然后锁才能被其它线程获得。看下官网文档中的简单例子就能明白：</p>
+
+<pre><code>void MyRecursiveFunction(int value) 
+{ 
+　　[theLock lock]; 
+　　if (value != 0) 
+　　{ 
+　　　　--value; 
+　　　　MyRecursiveFunction(value); 
+　　}
+　　[theLock unlock];
+}
+
+// 当然不只用于递归程序，类似Java中的ReentrantLock。
+</code></pre>
+
+<p>5 . @synchronized实现对象锁，类似Java中synchronized关键词，属性关键字auto。</p>
+
+<pre><code>@synchronized(anObj) 
+{ 
+    //......
+} 
+</code></pre>
+
+<p>6 .属性关键字atomic</p>
+
+<hr />
+
+<h2>GCD</h2>
+
+<p>Grand Central Dispatch 简称（GCD）是苹果公司开发的技术，以优化的应用程序支持多核心处理器和其他的对称多处理系统的系统，这建立在任务并行执行的线程池模式的基础上的，它首次发布在Mac OS X 10.6 ，iOS 4及以上也可用。</p>
+
+<p>工作原理是：程序平行排队特定的任务，根据可用的处理资源，安排他们在任何可用的处理器核心上执行任务。一个任务可以是一个函数(function)或者是一个block。 GCD的底层依然是用线程实现，但是开发者不用再直接跟线程打交道了，只需要向队列中添加任务即可，GCD在后端管理着一个线程池。GCD不仅决定着你的代码块将在哪个线程被执行，它还根据可用的系统资源对这些线程进行管理，将开发者从线程管理的工作中解放出来，通过集中的管理线程，来缓解大量线程被创建的问题。</p>
+
+<h4>一、dispatch对象</h4>
+
+<p>dispatch对象类型的部分定义，主要使用C语言的宏定义：</p>
+
+<pre><code>// &lt;os/object.h&gt;文件
+#define OS_OBJECT_CLASS(name) OS_##name
+#define OS_OBJECT_DECL(name, ...) \
+@protocol OS_OBJECT_CLASS(name) __VA_ARGS__ \
+@end \
+typedef NSObject&lt;OS_OBJECT_CLASS(name)&gt; *name##_t
+#define OS_OBJECT_DECL_SUBCLASS(name, super) \
+OS_OBJECT_DECL(name, &lt;OS_OBJECT_CLASS(super)&gt;)
+
+// &lt;dispatch/object.h&gt;文件
+#define DISPATCH_DECL(name) OS_OBJECT_DECL_SUBCLASS(name, dispatch_object)
+#define DISPATCH_GLOBAL_OBJECT(type, object) ((OS_OBJECT_BRIDGE type)&amp;(object))
+OS_OBJECT_DECL(dispatch_object); //定义dispatch_object_t
+
+// &lt;dispatch/queue.h&gt;文件（dispatch队列类定义，其它dispatch对象类似）
+DISPATCH_DECL(dispatch_queue); //定义dispatch_queue_t
+
+// 虽然它们之间没用直接继承关系，但都实现OS_dispatch_object接口，这样dispatch_queue_t对象也同样是dispatch_object_t的对象了,通过Xcode预编译后可以看到最终结果,最终都是NSObject类
+
+@protocol OS_dispatch_object
+@end
+typedef NSObject&lt;OS_dispatch_object&gt; *dispatch_object_t;
+
+@protocol OS_dispatch_queue &lt;OS_dispatch_object&gt;
+@end
+typedef NSObject&lt;OS_dispatch_queue&gt; *dispatch_queue_t;
+</code></pre>
+
+<p>由于dispatch api接口定义成C函数的形式，dispatch的对象都是由C函数形式的厂方法得到（不能继承dispatch类，不用alloc），这样做隐藏dispatch对象的具体形态，把注意力放在如何调用dispatch api上。从上面dispatch对象宏定义可以看到dispatch对象类的名称一般为dispatch_xyz_t(严格来讲是对象指针),它们都可以看成dispatch_object_t的子类（对象指针），所以使用dispatch对象时套用这个概念就行。</p>
+
+<p>有关dispatch对象的基本接口如下：</p>
+
+<pre><code>void dispatch_retain(dispatch_object_t object); //替代dispatch对象常规的retain来持有对象，但ARC编程中不再允许
+
+void dispatch_release(dispatch_object_t object); //替代dispatch对象常规的release来释放对象，同样ARC编程中不再允许
+
+void dispatch_set_context(dispatch_object_t object, void *context); //给dispatch对象绑定特定数据对象（类似线程的TLS数据），会被传给dispatch对象的finalizer函数
+
+void *dispatch_get_context(dispatch_object_t object); //返回dispatch对象绑定的数据对象指针
+
+void dispatch_set_finalizer_f(dispatch_object_t object, dispatch_function_t finalizer); //设置dispatch对象的finalizer函数，当该对象释放时会调用finalizer
+
+/*
+// 部分代码解释如何使用这个函数（ARC模式）
+dispatch_object_t dispatchObject = ...;
+void *context = ...;
+dispatch_set_context(dispatchObject, context);
+dispatch_set_finalizer_f(dispatchObject, finalizer);
+......
+dispatchObject = nil; //dispatchObject被释放，这时调用finalizer函数
+......
+
+void finalizer(void *context)
+{
+　　//处理或释放context相关资源
+}
+*/
+
+
+// dispatch对象的另外两个接口是：这正是理解dispatch对象的关键所在。dispatch对象其实是抽象的任务，把动态的任务变成对象来管理。任务是动态的，不存在继承关系，这就是为什么GCD没有提供静态继承dispatch对象类的方式。如果能这样理解，那么在使用dispatch函数时就能够更灵活地去编写代码，实现各种并发的多任务代码。
+
+void dispatch_resume(dispatch_object_t object); //激活（启动）在dispatch对象上的block调用，可以运行多个block
+
+void dispatch_suspend(dispatch_object_t object); //挂起（暂停）在dispatch对象上的block调用，已经运行的block不会停止一般这两个函数的调用必须成对，否则运行会出现异常。
+</code></pre>
+
+<h4>二、dispatch队列</h4>
+
+<p>GCD编程的核心就是dispatch队列，block的执行最终都会放进某个队列中去进行，它类似NSOperationQueue但更复杂也更强大，并且可以嵌套使用。所以说，结合block实现的GCD，把函数闭包（Closure）的特性发挥得淋漓尽致。<br/>
+GCD 公开有 5 个不同的队列：运行在主线程中的 main queue;三个不同优先级的后台队列，以及一个优先级更低的后台队列（用于 I/O）,由于是系统默认生成的，所以无法调用dispatch_resume()和dispatch_suspend()来控制执行继续或中断。需要注意的是，三个队列不代表三个线程，可能会有更多的线程,并发队列可以根据实际情况来自动产生合理的线程数，dispatch队列实现了一个线程池的管理，对于程序逻辑是透明的。另外，开发者可以创建自定义队列：串行或者并行队列。自定义队列非常强大，在自定义队列中被调度的所有block【最终】都将被放入到系统的【全局队列】中的线程池中：</p>
+
+<p><img src="http://img.objccn.io/issue-2/gcd-queues.png" alt="" /></p>
+
+<p>1 .创建dispatch队列</p>
+
+<pre><code>// 1.生成一个串行队列，队列中的block按照先进先出（FIFO）的顺序去执行，实际上为单线程执行。第一个参数是队列的名称，在调试程序时会非常有用，所有尽量不要重名了。
+dispatch_queue_t queue = dispatch_queue_create("com.dispatch.serial", DISPATCH_QUEUE_SERIAL); 
+
+// 2.生成一个并发执行队列，block被分发到多个线程去执行
+dispatch_queue_t queue = dispatch_queue_create("com.dispatch.concurrent", DISPATCH_QUEUE_CONCURRENT);
+
+// 3.获得程序进程缺省产生的并发队列，第二个参数可设定优先级来选择高、中、低三个优先级队列或者后台DISPATCH_QUEUE_PRIORITY_BACKGROUND
+dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0); 
+
+// 4.获得主线程的dispatch队列，实际是一个串行队列。同样无法控制主线程dispatch队列的执行继续或中断。
+dispatch_queue_t queue = dispatch_get_main_queue(); 
+</code></pre>
+
+<p>2 .执行dispatch</p>
+
+<p>使用dispatch_async或dispatch_sync函数来加载需要运行的block。</p>
+
+<pre><code>// 异步执行block，函数立即返回
+dispatch_async(queue, ^{
+　　// block具体代码
+}); 
+
+// 同步执行block，函数不返回，一直等到block执行完毕。编译器会根据实际情况优化代码，所以有时候你会发现block其实还在当前线程上执行，并没用产生新线程
+dispatch_sync(queue, ^{
+　　// block具体代码
+}); 
+</code></pre>
+
+<p>实际编程经验告诉我们，尽可能避免使用dispatch_sync，嵌套使用时还容易引起程序死锁。如果queue1是一个串行队列的话，这段代码立即产生死锁：</p>
+
+<pre><code>dispatch_sync(queue1, ^{
+    dispatch_sync(queue1, ^{
+　　　　// ......
+　　});
+　　// ......
+});
+
+// 下面这段代码主线程也会死锁
+dispatch_sync(dispatch_get_main_queue(), ^{
+    // ......
+}); 
+</code></pre>
+
+<p>那实际运用中，一般可以用dispatch这样来写，常见的网络请求数据多线程执行模型：</p>
+
+<pre><code>dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+　　// 子线程中开始网络请求数据
+　　// 更新数据模型
+　　dispatch_sync(dispatch_get_main_queue(), ^{
+　　　　// 在主线程中更新UI代码
+　　});
+});
+</code></pre>
+
+<p>dispatch队列是线程安全的，可以利用串行队列实现锁的功能。比如多线程写同一数据库，需要保持写入的顺序和每次写入的完整性，简单地利用串行队列即可实现：</p>
+
+<pre><code>dispatch_queue_t queue1 = dispatch_queue_create("com.dispatch.writedb", DISPATCH_QUEUE_SERIAL);
+
+// 下一次调用writeDB:必须等到上次调用完成后才能进行，保证writeDB:方法是线程安全的。 
+- (void)writeDB:(NSData *)data
+{
+　　dispatch_async(queue1, ^{
+　　　　// write database
+　　});
+} 
+</code></pre>
+
+<p>dispatch队列还实现其它一些常用函数：</p>
+
+<pre><code>// 重复执行block，需要注意的是这个方法是同步返回，也就是说等到所有block执行完毕才返回，如需异步返回则嵌套在dispatch_async中来使用。多个block的运行是否并发或串行执行也依赖queue的是否并发或串行
+void dispatch_apply(size_t iterations, dispatch_queue_t queue, void (^block)(size_t)); 
+
+// 这个函数可以设置同步执行的block，它会等到在它加入队列之前的block执行完毕后，才开始执行。在它之后加入队列的block，则等到这个block执行完毕后才开始执行。
+void dispatch_barrier_async(dispatch_queue_t queue, dispatch_block_t block);  
+
+   //同上，除了它是同步返回函数
+void dispatch_barrier_sync(dispatch_queue_t queue, dispatch_block_t block); 
+
+void dispatch_after(dispatch_time_t when, dispatch_queue_t queue, dispatch_block_t block);     最后再来看看
+</code></pre>
+
+<p>dispatch队列的一个很有特色的函数：</p>
+
+<pre><code>void dispatch_set_target_queue(dispatch_object_t object, dispatch_queue_t queue); 
+
+// 它会把需要执行的任务对象指定到不同的队列中去处理，这个任务对象可以是dispatch队列，也可以是dispatch源（以后博文会介绍）。而且这个过程可以是动态的，可以实现队列的动态调度管理等等。比如说有两个队列dispatchA和dispatchB，这时把dispatchA指派到dispatchB：
+dispatch_set_target_queue(dispatchA, dispatchB); 
+
+// 那么dispatchA上还未运行的block会在dispatchB上运行。这时如果暂停dispatchA运行：
+
+dispatch_suspend(dispatchA);
+
+// 则只会暂停dispatchA上原来的block的执行，dispatchB的block则不受影响。而如果暂停dispatchB的运行，则会暂停dispatchA的运行。这里只简单举个例子，说明dispatch队列运行的灵活性，在实际应用中你会逐步发掘出它的潜力。dispatch队列不支持cancel（取消），没有实现dispatch_cancel()函数，不像NSOperationQueue，不得不说这是个小小的缺憾 
+</code></pre>
+
+<h4>三、dispatch源</h4>
+
+<p>dispatch源（dispatch source）和RunLoop源概念上有些类似的地方，而且使用起来更简单。要很好地理解dispatch源，其实把它看成一种特别的生产消费模式。dispatch源好比生产的数据，当有新数据时，会自动在dispatch指定的队列（即消费队列）上运行相应地block，生产和消费同步是dispatch源会自动管理的。</p>
+
+<p>dispatch源的使用基本为以下步骤：</p>
+
+<pre><code>// 1.创建dispatch源，这里使用加法来合并dispatch源数据，最后一个参数是指定dispatch队列
+dispatch_source_t source = dispatch_source_create(dispatch_source_type, handler, mask, dispatch_queue); 
+
+// 2. 设置响应dispatch源事件的block，在dispatch源指定的队列上运行
+dispatch_source_set_event_handler(source, ^{     　　
+    //可以通过dispatch_source_get_data(source)来得到dispatch源数据
+});
+
+// 3.dispatch源创建后处于suspend状态，所以需要启动dispatch源
+dispatch_resume(source); 
+
+// 4.合并dispatch源数据，在dispatch源的block中，dispatch_source_get_data(source)就会得到value。
+dispatch_source_merge_data(source, value); 
+</code></pre>
+
+<p>比如网络请求数据的模式，就可以这样来写：</p>
+
+<pre><code>dispatch_source_t source = dispatch_source_create(DISPATCH_SOURCE_TYPE_DATA_ADD, 0, 0, dispatch_get_global_queue(0, 0));
+
+dispatch_source_set_event_handler(source, ^{
+    dispatch_sync(dispatch_get_main_queue(), ^{
+　　　　//更新UI
+    });
+});
+
+dispatch_resume(source);
+dispatch_async(dispatch_get_global_queue(0, 0), ^{
+　  // 网络请求
+　  
+    dispatch_source_merge_data(source, 1); //通知队列
+});
+</code></pre>
+
+<p>dispatch源还支持其它一些系统源，包括定时器、监控文件的读写、监控文件系统、监控信号或进程等，基本上调用的方式原理和上面相同，只是有可能是系统自动触发事件，<a href="https://developer.apple.com/library/ios/documentation/General/Conceptual/ConcurrencyProgrammingGuide/GCDWorkQueues/GCDWorkQueues.html#//apple_ref/doc/uid/TP40008091-CH103-SW1">参照官方文档</a>。比如dispatch定时器：</p>
+
+<pre><code>dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, queue);
+dispatch_source_set_timer(timer, dispatch_walltime(NULL, 0), 10*NSEC_PER_SEC, 1*NSEC_PER_SEC); //每10秒触发timer，误差1秒
+dispatch_source_set_event_handler(timer, ^{
+　　//定时处理
+});
+dispatch_resume(timer);
+</code></pre>
+
+<p>dispatch源的其它一些函数如下：</p>
+
+<pre><code>// 得到dispatch源创建，即调用dispatch_source_create的第二个参数
+uintptr_t dispatch_source_get_handle(dispatch_source_t source); 
+
+// 得到dispatch源创建，即调用dispatch_source_create的第三个参数
+unsignedlong dispatch_source_get_mask(dispatch_source_t source); 
+
+// 取消dispatch源的事件处理--即不再调用block。如果调用dispatch_suspend只是暂停dispatch源。
+void dispatch_source_cancel(dispatch_source_t source); 
+
+// 检测是否dispatch源被取消，如果返回非0值则表明dispatch源已经被取消
+long dispatch_source_testcancel(dispatch_source_t source); 
+
+// dispatch源取消时调用的block，一般用于关闭文件或socket等，释放相关资源
+void dispatch_source_set_cancel_handler(dispatch_source_t source, dispatch_block_t cancel_handler); 
+
+// 可用于设置dispatch源启动时调用block，调用完成后即释放这个block。也可在dispatch源运行当中随时调用这个函数
+void dispatch_source_set_registration_handler(dispatch_source_t source, dispatch_block_t registration_handler); 
+</code></pre>
+
+<h4>四、dispatch同步</h4>
+
+<p>GCD提供两种方式支持dispatch队列同步，即dispatch组和信号量。</p>
+
+<p>1 .dispatch组（dispatch group）</p>
+
+<pre><code>// 1.创建dispatch组
+dispatch_group_t group = dispatch_group_create(); 
+
+// 2.启动dispatch队列中的block关联到group中
+dispatch_group_async(group, queue, ^{ 
+　　// 。。。 
+}); 
+
+// 3.等待group关联的block执行完毕，也可以设置超时参数
+dispatch_group_wait(group, DISPATCH_TIME_FOREVER); 
+
+// 4.为group设置通知一个block，当group关联的block执行完毕后，就调用这个block,类似dispatch_barrier_async。
+dispatch_group_notify(group, queue, ^{
+　　// ···· 
+}); 
+
+// 5.手动管理group关联的block的运行状态(或计数)，进入和退出group次数必须匹配
+dispatch_group_enter(group);
+dispatch_group_leave(group);
+</code></pre>
+
+<p>所以下面的两种调用其实是等价的，可以利用dispatch_group_enter、dispatch_group_leave和dispatch_group_wait来实现同步，<a href="http://stackoverflow.com/questions/10643797/wait-until-multiple-operations-executed-including-completion-block-afnetworki/10644282#10644282">具体例子</a>。</p>
+
+<pre><code>// 方式一
+dispatch_group_async(group, queue, ^{ 
+　　// ···
+}); 
+
+// 方式二
+dispatch_group_enter(group);
+dispatch_async(queue, ^{
+　　// ···
+　　dispatch_group_leave(group);
+});
+</code></pre>
+
+<p>2 .dispatch信号量（dispatch semaphore）</p>
+
+<pre><code>// 1.创建信号量，可以设置信号量的资源数。0表示没有资源，调用dispatch_semaphore_wait会立即等待
+dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+
+// 2.等待信号，可以设置超时参数。该函数返回0表示得到通知，非0表示超时。
+dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+
+// 3.通知信号，如果等待线程被唤醒则返回非0，否则返回0。
+dispatch_semaphore_signal(semaphore);
+</code></pre>
+
+<p>生成消费者的例子如何使用dispatch信号量是如何实现同步：</p>
+
+<pre><code>dispatch_semaphore_t sem = dispatch_semaphore_create(0);
+dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{         
+      //消费者队列
+      while (condition) {
+　　　　if (dispatch_semaphore_wait(sem, dispatch_time(DISPATCH_TIME_NOW, 10*NSEC_PER_SEC))) //等待10秒
+　　　　　　continue;
+　　　　//得到数据
+　　}
+});
+
+dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{ 
+      //生产者队列
+      while (condition) {
+ 　　　　if (!dispatch_semaphore_signal(sem))
+　　　{
+　　　　　sleep(1); //wait for a while
+　　　　　continue;
+　　　}
+　　　//通知成功
+　　}
+});
+</code></pre>
+
+<hr />
+
+<h2>NSOperation和NSOperationQueue</h2>
+
+<p>iOS平台提供更高级的并发（异步）调用接口，让你可以集中精力去设计需完成的任务代码，避免去写与程序逻辑无关的线程生成、运行等管理代码。当然实质上是这些接口隐含生成线程和管理线程的运行，从而更加简洁地实现多线程。</p>
+
+<p>NSOperationQueue 有两种不同类型的队列：主队列和自定义队列。主队列运行在主线程之上，而自定义队列在后台执行。</p>
+
+<p>NSOperation实质是封装了需要并发运行的代码，一些主要接口和NSThread基本相同，可以看做没有线程运行能力的thread类的抽象。参考NSThread，NSOperation的一些相同的接口有：</p>
+
+<pre><code>- (void)start; //在当前任务状态和依赖关系合适的情况下，启动NSOperation的main方法任务，需要注意缺省实现只是在当前线程运行。如果需要并发执行，子类必须重写这个方法，并且使 - (BOOL)isConcurrent 方法返回YES
+
+- (void)main; //定义NSOperation的主要任务代码
+
+- (BOOL)isCancelled; //当前任务状态是否已标记为取消
+
+- (void)cancel; //取消当前NSOperation任务，实质是标记isCancelled状态
+
+- (BOOL)isExecuting; //NSOperation任务是否在运行
+
+- (BOOL)isFinished; //NSOperation任务是否已结束
+</code></pre>
+
+<p>NSOperation其它常用方法，包括依赖关系：</p>
+
+<pre><code>- (BOOL)isReady; //是否能准备运行，这个值和任务的依赖关系相关
+
+- (void)addDependency:(NSOperation *)op; //加上任务的依赖，也就是说依赖的任务都完成后，才能执行当前任务
+
+- (void)removeDependency:(NSOperation *)op; //取消任务的依赖，依赖的任务关系不会自动消除，必须调用该方法
+
+- (NSArray *)dependencies; //得到所有依赖的NSOperation任务
+</code></pre>
+
+<p>以及用于任务同步：</p>
+
+<pre><code>- (void)waitUntilFinished; //阻塞当前线程，直到该NSOperation结束。可用于线程执行顺序的同步
+
+- (void)setCompletionBlock:(void (^)(void))block; //设置NSOperation结束后运行的block代码，由于NSOperation有可能被取消，所以这个block运行的代码应该和NSOperation的核心任务无关。
+</code></pre>
+
+<p>你可以通过重写main或者start方法来定义自己的operations。前一种方法非常简单，开发者不需要管理一些状态属性（例如 isExecuting 和 isFinished），当main方法返回的时候，这个operation就结束了。这种方式使用起来非常简单，但是灵活性相对重写 start 来说要少一些。</p>
+
+<pre><code>@implementation YourOperation
+- (void)main
+{
+    // 进行处理 ...
+}
+@end
+</code></pre>
+
+<p>如果你希望拥有更多的控制权，以及在一个操作中可以执行异步任务，那么就重写 start 方法：</p>
+
+<pre><code>@implementation YourOperation
+- (void)start
+{
+    self.isExecuting = YES;
+    self.isFinished = NO;
+    // 开始处理，在结束时应该调用 finished ...
+}
+
+- (void)finished
+{
+    self.isExecuting = NO;
+    self.isFinished = YES;
+}
+@end
+</code></pre>
+
+<p>注意：这种情况下，你必须手动管理操作的状态。 为了让操作队列能够捕获到操作的改变，需要将状态的属性以配合 KVO 的方式进行实现。如果你不使用它们默认的 setter 来进行设置的话，你就需要在合适的时候发送合适的 KVO 消息。</p>
+
+<p>为了能使用操作队列所提供的取消功能，你需要在长时间操作中时不时地检查 isCancelled 属性：</p>
+
+<pre><code>- (void)main
+{
+    while (notDone &amp;&amp; !self.isCancelled) {
+        // 进行处理
+    }
+}
+</code></pre>
+
+<p>除了继承NSOperation来实现并发代码，通常更简便的办法是使用它的两个子类NSInvocationOperation或NSBlockOperation，然后加入到NSOperationQueue执行队列中去运行。部分示例代码如下：</p>
+
+<pre><code>NSInvocationOperation *opA = [[NSInvocationOperationalloc] initWithTarget:self selector:@selector(operate) object:nil];
+
+NSBlockOperation *opB = [NSBlockOperation blockOperationWithBlock:^{
+    [self operate];
+}];
+
+- (void)operate
+{
+　　//thread loop
+　　while (condition)
+　　{
+　　　　//....
+　　}
+}
+
+NSOperationQueue *queue = [[NSOperationQueuealloc] init];
+//设置最大并发执行数，如果为1则同时只有一个并发任务在运行，可控制顺序执行关系
+queue.maxConcurrentOperationCount = 2; 
+[queue addOperation:opA]; //加入到执行队列中，如果isReady则开始执行
+[queue addOperation:opB]; //同上，需要注意这时opA和opB是在并发运行
+[queue waitUntilAllOperationsAreFinished]; //当前线程等待，直到opA和opB都执行结束
+如果要求opB在opA执行完成后才开始执行，需要加上依赖关系即可：
+[opB addDependency:opA];
+
+// 当然也可以使用同步方法waitUntilFinished，在前面的例子中加入：
+NSBlockOperation *opB = [NSBlockOperation blockOperationWithBlock:^{
+　　[opA waitUntilFinished]; //opB线程等待直到opA执行结束（正常结束或被取消）
+    [self operate];
+}];
+
+// 注:建立依赖关系或等待关系，一定要出现避免循环依赖或循环等待，否则就会造成线程死锁。
+</code></pre>
+
+<p>在主队列中调度一个一次性任务：</p>
+
+<pre><code>[[NSOperationQueue mainQueue] addOperationWithBlock:^{
+    // 代码...
+}];
+</code></pre>
+
+<p>NSOperationQueue的其它常用方法：</p>
+
+<pre><code>- (void)addOperations:(NSArray *)ops waitUntilFinished:(BOOL)wait; //批量加入执行operation，wait标志是否当前线程等待所有operation结束后，才返回
+
+- (void)addOperationWithBlock:(void (^)(void))block; //相当于加入一个NSBlockOperation执行任务
+
+- (NSArray *)operations; //返回已加入执行operation的数组，当某个operation结束后会自动从这个数组清除
+
+- (NSUInteger)operationCount //返回已加入执行operation的数目
+
+- (void)setSuspended:(BOOL)b; //是否暂停将要执行的operation，但不会暂停已开始的operation
+
+- (BOOL)isSuspended; //返回暂停标志
+
+- (void)cancelAllOperations; //取消所有operation的执行，实质是调用各个operation的cancel方法
+
++ (id)currentQueue; //返回当前NSOperationQueue，如果当前线程不是在NSOperationQueue上运行则返回nil
+
++ (id)mainQueue; //返回主线程的NSOperationQueue，缺省总是有一个queue
+</code></pre>
+
+<h2>NSRoonLoop</h2>
+
+<p>Run loop并不像GCD或者操作队列那样是一种并发机制，因为它并不能并行执行任务。不过在主dispatch/operation队列中，run loop 将直接配合任务的执行，它提供了一种异步执行代码的机制。一个runloop总是绑定到某个特定的线程中,main run loop是与主线程相关的，在每一个 Cocoa 和 CocoaTouch 程序中，main run loop都扮演了一个核心角色，它负责处理 UI 事件、计时器，以及其它内核相关事件。例如：计时器、NSURLConnection或者调用performSelector:withObject:afterDelay:,其实背后都是run loop在处理这些异步任务。</p>
+
+<p>NSRunLoop几个常用的方法：</p>
+
+<pre><code>+ (NSRunLoop *)currentRunLoop; //获得当前线程的run loop
+
++ (NSRunLoop *)mainRunLoop; //获得主线程的run loop
+
+- (void)run; //进入处理事件循环，如果没有事件则立刻返回。注意：主线程上调用这个方法会导致无法返回（进入无限循环，虽然不会阻塞主线程），因为主线程一般总是会有事件处理。
+
+- (void)runUntilDate:(NSDate *)limitDate; //同run方法，增加超时参数limitDate，避免进入无限循环。使用在UI线程（亦即主线程）上，可以达到暂停的效果。
+
+- (BOOL)runMode:(NSString *)mode beforeDate:(NSDate *)limitDate; //等待消息处理，好比在PC终端窗口上等待键盘输入。一旦有合适事件（mode相当于定义了事件的类型）被处理了，则立刻返回；类同run方法，如果没有事件处理也立刻返回；有否事件处理由返回布尔值判断。同样limitDate为超时参数。
+
+- (void)acceptInputForMode:(NSString *)mode beforeDate:(NSDate *)limitDate; //似乎和runMode:差不多（测试过是这种结果，但确定是否有其它特殊情况下的不同），没有BOOL返回值。
+</code></pre>
+
+<p>官网文档也提到run和runUntilDate:会以NSDefaultRunLoopMode参数调用runMode:来处理事件。当app运行后，iOS系统已经帮助主线程启动一个run loop，而一般线程则需要手动来启动run loop。使用run loop的一个好处就是避免线程轮询的开销，run loop在无事件处理时可以自动进入睡眠状态，降低CPU的能耗。比如一般线程轮询的方式为：</p>
+
+<pre><code>while (condition)
+{
+　　// waiting for new data
+　　sleep(1);
+　　// process current data
+}
+</code></pre>
+
+<p>其实这种方式是很能消耗CPU时间片的，如果在UI线程中这样使用还会阻塞UI响应。而改用NSRunLoop来实现，则可大大改善线程的执行效率，而且不会阻塞UI（很神奇，呵呵。有点像javascript，用单线程实现多线程的效果）。上面的例子可以改为：</p>
+
+<pre><code>while (condition)
+{
+　　// waiting for new data
+　　if ([[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]])
+　　{
+　　　　// process current data
+　　}
+}
+</code></pre>
+
+<p>接下来我们看看具体的例子，包括如何实现线程执行的关联同步（join），以及UI线程run loop的一般使用技巧等。假设有个线程A，它会启动线程B，然后等待B线程的结束。NSThread是没有join的方法，用run loop方式实现就比较精巧。</p>
+
+<pre><code>NSThread *A; //global
+A = [[NSThread alloc] initWithTarget:self selector:@selector(runA) object:nil]; //生成线程A
+[A start]; //启动线程A
+
+- (void)runA
+{
+　　[NSThread detachNewThreadSelector:@selector(runB) toTarget:self withObject:nil]; //生成线程B
+　　while (1)
+　　{
+　　　　if ([[NSRunLoop currentRunLoop] runMode:@"CustomRunLoopMode" beforeDate:[NSDate distantFuture]]) //相当于join
+　　　　{
+　　　　　　NSLog(@"线程B结束");
+　　　　　　break;
+　　　　}
+　　}
+}
+
+- (void)runB
+{
+　　sleep(1);
+　　[self performSelector:@selector(setData) onThread:A withObject:nil waitUntilDone:YES modes:@[@"CustomRunLoopMode"]];
+}
+</code></pre>
+
+<p>实际运行时，过1秒后线程A也会自动结束。这里用到自定义的mode，一般在UI线程上调用run loop会使用缺省的mode。结合while循环，UI线程就可以实现子线程的同步运行。（<a href="http://www.cnblogs.com/tangbinblog/archive/2012/12/07/2807088.html">具体例子</a>）</p>
+
+<p>调用主线程的run loop的各种方式：</p>
+
+<pre><code>[[NSRunLoop mainRunLoop] run]; //主线程永远等待，但让出主线程时间片
+
+[[NSRunLoop mainRunLoop] runUntilDate:[NSDate distantFuture]]; //等同上面调用
+
+[[NSRunLoop mainRunLoop] runUntilDate:[NSDate date]]; //立即返回
+
+[[NSRunLoop mainRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:10.0]]; //主线程等待，但让出主线程时间片，然后过10秒后返回
+
+[[NSRunLoop mainRunLoop] runMode:NSDefaultRunLoopMode beforeDate: [NSDate distantFuture]]; //主线程等待，但让出主线程时间片；有事件到达就返回，比如点击UI等。
+
+[[NSRunLoop mainRunLoop] runMode:NSDefaultRunLoopMode beforeDate: [NSDate date]]; //立即返回
+
+[[NSRunLoop mainRunLoop] runMode:NSDefaultRunLoopMode beforeDate: [NSDate dateWithTimeIntervalSinceNow:10.0]]; //主线程等待，但让出主线程时间片；有事件到达就返回，如果没有则过10秒返回。
+</code></pre>
+
+<hr />
+
+<h2>相关</h2>
+
+<h4>四、如何让NSURLConnection在子线程中运行</h4>
+
+<p>可以有两个办法让NSURLConnection在子线程中运行，即将NSURLConnection加入到run loop或者NSOperationQueue中去运行。</p>
+
+<p>前面提到可以将NSTimer手动加入NSRunLoop，Cocoa库也为其它一些类提供了可以手动加入NSRunLoop的方法，这些类有NSPort、NSStream、NSURLConnection、NSNetServices，方法都是[scheduleInRunLoop:forMode:]形式</p>
+
+<p>如果NSURLConnection是在主线程中启动的，实际上它就在主线程中运行 &mdash; 并非启动的另外的线程，但又具备异步运行的特性，这个确实是run loop的巧妙所在。如果对run loop有了初步的了解和概念后，实际上就能明白NSURLConnection的运行，实际也是需要当前线程具备run loop。</p>
+
+<pre><code>// 将加入指定的run loop中运行，必须保证这时NSURLConnection不能启动，否则不起作用了
+- (void)scheduleInRunLoop:(NSRunLoop *)aRunLoop forMode:(NSString *)mode; 
+
+// 将取消在指定run loop中的运行，实际上就会停止NSURLConnection的运行
+- (void)unscheduleFromRunLoop:(NSRunLoop *)aRunLoop forMode:(NSString *)mode; 
+</code></pre>
+
+<p>下面是如何在其它线程中运行NSURLConnection的主要实现代码：</p>
+
+<pre><code>NSRunLoop *runloop; //global
+// 启动包含run loop的线程
+[self performSelectorInBackground:@selector(thread) withObject:nil]; 
+// 注意这时不能先启动NSURLConnection
+NSURLConnection *conn = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:NO]; 
+// 指定在上面启动的线程中运行NSURLConnection
+[conn scheduleInRunLoop:runloop forMode:NSRunLoopCommonModes]; 
+[conn start]; //启动NSURLConnection
+
+- (void)thread
+{
+　　runloop = [NSRunLoop currentRunLoop]; //设置为当前线程的run loop值
+　　while (condition)
+　　{
+　　　　[runloop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1.0]]; //启动run loop
+　　}
+}
+</code></pre>
+
+<p>将NSURLConnection加入到NSOperationQueue中去运行的方式基本类似：</p>
+
+<pre><code>NSOperationQueue *queue = [[NSOperationQueuealloc] init];
+NSURLConnection *conn = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:NO]; 
+[conn setDelegateQueue:queue];
+[conn start];
+</code></pre>
+
+<h4>二、NSTimer</h4>
+
+<p>理解run loop后，才能彻底理解NSTimer的实现原理，也就是说NSTimer实际上依赖run loop实现的。</p>
+
+<p>NSTimer的常用方法：</p>
+
+<pre><code>+ (NSTimer *)timerWithTimeInterval:(NSTimeInterval)ti target:(id)aTarget selector:(SEL)aSelector userInfo:(id)userInfo repeats:(BOOL)yesOrNo; //生成timer但不执行
+
++ (NSTimer *)scheduledTimerWithTimeInterval:(NSTimeInterval)ti target:(id)aTarget selector:(SEL)aSelector userInfo:(id)userInfo repeats:(BOOL)yesOrNo; //生成timer并且纳入当前线程的run loop来执行
+</code></pre>
+
+<p>NSRunLoop与timer有关方法为：</p>
+
+<pre><code>- (void)addTimer:(NSTimer *)timer forMode:(NSString *)mode; //在run loop上注册timer
+</code></pre>
+
+<p>主线程已经有run loop，所以NSTimer一般在主线程上运行都不必再调用addTimer:，但在非主线程上运行必须配置run loop，该线程的main方法示例代码如下：</p>
+
+<pre><code>- (void)main
+{
+　　NSTimer *myTimer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(timer:) userInfo:nil repeats:YES];
+
+　　NSRunLoop *runLoop = [NSRunLoop currentRunLoop];
+　　//实际上这步是不需要，scheduledTimerWithTimeInterval已经纳入当前线程运行。如果使用timerWithTimeInterval则需要
+　　[runLoop addTimer:myTimer forMode:NSDefaultRunLoopMode]; 
+　　while (condition) {
+　　    [runLoop run];
+　　}
+}
+</code></pre>
+
+<p>实际上这个线程无法退出，因为有timer事件需要处理，[runLoop run]会一直无法返回。解决办法就是设置一个截止时间：
+[runLoop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:10.0]]; //每隔10秒检查下线程循环条件，当然时间值可以根据实际情况来定。</p>
+
+<p>我们通常在主线程中使用NSTimer，有个实际遇到的问题需要注意。当滑动界面时，系统为了更好地处理UI事件和滚动显示，主线程runloop会暂时停止处理一些其它事件，这时主线程中运行的NSTimer就会被暂停。解决办法就是改变NSTimer运行的mode（mode可以看成事件类型），不使用缺省的NSDefaultRunLoopMode，而是改用NSRunLoopCommonModes，这样主线程就会继续处理NSTimer事件了。具体代码如下：</p>
+
+<pre><code>NSTimer *timer = [NSTimer timerWithTimeInterval:1.0 target:self selector:@selector(timer:) userInfo:nil repeats:YES];
+[[NSRunLoop currentRunLoop] addTimer:timer forMode:NSRunLoopCommonModes];
+</code></pre>
+
+<p>大家可以参看博文<a href="http://bluevt.org/?p=209">http://bluevt.org/?p=209</a>，加深理解NSTimer和NSRunLoop的关系。</p>
+
+<p>之前提到延迟调用的方法，其实就是在当前线程的run loop上注册timer来实现定时运行的。所以如果是在非主线程上使用，一定要有一个run loop。</p>
+
+<pre><code>- (void)performSelector:(SEL)aSelector withObject:(id)anArgument afterDelay:(NSTimeInterval)delay inModes:(NSArray *)modes;
+
+- (void)performSelector:(SEL)aSelector withObject:(id)anArgument afterDelay:(NSTimeInterval)delay;
+</code></pre>
+
+<h2>参考</h2>
+
+<ul>
+<li><a href="https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/Multithreading/AboutThreads/AboutThreads.html#//apple_ref/doc/uid/10000057i-CH6-SW2">Apple Threading Programming Guide</a></li>
+<li><a href="http://www.cnblogs.com/sunfrog/tag/ios/">iOS多线程的初步研究</a></li>
+<li><a href="http://objccn.io/issue-2-1/">并发编程：API 及挑战</a></li>
+</ul>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/05/10/at-ioszhong-mao-dian-anchorpointli-jie/">iOS中锚点anchorPoint理解</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-05-10T14:10:00+08:00" pubdate data-updated="true">May 10<span>th</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4>引言</h4>
+
+<p>最近项目中使用到UIBezierPath和CAShapeLayer，发现锚点anchorPoint的概念有点模糊，来捋一捋。</p>
+
+<h4>概念</h4>
+
+<p>UIView内部管理这一个CALayer，这厮才是真正显示的东西。首先要清楚UIView和CALayer它们几何层级关系的表示，我们通常的UIView的通过frame来描述视图在父视图中的位置，其实frame是根据另外两个属性bounds和center计算出来的。而CAlayer也有这几个属性，另外增加了一个anchorPoint属性，同UIView一样，frame属性也是计算出来的，首先记住一个公式，如果脑子转不过来，运算一下：</p>
+
+<pre><code>// UIView的frame计算公式
+frame.origin.x = center.x - 0.5 * bounds.size.width;
+frame.origin.y = center.y - 0.5 *bounds.size.height;
+或者
+center.x = frame.origin.x + 0.5 * bounds.size.width;
+center.y = frame.origin.y + 0.5 *bounds.size.height;
+
+// CALayer的frame的计算公式
+frame.origin.x = position.x - anchorPoint.x * bounds.size.width;
+frame.origin.y = position.y - anchorPoint.x * bounds.size.height;
+或者
+position.x = frame.origin.x + anchorPoint.x * bounds.size.width；  
+position.y = frame.origin.y + anchorPoint.y * bounds.size.height；
+</code></pre>
+
+<p>结论就是：frame.origin由position和anchorPoint共同决定，anchorPoint和position之间互不影响。当你设置图层的frame属性的时候，position点的位置（也就是position坐标）根据锚点（anchorPoint）的值来确定；而当你设置图层的position属性的时候，bounds的位置（也就是frame的orgin坐标）会根据锚点(anchorPoint)来确定。</p>
+
+<p>在实际情况中，可能还有这样一种需求，我需要修改anchorPoint，但又不想要移动layer也就是不想修改frame.origin，那么根据前面的公式，就需要position做相应地修改。简单地推导，可以得到下面的公式：</p>
+
+<pre><code>positionNew.x = positionOld.x + (anchorPointNew.x - anchorPointOld.x)  * bounds.size.width  
+positionNew.y = positionOld.y + (anchorPointNew.y - anchorPointOld.y)  * bounds.size.height
+</code></pre>
+
+<p>但是在实际使用没必要这么麻烦。修改anchorPoint而不想移动layer，在修改anchorPoint后再重新设置一遍frame就可以达到目的，这时position就会自动进行相应的改变。写成函数就是下面这样的：</p>
+
+<pre><code>- (void) setAnchorPoint:(CGPoint)anchorpoint forView:(UIView *)view{
+    CGRect oldFrame = view.frame;
+    view.layer.anchorPoint = anchorpoint;
+    view.frame = oldFrame;
+}
+</code></pre>
+
+<h4>锚点anchoroPoint</h4>
+
+<p>可以理解成变换(平移，缩放，旋转)的支点，锚点也是一个CGPoint，用于描述支点的位置相对视图bounds的比例值，比如anchorPoint = (0.5, 0.5)，锚点位于中心；在左手坐标系(iOS)中，那么anchorPoint（0，1）位于右上角，如下图:</p>
+
+<p><img src="http://wonderffee.github.io/images/anchorPointAndPosition/layer_coords_anchorpoint_position_2x.png" alt="" /></p>
+
+<p><img src="http://wonderffee.github.io/images/anchorPointAndPosition/anchorpoint2.jpg" alt="" /></p>
+
+<p>参考：</p>
+
+<ul>
+<li><a href="http://wonderffee.github.io/blog/2013/10/13/understand-anchorpoint-and-position/">彻底理解position与anchorPoint</a></li>
+</ul>
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -1942,6 +2944,8 @@ gem cleanup #清除所有包旧版本，保留最新版本
 gem contents rake #显示rake包中所包含的文件 
 gem dependency rails -v 0.10.1 #列出与rails相互依赖的包 
 gem environment #查看gem的环境
+gem sources -l #查看源,可以通过--remove删除一个源，以及-a来添加一个源
+#https://rubygems.org/ 或者 http://ruby.taobao.org/
 </code></pre>
 
 <p>注意：安装的时候不要使用sudo，默认的Mac OS安装了Ruby，所以这个时候如果使用sudo，更新的是系统版本的ruby对应的gems。</p>
@@ -2292,6 +3296,14 @@ git pull origin master  # update the local master branch
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2014/05/30/ioszhong-duo-xian-cheng-xiang-guan/">iOS中多线程相关</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/05/10/at-ioszhong-mao-dian-anchorpointli-jie/">iOS中锚点anchorPoint理解</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2014/04/09/iosping-mu-xuan-zhuan/">iOS屏幕旋转</a>
       </li>
     
@@ -2303,14 +3315,6 @@ git pull origin master  # update the local master branch
         <a href="/blog/2014/04/03/objective-c-dui-xiang-mo-xing-ji-ying-yong/">Objective-C 对象模型及应用</a>
       </li>
     
-      <li class="post">
-        <a href="/blog/2014/04/03/objective-czhong-blockde-shi-yong/">Objective-C中Block的使用</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/04/03/markdownshi-yong/">MarkDown使用</a>
-      </li>
-    
   </ul>
 </section>
 
@@ -2320,7 +3324,7 @@ git pull origin master  # update the local master branch
 <section>  
   <h1>Categories</h1>  
   <ul id="categories">  
-    <li class='category'><a href='/blog/categories/ios/'>iOS (4)</a></li>
+    <li class='category'><a href='/blog/categories/ios/'>iOS (6)</a></li>
 <li class='category'><a href='/blog/categories/other/'>other (4)</a></li>
   
   </ul>  
