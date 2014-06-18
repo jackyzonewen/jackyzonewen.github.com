@@ -126,13 +126,11 @@ $(document).bind('DOMNodeInserted', function(event) {
 
 <h2>NSThread</h2>
 
-<p>NSThread是Objective-C对pThread的封装，一般我们iOS开发中也很少直接使用到它，因为需要我们自己来管理线程的声明周期，线程同步等问题，而且线程的创建是需要开销的，每个线程会消耗一定的内存和内核资源。直接使用线程可能引发这样的问题，线程的数量以指数级增长，比如在8核CPU中，创建8个线程可以完全发挥CPU的性能，然而线程中所调用的框架代码中也可能做了同样的事情，这样就很快产生了成百上千个线程。</p>
-
-<p>产生线程的方式可以分为两类，一类是显式调用；另一类则是隐式调用。</p>
+<p>NSThread是Objective-C对pThread的封装，一般我们iOS开发中也很少直接使用到它，因为需要自己来管理线程的生命周期，线程同步等问题；而且线程的创建是需要开销的，每个线程会消耗一定的内存和内核资源，直接使用线程可能引发这样的问题，线程的数量以指数级增长，比如在8核CPU中，创建8个线程可以完全发挥CPU的性能，然而线程中所调用的框架代码中也可能做了同样的事情，这样就很快产生了成百上千个线程，iOS中每个app对于内存的使用是有限制的。产生线程的方式可以分为两类，一类是显式调用；另一类则是隐式调用。</p>
 
 <h4>一.显式调用</h4>
 
-<p>显示调用的类就是我们说的NSThread，构建一个NSThread线程对象可以通过两种方式：</p>
+<p>显示调用的类就是我们现在说的NSThread，构建一个NSThread线程对象可以通过两种方式：</p>
 
 <p>1 .初始化线程方法：</p>
 
@@ -3336,6 +3334,7 @@ git pull origin master  # update the local master branch
 <a style="font-size: 90%" href="/tags/octopress/">OctoPress</a>
 <a style="font-size: 90%" href="/tags/orientation/">Orientation</a>
 <a style="font-size: 90%" href="/tags/svn/">SVN</a>
+<a style="font-size: 90%" href="/tags/thread/">Thread</a>
 <a style="font-size: 90%" href="/tags/block/">block</a>
 <a style="font-size: 90%" href="/tags/heap/">heap</a>
 <a style="font-size: 90%" href="/tags/markdown/">markdown</a>
