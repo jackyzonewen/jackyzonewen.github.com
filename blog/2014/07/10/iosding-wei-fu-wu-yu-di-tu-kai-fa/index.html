@@ -5,11 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Tag: Github - 挡不住的君文</title>
+  <title>iOS定位服务与地图开发 - 挡不住的君文</title>
   <meta name="author" content="jackyzonewen">
 
   
-  <meta name="description" content="Tag: Github">
+  <meta name="description" content="移动互联时代已经来临，目前越来越多的应用是基于地图的，而在地图应用中又有非常多的定位服务，通过定位服务可以改变人们的生活方式，让一些变得更加的便捷，例如通过定位服务查询周边的餐馆、影院等··· iOS开发中，定位服务和地图开发是两个概念，使用的完全不同的两套API，但是他们之间的关系又非常密切。 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://jackyzonewen.github.iotags/github">
+  <link rel="canonical" href="http://jackyzonewen.github.io/blog/2014/07/10/iosding-wei-fu-wu-yu-di-tu-kai-fa">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="挡不住的君文" type="application/atom+xml">
@@ -76,52 +76,133 @@ $(document).bind('DOMNodeInserted', function(event) {
   <div id="main">
     <div id="content">
       <div>
-<article role="article">
+<article class="hentry" role="article">
   
   <header>
-    <h1 class="entry-title">Tag: Github</h1>
+    
+      <h1 class="entry-title">iOS定位服务与地图开发</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-07-10T23:10:00+08:00" pubdate data-updated="true">Jul 10<span>th</span>, 2014</time>
+        
+      </p>
     
   </header>
-  
-  <div id="blog-archives" class="tag">
 
 
+<div class="entry-content"><blockquote><p>移动互联时代已经来临，目前越来越多的应用是基于地图的，而在地图应用中又有非常多的定位服务，通过定位服务可以改变人们的生活方式，让一些变得更加的便捷，例如通过定位服务查询周边的餐馆、影院等···</p></blockquote>
 
-  
-  <h2>2014</h2>
+<p>iOS开发中，定位服务和地图开发是两个概念，使用的完全不同的两套API，但是他们之间的关系又非常密切。</p>
 
-<article>
-  
-<h1><a href="/blog/2014/01/16/shi-yong-githe-svnguan-li-androidhe-iosgong-cheng/">使用git和svn管理android和iOS工程</a></h1>
-<time datetime="2014-01-16T19:32:00+08:00" pubdate><span class='month'>Jan</span> <span class='day'>16</span> <span class='year'>2014</span></time>
+<hr />
 
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/other/'>other</a></span>
-</footer>
+<h4>定位服务</h4>
 
+<p>iPhone、iPod和iPad等都可以提供定位服务，其实是通过三种方式提供定位服务：</p>
 
-</article>
-
-
-
-  
-  <h2>2013</h2>
-
-<article>
-  
-<h1><a href="/blog/2013/10/30/yi-bu-yi-bu-jiao-ni-da-jian-ji-yu-octopress-plus-githubde-ge-ren-bo-ke/">一步一步教你搭建基于OctoPress+Github的个人博客</a></h1>
-<time datetime="2013-10-30T17:47:00+08:00" pubdate><span class='month'>Oct</span> <span class='day'>30</span> <span class='year'>2013</span></time>
-
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/other/'>other</a></span>
-</footer>
+<ol>
+<li>WIFI定位 : 通过查询一个WIFI路由器的地理位置信息，优点是比较省点，经济实惠</li>
+<li>蜂窝式移动电话基站定位 : 通过移动运营商基站定位，缺点是误差比较大，非用户流量</li>
+<li>GPS卫星定位 : 通过几颗GPS卫星位置定位，优点是准确，缺点是费电，不能遮挡</li>
+</ol>
 
 
-</article>
+<p>iOS系统不允许我们程序员来决定定位的方式，API把底层的实现细节屏蔽了，iOS系统会根据设备的情况和周围的环境来采用最佳的定位方案，大概的规则如下:</p>
+
+<ul>
+<li>能够接受到GPS信息，优先采用GPS定位</li>
+<li>如果接受不到GPS信息，优先采用WIFI定位</li>
+<li>如果未连接WIFI才采用蜂窝基站定位</li>
+</ul>
+
+
+<h4>定位服务API</h4>
+
+<p>iOS开发中的定位主要使用CoreLocation框架，定位时主要使用以下几个类:</p>
+
+<ul>
+<li><p>CLLocationManager:获取设备的位置信息，监控设备进入某个区域等</p></li>
+<li><p>CLLocationManagerDelegate:相关回调</p></li>
+<li><p>CLLocation:位置和高度等信息的封装</p></li>
+</ul>
 
 </div>
 
+
+  <footer>
+    <p class="meta">
+      
   
+
+<span class="byline author vcard">Posted by <span class="fn">jackyzonewen</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-07-10T23:10:00+08:00" pubdate data-updated="true">Jul 10<span>th</span>, 2014</time>
+      
+
+
+    </p>
+    <p class="meta">
+      原创&amp;整理的文章，版权声明:自由转载-非商用&amp;衍生-保持署名
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+  
+     <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style_32x32">
+	<a class="jiathis_button_qzone"></a>
+	<a class="jiathis_button_tsina"></a>
+	<a class="jiathis_button_tqq"></a>
+	<a class="jiathis_button_weixin"></a>
+	<a class="jiathis_button_renren"></a>
+	<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	<a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+<!-- UY BEGIN -->
+<div id="uyan_frame"></div>
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js"></script>
+<!-- UY END -->
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2014/05/30/ioszhong-duo-xian-cheng-xiang-guan/" title="Previous Post: iOS中多线程相关">&laquo; iOS中多线程相关</a>
+      
+      
+    </p>
+  </footer>
 </article>
 
 </div>
