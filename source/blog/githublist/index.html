@@ -29,9 +29,10 @@ $(document).ready(function(){
             url = 'https://github.com/search?q=' + repo.name;
         }
 
-        return '<tr repo="' + repo.name + '" owner="' + repo.owner + '">' +
+        return '<tr id="' + repo.owner + '_' + repo.name + '"" repo="' + repo.name + '" owner="' + repo.owner + '">' +
         '<td><i class="icon-link"></i><a href="' + url + '" target="_blank"> ' + repo.name + '</a></td>' + 
         '<td>' + repo.desc + '</td>' + 
+        '<td></td>' +
         '<td><i class="icon-star-empty"></i> </td>' +
         '<td><i class="icon-code-fork"></i> </td>' +
         '</tr>';
@@ -44,7 +45,7 @@ $(document).ready(function(){
         }
         if (!minor.list){
             return '<table class="table table-hover">' +
-                '<colgroup> <col width="26%" /><col width="60%" /><col width="7%" /><col width="7%" />' +
+                '<colgroup> <col width="26%" /><col width="50%" /><col width="9%" /><col width="7%" /><col width="7%" />' +
                 '</colgroup>' +
                 '<thead>' +
                 '</thead>' +
@@ -64,7 +65,7 @@ $(document).ready(function(){
                     '<div class="list-box-inner-wrap" style="height: auto;">' +
                         '<div class="list-box-inner">' +
                            '<table class="table table-hover">' +
-                                '<colgroup> <col width="26%" /><col width="60%" /><col width="7%" /><col width="7%" />' +
+                                '<colgroup> <col width="26%" /><col width="50%" /><col width="9%" /><col width="7%" /><col width="7%" />' +
                                 '</colgroup>' +
                                 '<thead>' +
                                 '</thead>' +
@@ -102,7 +103,7 @@ $(document).ready(function(){
             inner += getMajorHTML(major);
         }
         return '<div id="fix-top-header">' + 
-            '<div id="fix-top-inner">- ( ゜- ゜)つロ Github-iOS备忘-转载自<a link="http://github.ibireme.com/github/list/ios/">ibireme</a></div>' + 
+            '<div id="fix-top-inner">' + githubHeaderTitle + '</div>' + 
             '<div id="fix-top-action">' + 
                 '<a href="#" id="action-expand-all">全部展开</a>' + 
                     "&nbsp;&nbsp;" +
@@ -163,29 +164,44 @@ $(document).ready(function(){
     });
     setTimeout(collapseAll,100);
     
+
+
+
+
+
+
     //获取fork、star数量
-    function getRepoInfo(tr){
-        var owner = $(tr).first().attr("owner");
-        if (!owner || owner=='') {
-            return;
-        }
-        var repo = $(tr).first().attr("repo");
-        var url = "https://api.github.com/repos/" + owner + "/" + repo;
-        $.get(url,function(data){
-            var avatar_url = data.owner.avatar_url;
-            var star = data.watchers_count;
-            var fork = data.forks_count;
-            console.log("star" + star + " fork" + fork);
-            $(tr).first().find(".icon-star-empty").first().parent()[0].innerHTML = '<i class="icon-star-empty"></i> ' + star;
-            $(tr).first().find(".icon-code-fork").first().parent()[0].innerHTML = '<i class="icon-code-fork"></i> ' + fork;
+    function getStars(page) {
+        $.getJSON('https://api.github.com/users/ibiremebot/starred?page=' + page + '&per_page=100',function(result){
+            $.each(result, function(i, repo){
+                try {
+                    var repo_id = repo.owner.login + '_' + repo.name;
+
+                    $('#' + repo_id + ' td')[2].innerHTML = repo.pushed_at.substring(0,10);
+                    $('#' + repo_id + ' td')[3].innerHTML += repo.stargazers_count;
+                    $('#' + repo_id + ' td')[4].innerHTML += repo.forks_count;
+
+
+                }
+                catch(err) {}
+            });
+            page--;
+            if(page > 0) getStars(page);
         });
     }
-    var trs = $("tr");
-    for (var i=0; i<trs.length; i++){
-       //getRepoInfo(trs[i]);
-       //will ban IP... X_X
-       //github 没有oauth时，每小时60次调用限制..
+
+    function getAllStars() {
+        var totalStarNeeded = $(".icon-star-empty").length;
+        getStars(Math.ceil(totalStarNeeded / 100));
     }
+
+    setTimeout(getAllStars,2000);
+
+
+
+
+
+
 
 
     function getElementTop(element){
@@ -213,7 +229,7 @@ $(document).ready(function(){
         }
         
         if (y < 35) {
-            $("#fix-top-inner")[0].innerHTML = "- ( ゜- ゜)つロ Github-iOS备忘";
+            $("#fix-top-inner")[0].innerHTML = githubHeaderTitle;
             return;
         }
         var curHeader;
