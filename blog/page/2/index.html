@@ -9,8 +9,7 @@
   <meta name="author" content="jackyzonewen">
 
   
-  <meta name="description" content="最近看了很多博客，然后想尝试着搭建一个属于自己的博客，所以搜集了网上一些教程，然后针对于自己在搭建过程中出 现的问题记录下来，希望大家可以照着教程更方便的搭建属于自己的博客并且熟悉如何来管理自己的博客，如有什么错误之处，还望指正。 目录 安装Ruby环境
-设置Github账号 &hellip;">
+  <meta name="description" content="Ruby是日本人发明的一种脚本语言。 Brew是OS X上提供软件包的管理。Homebrew将软件包安装到单独的目录，然后符号链接到/usr/local 中，完全基于git和ruby。使用gem来安装你的gems，用brew来搞定他们的依赖包。 Mac OS X是基于Unix的操作系统， &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -78,6 +77,266 @@ $(document).bind('DOMNodeInserted', function(event) {
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/01/06/ruby-rvm-brew-gem-bundlershu-li/">Ruby Rvm Brew Gem Bundler梳理</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-01-06T16:07:00+08:00" pubdate data-updated="true">Jan 6<span>th</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><strong>Ruby</strong>是日本人发明的一种脚本语言。</p>
+
+<hr />
+
+<p><strong><a href="https://github.com/Homebrew/homebrew/wiki">Brew</a></strong>是OS X上提供软件包的管理。Homebrew将软件包安装到单独的目录，然后符号链接到/usr/local 中，完全基于git和ruby。使用gem来安装你的gems，用brew来搞定他们的依赖包。</p>
+
+<p>Mac OS X是基于Unix的操作系统，可以安装大部分为Unix/Linux开发的软件。如果只是以使用为目的，对每个软件都进行手工编译不是很方便，也不利于管理已安装的软件，于是出现了类似于Linux中APT、Yum等类似的软件包管理系统，Mac下比较著名的有MacPorts、Fink、Homebrew等。</p>
+
+<p>MacPorts有个原则，对于软件包之间的依赖，都在MacPorts内部解决（/opt/local），无论系统本身是否包含了需要的库，都不会重用。这使得MacPorts过分的庞大臃肿，导致系统出现大量软件包的冗余，占用不小的磁盘空间，同时稍大型一点的软件编译时间都会难以忍受。</p>
+
+<p>Homebrew恰恰相反，它尽可能地利用系统自带的各种库，使得软件包的编译时间大为缩短；同时由于几乎不会造成冗余，软件包的管理也清晰、灵活了许多。Homebrew的另一个特点是使用Ruby定义软件包安装配置(formula)，定制非常简单。</p>
+
+<p>Fink暂不讨论。</p>
+
+<p>首先确保你的系统满足如下要求：
+ 1. 基于Intel CPU
+ 2. 操作系统为Mac OS X 10.5 Leopard或更高版本
+ 3. 已安装版本管理工具Git（Mac OS X 10.7 Lion已经预安装
+ 4. 已安装Xcode开发工具1(Command Line Tools)
+ 5. 已安装Java Developer Update2</p>
+
+<p>注1：Xcode 4.3中，命令行编译工具是可选安装，需要在Preferences > Downloads中激活。<br>
+注2：可选，Homebrew本身不依赖于Java，只有部分软件包的安装需要Java支持。</p>
+
+<p>Homebrew的安装:</p>
+
+<pre><code>ruby -e "$(curl -fsSL https://raw.github.com/mxcl/homebrew/go)"
+</code></pre>
+
+<p>或者</p>
+
+<pre><code>ruby -e "$(curl -fsSL https://raw.github.com/Homebrew/homebrew/go/install)" 
+</code></pre>
+
+<p>由于Homebrew的安装地址可能变化，请到<a href="https://github.com/Homebrew/homebrew/wiki">官方网站</a>查看最新的安装方法。</p>
+
+<p>Homebrew的使用: Homebrew的可执行命令是brew，其基本使用方法如下（以软件包wget为例）。</p>
+
+<p>查找软件包</p>
+
+<pre><code>brew search wget
+</code></pre>
+
+<p>安装软件包</p>
+
+<pre><code>brew install wget
+</code></pre>
+
+<p>列出已安装的软件包</p>
+
+<pre><code>brew list
+</code></pre>
+
+<p>删除软件包</p>
+
+<pre><code>brew remove wget
+</code></pre>
+
+<p>查看软件包信息</p>
+
+<pre><code>brew info wget
+</code></pre>
+
+<p>列出软件包的依赖关系</p>
+
+<pre><code>brew deps wget
+</code></pre>
+
+<p>更新brew</p>
+
+<pre><code>brew update
+</code></pre>
+
+<p>列出过时的软件包（已安装但不是最新版本）</p>
+
+<pre><code>brew outdated
+</code></pre>
+
+<p>更新过时的软件包（全部或指定）</p>
+
+<pre><code>brew upgrade 或 brew upgrade wget
+</code></pre>
+
+<p>定制自己的软件包（假定软件包名称是bar，来自foo站点）。</p>
+
+<p>首先找到待安装软件的源码下载地址
+<a href="http://foo.com/bar-1.0.tgz">http://foo.com/bar-1.0.tgz</a></p>
+
+<p>建立自己的formula
+brew create <a href="http://foo.com/bar-1.0.tgz">http://foo.com/bar-1.0.tgz</a></p>
+
+<p>编辑formula，上一步建立成功后，Homebrew会自动打开新建的formula进行编辑，也可用如下命令打开formula进行编辑:</p>
+
+<pre><code>brew edit bar
+</code></pre>
+
+<p>Homebrew自动建立的formula已经包含了基本的configure和make install命令，对于大部分软件，不需要进行修改，退出编辑即可。</p>
+
+<p>输入以下命令安装自定义的软件包</p>
+
+<pre><code>brew install bar
+</code></pre>
+
+<hr />
+
+<p><strong><a href="http://rubygems.org/">RubyGems</a></strong>是一个包管理框架，提供了ruby社区gem的托管服务，用于方便地下载、安装和使用ruby软件包(gem)，包含了ruby应用或库,要升级到最新的RubyGems，运行：</p>
+
+<pre><code>$ gem update --system
+</code></pre>
+
+<p>如果没有安装RubyGems，则需要先下载安装包，然后解压开后运行：</p>
+
+<pre><code>ruby setup.rb
+</code></pre>
+
+<hr />
+
+<p><strong>Gem</strong>也是Ruby软件包管理工具,如果要看安装的gem文档，一是可以用ri，二是可以gem server启动一个web服务。详细的帮助参见<a href="http://guides.rubygems.org/">RubyGems Guides</a>。</p>
+
+<p>brew和gem不同，brew用于操作系统层面上软件包的安装，而gem只是管理ruby软件,gem常用命令如下:</p>
+
+<pre><code>gem -v #gem版本
+gem update #更新所有包 
+gem update --system #更新RubyGems软件 
+gem install rake #安装rake,从本地或远程服务器 
+gem install rake --remote #安装rake,从远程服务器 
+gem install watir -v(或者--version) 1.6.2#指定安装版本的 
+gem uninstall rake #卸载rake包 
+gem list d #列出本地以d打头的包
+gem list --local | grep cocoapods #列出cocoapods相关的set 
+gem query -n ''[0-9]'' --local #查找本地含有数字的包 
+gem search log --both #从本地和远程服务器上查找含有log字符串的包 
+gem search log --remoter #只从远程服务器上查找含有log字符串的包 
+gem search -r log #只从远程服务器上查找含有log字符串的包 
+gem help #提醒式的帮助 
+gem help install #列出install命令 帮助 
+gem help examples #列出gem命令使用一些例子 
+gem build rake.gemspec #把rake.gemspec编译成rake.gem 
+gem check -v pkg/rake-0.4.0.gem #检测rake是否有效 
+gem cleanup #清除所有包旧版本，保留最新版本 
+gem contents rake #显示rake包中所包含的文件 
+gem dependency rails -v 0.10.1 #列出与rails相互依赖的包 
+gem environment #查看gem的环境
+gem sources -l #查看源,可以通过--remove删除一个源，以及-a来添加一个源
+#https://rubygems.org/ 或者 http://ruby.taobao.org/
+</code></pre>
+
+<p>注意：安装的时候不要使用sudo，默认的Mac OS安装了Ruby，所以这个时候如果使用sudo，更新的是系统版本的ruby对应的gems。</p>
+
+<hr />
+
+<p><strong><a href="https://rvm.io/">RVM</a></strong>（Ruby enVironment Version  ) Manager）是一个命令行工具，提供在多个ruby环境中方便的安装、管理和工作，包括解释器和gem集合。rvm自己的安装通过curl命令执行，如：curl -L <a href="https://get.rvm.io">https://get.rvm.io</a> | bash。</p>
+
+<p>RVM有一个非常灵活的gem管理系统，称为Gem Sets。RVM的’gemsets’管理横跨多个Ruby版本的gems包。</p>
+
+<p>这里所有的命令都是再用户权限下操作的，任何命令最好都不要用sudo.</p>
+
+<p>rvm安装:</p>
+
+<pre><code>bash -s stable &lt; &lt;(curl -s https://raw.github.com/wayneeseguin/rvm/master/binscripts/rvm-installer)
+</code></pre>
+
+<p>设置环境变量:</p>
+
+<pre><code>echo '[[ -s "$HOME/.rvm/scripts/rvm" ]] &amp;&amp; . "$HOME/.rvm/scripts/rvm" # Load RVM function' &gt;&gt; ~/.bash_profile
+source ~/.bash_profile
+</code></pre>
+
+<p>修改 RVM 的 Ruby 安装源到国内的 淘宝镜像服务器，这样能提高安装速度</p>
+
+<pre><code>sed -i -e 's/ftp\.ruby-lang\.org\/pub\/ruby/ruby\.taobao\.org\/mirrors\/ruby/g' ~/.rvm/config/db
+</code></pre>
+
+<p>列出已知的ruby版本</p>
+
+<pre><code>rvm list known
+</code></pre>
+
+<p>安装一个ruby版本</p>
+
+<pre><code>rvm install 1.9.3
+</code></pre>
+
+<p>这里安装了最新的1.9.3, rvm list known列表里面的都可以拿来安装。</p>
+
+<p>使用一个ruby版本</p>
+
+<pre><code>rvm use 1.9.3
+</code></pre>
+
+<p>如果想设置为默认版本，可以这样</p>
+
+<pre><code>rvm use 1.9.3 --default 
+</code></pre>
+
+<p>查询已经安装的ruby</p>
+
+<pre><code>rvm list
+</code></pre>
+
+<p>卸载一个已安装版本</p>
+
+<pre><code>rvm remove 1.9.2
+</code></pre>
+
+<p>rvm连同ruby一起卸载调</p>
+
+<pre><code>rvm implode
+</code></pre>
+
+<p>一键将rvm,Ruby连同bundler一起装好</p>
+
+<pre><code>curl -L https://get.rvm.io | bash -s stable --ruby
+</code></pre>
+
+<hr />
+
+<p><strong><a href="http://bundler.io/">Bundler</a></strong>为ruby维持一个一致性的环境，跟踪应用代码和所需要的ruby gems，这样一个应用可以有所需要的精确的gems（和版本）安装通过如下命令：</p>
+
+<pre><code>$ gem install bundler
+</code></pre>
+
+<hr />
+
+<p>安装的顺序，先安装rvm，之后选择安装一个ruby版本，就可以提供一个完整的ruby运行环境。之后可以安装brew（brew虽然是管理os的，但基于ruby）和gem，分别管理操作系统和ruby的软件包。之后ruby重新编译的时候所依赖的包可以使用brew安装。有了gem之后，bundler只不过就是一个gem，直接通过gem install 即可。</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -344,6 +603,10 @@ git pull origin master  # update the local master branch
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2015/01/20/androiddong-hua/">Android动画</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2014/07/10/iosding-wei-fu-wu-yu-di-tu-kai-fa/">iOS定位服务与地图开发</a>
       </li>
     
@@ -357,10 +620,6 @@ git pull origin master  # update the local master branch
     
       <li class="post">
         <a href="/blog/2014/04/09/iosping-mu-xuan-zhuan/">iOS屏幕旋转</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/04/04/ioszhong-de-dui-he-zhan/">iOS中的堆和栈</a>
       </li>
     
   </ul>
@@ -386,6 +645,8 @@ git pull origin master  # update the local master branch
 <a style="font-size: 90%" href="/tags/orientation/">Orientation</a>
 <a style="font-size: 90%" href="/tags/svn/">SVN</a>
 <a style="font-size: 90%" href="/tags/thread/">Thread</a>
+<a style="font-size: 90%" href="/tags/android/">android</a>
+<a style="font-size: 90%" href="/tags/animation/">animation</a>
 <a style="font-size: 90%" href="/tags/block/">block</a>
 <a style="font-size: 90%" href="/tags/heap/">heap</a>
 <a style="font-size: 90%" href="/tags/markdown/">markdown</a>
@@ -413,7 +674,7 @@ git pull origin master  # update the local master branch
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2014 - jackyzonewen -
+  Copyright &copy; 2015 - jackyzonewen -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 

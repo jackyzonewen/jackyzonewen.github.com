@@ -9,7 +9,7 @@
   <meta name="author" content="jackyzonewen">
 
   
-  <meta name="description" content="移动互联时代已经来临，目前越来越多的应用是基于地图的，而在地图应用中又有非常多的定位服务，通过定位服务可以改变人们的生活方式，让一些变得更加的便捷，例如通过定位服务查询周边的餐馆、影院等··· iOS开发中，定位服务和地图开发是两个概念，使用的完全不同的两套API，但是他们之间的关系又非常密切。 &hellip;">
+  <meta name="description" content="前言 闲来无事，整理一下Android的动画的学习和使用。 简介 Android提供了三种动画: 补间动画(Tween):通过对场景里的对象不断做图像变换(平移、缩放、旋转)产生动画效果，即是一种渐变动画，只是在绘制的过程对于矩阵做了变换，注意，只是修改了绘制的效果(缩放、旋转、 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -77,6 +77,209 @@ $(document).bind('DOMNodeInserted', function(event) {
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/01/20/androiddong-hua/">Android动画</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-01-20T17:08:00+08:00" pubdate data-updated="true">Jan 20<span>th</span>, 2015</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4>前言</h4>
+
+<p>闲来无事，整理一下Android的动画的学习和使用。</p>
+
+<h4>简介</h4>
+
+<p>Android提供了三种动画:</p>
+
+<ol>
+<li>补间动画(Tween):通过对场景里的对象不断做图像变换(平移、缩放、旋转)产生动画效果，即是一种渐变动画，只是在绘制的过程对于矩阵做了变换，注意，只是修改了绘制的效果(缩放、旋转、平移和alpha透明度等)，但是它的实际属性值没有改变，比如你缩小了一个Button的大小，它的有效点击区域却不变，因为它的位置和大小属性没变动。</li>
+<li>帧动画(Drawable):连续展示一帧一帧的图片资源(存放在res/drawable)，只能设置帧与帧的间隔时间，像播放电影一样。</li>
+<li>属性动画(Property):Android3.0推出,<a href="http://nineoldandroids.com">nineoldandroids</a>可以兼容到3.0以下，对于之前的补间的动画的一个提升，通过动态地改变对象的属性从而达到动画效果，同时支持对非视图对象进行动画。</li>
+</ol>
+
+
+<h4>补间动画</h4>
+
+<h5>原理</h5>
+
+<p>要知道原理，首先需要知道android的视图的层级结构，具体的可以查看相关教程，大概的层次结构如下:<br/>
+RootView &ndash;> DecorView &ndash;> LinearLayout(title+content) &ndash;> ··· &ndash;> activity_root &ndash;> ···</p>
+
+<p>RootView为视图层级树的顶层视图，RootView只有一个子视图DecorView，DecorView为整个Window界面的最顶层View，DecorView只有一个子视图为LinearLayout，代表整个Window界面，包含通知栏，标题栏，内容显示栏三块区域，通常在Activity中setContentView是设置的内容显示视图。<br/>
+ViewTree是以一种自上而下的方式进行遍历实现，Parent总是最先绘制的，其次才是Children，并且仍然遵循自上而下的方式。</p>
+
+<p>ViewRoot.java中的draw函数准备好Canvas后会调用mView.draw(canvas)，其中mView就是调用ViewRoot.setView时设置的DecorView。<br/>
+接着看一下View的绘制过程：</p>
+
+<ol>
+<li>绘制背景；</li>
+<li>如果需要，保存画布（canvas）的层为淡入或淡出做准备；</li>
+<li>绘制View本身的内容，通过调用View.onDraw(canvas)函数实现，通过这个我们应该能看出来onDraw 函数重载的重要性，onDraw函数中绘制线条/圆/文字等功能会调用Canvas中对应的功能；</li>
+<li>绘制自己的孩子（通常也是一个view系统），通过dispatchDraw(canvas)实现，参看ViewGroup.Java中的代码可知，dispatchDraw->drawChild->child.draw(canvas)这样的调用过程被用来保证每个子View的draw函数都被调用，通过这种递归调用从而让整个View树中的所有View的内容都得到绘制。在调用每个子View的draw函数之前，需要绘制的View的绘制位置是在Canvas通过translate函数调用来进行切换的，窗口中的所有View是共用一个Canvas对象；</li>
+<li>如果需要，绘制淡入淡出相关的内容并恢复保存的画布所在的层（layer）；</li>
+<li>绘制修饰的内容（例如滚动条等）；</li>
+</ol>
+
+
+<p>当一个ChildView要重画时，它会调用其成员函数invalidate()函数将通知其ParentView这个ChildView要重画，这个过程一直向上遍历到ViewRoot，当ViewRoot收到这个通知后就会调用上面提到的 ViewRoot中的draw函数从而完成绘制。</p>
+
+<p>ParentView根据ChildView在其内部的布局来调整Canvas，其中画布的属性之一就是定义和ChildView相关的坐标系，Android动画就是通过ParentView来不断调整ChildView的画布坐标系来实现的。</p>
+
+<pre><code>dispatchDraw() 
+{ 
+     .... 
+     Animation a = ChildView.getAnimation() 
+     Transformation tm = a.getTransformation(); 
+     Use tm to set ChildView's Canvas; 
+     Invalidate(); 
+     .... 
+} 
+</code></pre>
+
+<p>可知某一个View的动画的绘制并不是由他自己完成的而是由它的父view完成。</p>
+
+<h5>动画类型</h5>
+
+<p>抽象类Animation中主要定义了动画的一些属性，比如开始时间、持续时间、是否重复播放等，这个类主要有两个重要的函数：getTransformation和applyTransformation，在getTransformation中Animation会根据动画的属性来产生一系列的差值点，然后将这些差值点传给applyTransformation，不同的动画重载这个函数，实现不同的动画效果，通过这个函数将根据这些点来生成不同的Transformation，Transformation中包含一个矩阵和alpha值，矩阵是用来做平移、旋转和缩放动画的，而alpha值是用来做透明度的动画，类的层次结构如下：</p>
+
+<p><img src="../images/animation.png" alt="" /></p>
+
+<h5>如何使用？</h5>
+
+<p>使用代码创建如下类的实例构建动画:</p>
+
+<ul>
+<li>AlphaAnimation:渐变透明度动画效果</li>
+<li>ScaleAnimation:渐变尺寸伸缩动画效果</li>
+<li>TranslateAnimation:画面转换位置移动动画效果</li>
+<li>RotateAnimation:画面转移旋转动画效果</li>
+<li>AnimationSet:动画集合</li>
+<li>Rotate3dAnimation:3D动画</li>
+</ul>
+
+
+<p>例如：</p>
+
+<pre><code>Animation anim = AnimationUtils.loadAnimation(mContext, R.anim.rotate); 
+//监听动画的状态（开始，结束）
+anim.setAnimationListener(new EffectAnimationListener());
+textWidget = (TextView)findViewById(R.id.text_widget);
+textWidget.setText("画面旋转动画效果");
+textWidget.startAnimation(anim);
+</code></pre>
+
+<p>在XML中定义动画，然后通过AnimationUtils加载:</p>
+
+<ul>
+<li>alpha:渐变透明度动画效果</li>
+<li>scale:渐变尺寸伸缩动画效果</li>
+<li>translate:画面转换位置移动动画效果</li>
+<li>rotate:画面转移旋转动画效果</li>
+<li>set: 动画集合</li>
+</ul>
+
+
+<p>例如：</p>
+
+<pre><code>&lt;?xml version="1.0" encoding="utf-8"?&gt;  
+&lt;set xmlns:android="http://schemas.android.com/apk/res/android"  
+     android:fillAfter = "false"  
+     android:zAdjustment="bottom"&gt;  
+    &lt;rotate  
+        android:fromDegrees="0"  
+        android:toDegrees="360"  
+        android:pivotX="50%"  
+        android:pivotY="50%"  
+        android:duration="4000"/&gt;
+    &lt;scale
+        android:interpolator= “@android:anim/accelerate_decelerate_interpolator”
+        android:fromXScale=”0.0″
+        android:toXScale=”1.4″
+        android:fromYScale=”0.0″
+        android:toYScale=”1.4″
+        android:pivotX=”50%”
+        android:pivotY=”50%”
+        android:fillAfter=”false”
+        android:startOffset=“700”
+        android:duration=”4000″
+        android:repeatCount=”10″ /&gt;  
+&lt;/set&gt;  
+</code></pre>
+
+<h4>帧动画</h4>
+
+<p>Android SDK提供了另外一个类AnimationDrawable来定义使用帧动画，本身并没有提供接口来监听动画的状态,需要自己处理。</p>
+
+<p>例如在drable文件夹中实现帧动画：</p>
+
+<pre><code>&lt;?xml version="1.0" encoding="utf-8"?&gt;  
+&lt;animation-list  
+  xmlns:android="http://schemas.android.com/apk/res/android"  
+  android:oneshot="true"&gt;  
+       &lt;item android:drawable="@drawable/p1" android:duration="1000"&gt;&lt;/item&gt;  
+       &lt;item android:drawable="@drawable/p2" android:duration="1000"&gt;&lt;/item&gt;  
+       &lt;item android:drawable="@drawable/p3" android:duration="1000"&gt;&lt;/item&gt;  
+       &lt;item android:drawable="@drawable/p4" android:duration="1000"&gt;&lt;/item&gt;  
+       &lt;item android:drawable="@drawable/p5" android:duration="1000"&gt;&lt;/item&gt;  
+       &lt;item android:drawable="@drawable/p6" android:duration="1000"&gt;&lt;/item&gt;  
+&lt;/animation-list&gt;  
+</code></pre>
+
+<p>代码中调用帧动画：</p>
+
+<pre><code>AnimationDrawable anim = (AnimationDrawable)getResources().getDrawable(R.drawable.frame);
+textWidget = (TextView)findViewById(R.id.text_widget);
+textWidget.setText("背景渐变动画效果");
+textWidget.setBackgroundDrawable(anim);
+anim.start();
+</code></pre>
+
+<h4>属性动画</h4>
+
+<p><img src="../images/animator.png" alt="" /></p>
+
+<h4>参考</h4>
+
+<ul>
+<li><a href="http://developer.android.com/guide/topics/resources/animation-resource.html">官方SDK</a></li>
+<li><a href="http://www.cnblogs.com/feisky/archive/2010/01/11/1644482.html">Android Animation学习笔记</a></li>
+<li><a href="http://blog.csdn.net/xushuaic/article/details/40322345">传统View动画与Property动画基础及比较</a>&ndash;</li>
+<li><a href="http://blog.csdn.net/lmj623565791/article/details/38067475">Android属性动画完全解析</a></li>
+<li><a href="http://blog.csdn.net/singwhatiwanna/article/details/17841165">Android属性动画深入分析：让你成为动画牛人</a></li>
+<li><a href="http://blog.csdn.net/xushuaic/article/details/40424379">Property Anim详解</a></li>
+<li><a href="http://blog.csdn.net/lmj623565791/article/details/42056859">Android 属性动画 源码解析 深入了解其内部实现</a></li>
+<li><a href="http://www.imooc.com/learn/263">属性动画视频教程</a></li>
+</ul>
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -2842,266 +3045,6 @@ status发现svn是未检测到有变化的) 通过git add命令和git commit命�
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2014/01/06/ruby-rvm-brew-gem-bundlershu-li/">Ruby Rvm Brew Gem Bundler梳理</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-01-06T16:07:00+08:00" pubdate data-updated="true">Jan 6<span>th</span>, 2014</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><strong>Ruby</strong>是日本人发明的一种脚本语言。</p>
-
-<hr />
-
-<p><strong><a href="https://github.com/Homebrew/homebrew/wiki">Brew</a></strong>是OS X上提供软件包的管理。Homebrew将软件包安装到单独的目录，然后符号链接到/usr/local 中，完全基于git和ruby。使用gem来安装你的gems，用brew来搞定他们的依赖包。</p>
-
-<p>Mac OS X是基于Unix的操作系统，可以安装大部分为Unix/Linux开发的软件。如果只是以使用为目的，对每个软件都进行手工编译不是很方便，也不利于管理已安装的软件，于是出现了类似于Linux中APT、Yum等类似的软件包管理系统，Mac下比较著名的有MacPorts、Fink、Homebrew等。</p>
-
-<p>MacPorts有个原则，对于软件包之间的依赖，都在MacPorts内部解决（/opt/local），无论系统本身是否包含了需要的库，都不会重用。这使得MacPorts过分的庞大臃肿，导致系统出现大量软件包的冗余，占用不小的磁盘空间，同时稍大型一点的软件编译时间都会难以忍受。</p>
-
-<p>Homebrew恰恰相反，它尽可能地利用系统自带的各种库，使得软件包的编译时间大为缩短；同时由于几乎不会造成冗余，软件包的管理也清晰、灵活了许多。Homebrew的另一个特点是使用Ruby定义软件包安装配置(formula)，定制非常简单。</p>
-
-<p>Fink暂不讨论。</p>
-
-<p>首先确保你的系统满足如下要求：
- 1. 基于Intel CPU
- 2. 操作系统为Mac OS X 10.5 Leopard或更高版本
- 3. 已安装版本管理工具Git（Mac OS X 10.7 Lion已经预安装
- 4. 已安装Xcode开发工具1(Command Line Tools)
- 5. 已安装Java Developer Update2</p>
-
-<p>注1：Xcode 4.3中，命令行编译工具是可选安装，需要在Preferences > Downloads中激活。<br>
-注2：可选，Homebrew本身不依赖于Java，只有部分软件包的安装需要Java支持。</p>
-
-<p>Homebrew的安装:</p>
-
-<pre><code>ruby -e "$(curl -fsSL https://raw.github.com/mxcl/homebrew/go)"
-</code></pre>
-
-<p>或者</p>
-
-<pre><code>ruby -e "$(curl -fsSL https://raw.github.com/Homebrew/homebrew/go/install)" 
-</code></pre>
-
-<p>由于Homebrew的安装地址可能变化，请到<a href="https://github.com/Homebrew/homebrew/wiki">官方网站</a>查看最新的安装方法。</p>
-
-<p>Homebrew的使用: Homebrew的可执行命令是brew，其基本使用方法如下（以软件包wget为例）。</p>
-
-<p>查找软件包</p>
-
-<pre><code>brew search wget
-</code></pre>
-
-<p>安装软件包</p>
-
-<pre><code>brew install wget
-</code></pre>
-
-<p>列出已安装的软件包</p>
-
-<pre><code>brew list
-</code></pre>
-
-<p>删除软件包</p>
-
-<pre><code>brew remove wget
-</code></pre>
-
-<p>查看软件包信息</p>
-
-<pre><code>brew info wget
-</code></pre>
-
-<p>列出软件包的依赖关系</p>
-
-<pre><code>brew deps wget
-</code></pre>
-
-<p>更新brew</p>
-
-<pre><code>brew update
-</code></pre>
-
-<p>列出过时的软件包（已安装但不是最新版本）</p>
-
-<pre><code>brew outdated
-</code></pre>
-
-<p>更新过时的软件包（全部或指定）</p>
-
-<pre><code>brew upgrade 或 brew upgrade wget
-</code></pre>
-
-<p>定制自己的软件包（假定软件包名称是bar，来自foo站点）。</p>
-
-<p>首先找到待安装软件的源码下载地址
-<a href="http://foo.com/bar-1.0.tgz">http://foo.com/bar-1.0.tgz</a></p>
-
-<p>建立自己的formula
-brew create <a href="http://foo.com/bar-1.0.tgz">http://foo.com/bar-1.0.tgz</a></p>
-
-<p>编辑formula，上一步建立成功后，Homebrew会自动打开新建的formula进行编辑，也可用如下命令打开formula进行编辑:</p>
-
-<pre><code>brew edit bar
-</code></pre>
-
-<p>Homebrew自动建立的formula已经包含了基本的configure和make install命令，对于大部分软件，不需要进行修改，退出编辑即可。</p>
-
-<p>输入以下命令安装自定义的软件包</p>
-
-<pre><code>brew install bar
-</code></pre>
-
-<hr />
-
-<p><strong><a href="http://rubygems.org/">RubyGems</a></strong>是一个包管理框架，提供了ruby社区gem的托管服务，用于方便地下载、安装和使用ruby软件包(gem)，包含了ruby应用或库,要升级到最新的RubyGems，运行：</p>
-
-<pre><code>$ gem update --system
-</code></pre>
-
-<p>如果没有安装RubyGems，则需要先下载安装包，然后解压开后运行：</p>
-
-<pre><code>ruby setup.rb
-</code></pre>
-
-<hr />
-
-<p><strong>Gem</strong>也是Ruby软件包管理工具,如果要看安装的gem文档，一是可以用ri，二是可以gem server启动一个web服务。详细的帮助参见<a href="http://guides.rubygems.org/">RubyGems Guides</a>。</p>
-
-<p>brew和gem不同，brew用于操作系统层面上软件包的安装，而gem只是管理ruby软件,gem常用命令如下:</p>
-
-<pre><code>gem -v #gem版本
-gem update #更新所有包 
-gem update --system #更新RubyGems软件 
-gem install rake #安装rake,从本地或远程服务器 
-gem install rake --remote #安装rake,从远程服务器 
-gem install watir -v(或者--version) 1.6.2#指定安装版本的 
-gem uninstall rake #卸载rake包 
-gem list d #列出本地以d打头的包
-gem list --local | grep cocoapods #列出cocoapods相关的set 
-gem query -n ''[0-9]'' --local #查找本地含有数字的包 
-gem search log --both #从本地和远程服务器上查找含有log字符串的包 
-gem search log --remoter #只从远程服务器上查找含有log字符串的包 
-gem search -r log #只从远程服务器上查找含有log字符串的包 
-gem help #提醒式的帮助 
-gem help install #列出install命令 帮助 
-gem help examples #列出gem命令使用一些例子 
-gem build rake.gemspec #把rake.gemspec编译成rake.gem 
-gem check -v pkg/rake-0.4.0.gem #检测rake是否有效 
-gem cleanup #清除所有包旧版本，保留最新版本 
-gem contents rake #显示rake包中所包含的文件 
-gem dependency rails -v 0.10.1 #列出与rails相互依赖的包 
-gem environment #查看gem的环境
-gem sources -l #查看源,可以通过--remove删除一个源，以及-a来添加一个源
-#https://rubygems.org/ 或者 http://ruby.taobao.org/
-</code></pre>
-
-<p>注意：安装的时候不要使用sudo，默认的Mac OS安装了Ruby，所以这个时候如果使用sudo，更新的是系统版本的ruby对应的gems。</p>
-
-<hr />
-
-<p><strong><a href="https://rvm.io/">RVM</a></strong>（Ruby enVironment Version  ) Manager）是一个命令行工具，提供在多个ruby环境中方便的安装、管理和工作，包括解释器和gem集合。rvm自己的安装通过curl命令执行，如：curl -L <a href="https://get.rvm.io">https://get.rvm.io</a> | bash。</p>
-
-<p>RVM有一个非常灵活的gem管理系统，称为Gem Sets。RVM的’gemsets’管理横跨多个Ruby版本的gems包。</p>
-
-<p>这里所有的命令都是再用户权限下操作的，任何命令最好都不要用sudo.</p>
-
-<p>rvm安装:</p>
-
-<pre><code>bash -s stable &lt; &lt;(curl -s https://raw.github.com/wayneeseguin/rvm/master/binscripts/rvm-installer)
-</code></pre>
-
-<p>设置环境变量:</p>
-
-<pre><code>echo '[[ -s "$HOME/.rvm/scripts/rvm" ]] &amp;&amp; . "$HOME/.rvm/scripts/rvm" # Load RVM function' &gt;&gt; ~/.bash_profile
-source ~/.bash_profile
-</code></pre>
-
-<p>修改 RVM 的 Ruby 安装源到国内的 淘宝镜像服务器，这样能提高安装速度</p>
-
-<pre><code>sed -i -e 's/ftp\.ruby-lang\.org\/pub\/ruby/ruby\.taobao\.org\/mirrors\/ruby/g' ~/.rvm/config/db
-</code></pre>
-
-<p>列出已知的ruby版本</p>
-
-<pre><code>rvm list known
-</code></pre>
-
-<p>安装一个ruby版本</p>
-
-<pre><code>rvm install 1.9.3
-</code></pre>
-
-<p>这里安装了最新的1.9.3, rvm list known列表里面的都可以拿来安装。</p>
-
-<p>使用一个ruby版本</p>
-
-<pre><code>rvm use 1.9.3
-</code></pre>
-
-<p>如果想设置为默认版本，可以这样</p>
-
-<pre><code>rvm use 1.9.3 --default 
-</code></pre>
-
-<p>查询已经安装的ruby</p>
-
-<pre><code>rvm list
-</code></pre>
-
-<p>卸载一个已安装版本</p>
-
-<pre><code>rvm remove 1.9.2
-</code></pre>
-
-<p>rvm连同ruby一起卸载调</p>
-
-<pre><code>rvm implode
-</code></pre>
-
-<p>一键将rvm,Ruby连同bundler一起装好</p>
-
-<pre><code>curl -L https://get.rvm.io | bash -s stable --ruby
-</code></pre>
-
-<hr />
-
-<p><strong><a href="http://bundler.io/">Bundler</a></strong>为ruby维持一个一致性的环境，跟踪应用代码和所需要的ruby gems，这样一个应用可以有所需要的精确的gems（和版本）安装通过如下命令：</p>
-
-<pre><code>$ gem install bundler
-</code></pre>
-
-<hr />
-
-<p>安装的顺序，先安装rvm，之后选择安装一个ruby版本，就可以提供一个完整的ruby运行环境。之后可以安装brew（brew虽然是管理os的，但基于ruby）和gem，分别管理操作系统和ruby的软件包。之后ruby重新编译的时候所依赖的包可以使用brew安装。有了gem之后，bundler只不过就是一个gem，直接通过gem install 即可。</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -3117,6 +3060,10 @@ source ~/.bash_profile
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2015/01/20/androiddong-hua/">Android动画</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2014/07/10/iosding-wei-fu-wu-yu-di-tu-kai-fa/">iOS定位服务与地图开发</a>
       </li>
     
@@ -3130,10 +3077,6 @@ source ~/.bash_profile
     
       <li class="post">
         <a href="/blog/2014/04/09/iosping-mu-xuan-zhuan/">iOS屏幕旋转</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/04/04/ioszhong-de-dui-he-zhan/">iOS中的堆和栈</a>
       </li>
     
   </ul>
@@ -3159,6 +3102,8 @@ source ~/.bash_profile
 <a style="font-size: 90%" href="/tags/orientation/">Orientation</a>
 <a style="font-size: 90%" href="/tags/svn/">SVN</a>
 <a style="font-size: 90%" href="/tags/thread/">Thread</a>
+<a style="font-size: 90%" href="/tags/android/">android</a>
+<a style="font-size: 90%" href="/tags/animation/">animation</a>
 <a style="font-size: 90%" href="/tags/block/">block</a>
 <a style="font-size: 90%" href="/tags/heap/">heap</a>
 <a style="font-size: 90%" href="/tags/markdown/">markdown</a>
@@ -3186,7 +3131,7 @@ source ~/.bash_profile
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2014 - jackyzonewen -
+  Copyright &copy; 2015 - jackyzonewen -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 
