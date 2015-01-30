@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: animation | 挡不住的君文]]></title>
   <link href="http://jackyzonewen.github.io/tags/animation/atom.xml" rel="self"/>
   <link href="http://jackyzonewen.github.io/"/>
-  <updated>2015-01-21T00:26:19+08:00</updated>
+  <updated>2015-01-30T17:23:57+08:00</updated>
   <id>http://jackyzonewen.github.io/</id>
   <author>
     <name><![CDATA[jackyzonewen]]></name>
@@ -77,7 +77,12 @@ ViewTree是以一种自上而下的方式进行遍历实现，Parent总是最先
 
 <p>抽象类Animation中主要定义了动画的一些属性，比如开始时间、持续时间、是否重复播放等，这个类主要有两个重要的函数：getTransformation和applyTransformation，在getTransformation中Animation会根据动画的属性来产生一系列的差值点，然后将这些差值点传给applyTransformation，不同的动画重载这个函数，实现不同的动画效果，通过这个函数将根据这些点来生成不同的Transformation，Transformation中包含一个矩阵和alpha值，矩阵是用来做平移、旋转和缩放动画的，而alpha值是用来做透明度的动画，类的层次结构如下：</p>
 
-<p><img src="../images/animation.png" alt="" /></p>
+<!--
+![](../images/animation.png)
+-->
+
+
+<p><img src="../images/animation.png"></p>
 
 <h5>如何使用？</h5>
 
@@ -171,7 +176,12 @@ anim.start();
 
 <h4>属性动画</h4>
 
-<p><img src="../images/animator.png" alt="" /></p>
+<!--
+![](../images/animator.png)
+-->
+
+
+<p><img src="../images/animator.png"></p>
 
 <h4>参考</h4>
 
