@@ -1,0 +1,592 @@
+---
+layout: post
+title: "Android事件机制详解"
+date: 2015-01-30 10:36
+comments: true
+categories: 
+tags: [android, 事件]
+---
+
+<h4>序言</h4>
+
+　　对于Android事件一直处于会使用的状态，感觉好像知道了，心里又没有底，有很多博客文章讲的都不错，所以最近想把Android事件结合源码捋一捋，年前也争取把iOS的事件机制捋一捋，写一篇博客，加深自己的理解和记忆，其实他们的机制很多的相似之处。  
+　　ps:下文中的事件都指的是手势，比如点击，长按，快速滑动等；对于ACTION_UP、ACTION_DOWN等称为是动作。
+
+<h4>介绍</h4>
+
+　　Android中常用的事件包括点击、长按、拖拽、滑动、各种Gesture等，点击又包括单击和双击，另外还包括单指操作和多指操作，事件都是都是通过以下几个动作加上事件处理逻辑来实现：
+
+- 按下动作（ACTION_DOWN）
+- 移动动作（ACTION_MOVE）
+- 抬起动作（ACTION_UP）
+- 取消动作（ACTION_CANCEL）
+
+　　明确事件传递机制的最终目的都是为了触发执行View的点击监听(setOnClickListener)和触摸监听(setOnTouchListener)等，用来与用户进行交互。
+
+View和事件有关的函数：
+
+	public boolean dispatchTouchEvent(MotionEvent event)
+	public boolean onTouchEvent(MotionEvent event)
+
+ViewGroup事件相关函数：
+
+    public boolean dispatchTouchEvent(MotionEvent event)
+    public boolean onTouchEvent(MotionEvent event)
+    public boolean onInterceptTouchEvent(MotionEvent ev)
+
+Activity事件相关函数:
+
+	public boolean dispatchTouchEvent(MotionEvent event)
+	public boolean onTouchEvent(MotionEvent event)
+
+　　可以发现ViewGroup多了一个onInterceptTouchEvent函数，并且这几个函数的返回值都是boolean类型的，在Android中，所有的动作的生命周期都是从产生->分发->处理(是否消费)的一个过程，这些方法的返回值就决定了某一动作是否是继续往下分发，还是被拦截了，或是被消费了。
+
+　　这里的消费(consume)的概念需要理解一下，比如ACTION_MOVE或者ACTION_UP发生的前提是一定曾经发生了ACTION_DOWN，如果没有消费掉ACTION_DOWN，那么系统会认为ACTION_DOWN没有发生过，所以ACTION_MOVE或者ACTION_UP就不能被捕获。
+
+<h4>事件的分析</h4>
+
+　　我们从手指点击屏幕开始分析，当手指点击屏幕的时候，系统会产生很多的消息，消息会被系统进行封装进MotionEvent对象里面，内核部分省略不懂，我们坚信这些MotionEvent会传递给当前打开的应用程序，Activity是应用程序界面组件，所以肯定也会传递给它，看看源码：
+
+	// Activity的dispatchTouchEvent源码
+	public boolean dispatchTouchEvent(MotionEvent ev) {
+	
+	     // 如果是按下状态就调用onUserInteraction()方法，默认空实现
+        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+            onUserInteraction();
+        }
+        
+        // 消息真正的遍历的过程就在这里···
+        if (getWindow().superDispatchTouchEvent(ev)) {
+            return true;
+        }
+        
+        // getWindow().superDispatchTouchEvent(ev)返回false，跳转到Activity的onTouchEvent
+        return onTouchEvent(ev);
+    }
+	
+	// Activity的onTouchEvent默认返回了false，不处理消息
+	public boolean onTouchEvent(MotionEvent event) {
+        return false;
+    }
+	
+getWindow()返回当前Activity的顶层窗口Window对象，我们直接看Window API的方法：
+	
+	// Window的方法
+	public abstract boolean superDispatchTouchEvent(MotionEvent event);
+	
+这是一个抽象的方法，那么我们查看一下它的唯一子类PhoneWindow的方法：
+	
+	// PhoneWindow的方法
+	public boolean superDispatchTouchEvent(MotionEvent event) {
+        return mDecor.superDispatchTouchEvent(event);
+    }
+    
+这里直接调用mDecor的superDispatchTouchEvent方法；DecorView是PhoneWindow的一个final的内部类并且继承FrameLayout的，也是Window界面的最顶层的View对象，DecorView里面只有一个子视图LinearLayout，LinearLayout有两个FrameLayout，这里由于我们没有显示标题，所以显示的是ViewStub，下面的FrameLayout就是用来装载我们setContentView()方法设置的view，用Hierarchyviewer查看视图层次结构:
+<!--
+![](../images/android_view_hierarchy.png)
+-->
+{% img ../images/android_view_hierarchy.png %}
+
+接下来看一下我们的DecorView的superDispatchTouchEvent方法：
+
+    // DecorView的方法
+    public boolean superDispatchTouchEvent(MotionEvent event) {
+        return super.dispatchTouchEvent(event);
+    }
+
+调用了父类的superDispatchTouchEvent，由于FrameLayout没有dispatchTouchEvent方法，所以会调用ViewGroup的dispatchTouchEvent方法，我们查看下ViewGroup的源码：
+
+	// ViewGroup的dispatchTouchEvent方法
+	public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (!onFilterTouchEventForSecurity(ev)) {
+            return false;
+        }
+
+        final int action = ev.getAction();
+        final float xf = ev.getX();
+        final float yf = ev.getY();
+        final float scrolledXFloat = xf + mScrollX;
+        final float scrolledYFloat = yf + mScrollY;
+        final Rect frame = mTempRect;
+		 
+	     // 默认为false，子视图可以通过调用requestDisallowInterceptTouchEvent来阻止父视图拦截事件动作
+        boolean disallowIntercept = (mGroupFlags & FLAG_DISALLOW_INTERCEPT) != 0;
+	     
+	     // DOWN事件动作处理逻辑
+        if (action == MotionEvent.ACTION_DOWN) {
+            // 每次按下的时候都会让mMotionTarget为null
+            if (mMotionTarget != null) {
+                // this is weird, we got a pen down, but we thought it was
+                // already down!
+                // XXX: We should probably send an ACTION_UP to the current
+                // target.
+                mMotionTarget = null;
+            }
+            // If we're disallowing intercept or if we're allowing and we didn't
+            // intercept
+            // 如果不允许拦截事件 或者 拦截函数onInterceptTouchEvent返回的为false
+            if (disallowIntercept || !onInterceptTouchEvent(ev)) {
+                // reset this event's action (just to protect ourselves)
+                ev.setAction(MotionEvent.ACTION_DOWN);
+                // We know we want to dispatch the event down, find a child
+                // who can handle it, start with the front-most child.
+                final int scrolledXInt = (int) scrolledXFloat;
+                final int scrolledYInt = (int) scrolledYFloat;
+                final View[] children = mChildren;
+                final int count = mChildrenCount;
+			      // 遍历子View
+                for (int i = count - 1; i >= 0; i--) {
+                    final View child = children[i];
+                    // 如果子视图可见或者子视图正在执行动画
+                    if ((child.mViewFlags & VISIBILITY_MASK) == VISIBLE
+                            || child.getAnimation() != null) {
+                        // 获取子视图的位置范围
+                        child.getHitRect(frame);
+                        // 手势的触摸点位于改子视图内部
+                        if (frame.contains(scrolledXInt, scrolledYInt)) {
+                            // offset the event to the view's coordinate system
+                            final float xc = scrolledXFloat - child.mLeft;
+                            final float yc = scrolledYFloat - child.mTop;
+                            ev.setLocation(xc, yc);
+                            child.mPrivateFlags &= ~CANCEL_NEXT_UP_EVENT;
+                            
+                            // 调用该子视图的dispatchTouchEvent分发事件
+                            // 如果该子视图的dispatchTouchEvent返回true，表示该事件动作被消费了，mMotionTarget记录这个消费的子视图，后面处理事件有用
+                            if (child.dispatchTouchEvent(ev))  {
+                                // Event handled, we have a target now.
+                                mMotionTarget = child;
+                                return true;
+                            }
+                            // The event didn't get handled, try the next view.
+                            // Don't reset the event's location, it's not
+                            // necessary here.
+                        }
+                    }
+                }
+            }
+        }
+		  
+		　// 是否为UP动作或者CANCEL动作
+        boolean isUpOrCancel = (action == MotionEvent.ACTION_UP) ||
+                (action == MotionEvent.ACTION_CANCEL);
+		 
+		　// 如果为抬起或者取消动作，设置标志位，让disallowIntercept为false
+		　// 假如我们在子视图中调用requestDisallowInterceptTouchEvent来设置
+		　// disallowIntercept为true，当我们抬起或者取消的时候要将disallowIntercept重置为false
+        if (isUpOrCancel) {
+            // Note, we've already copied the previous state to our local
+            // variable, so this takes effect on the next event
+            mGroupFlags &= ~FLAG_DISALLOW_INTERCEPT;
+        }
+		 
+        // The event wasn't an ACTION_DOWN, dispatch it to our target if
+        // we have one.        
+        final View target = mMotionTarget;
+        // 如果mMotionTarget为null，说明签名遍历子视图过程，事件没有被消费，所以需要让ViewGroup采用View的dispatchTouchEvent逻辑处理这个事件动作，所以调用ViewGroup父类的dispatchTouchEvent方法，也就是view的dispatchTouchEvent方法
+        if (target == null) {
+            // We don't have a target, this means we're handling the
+            // event as a regular view.
+            ev.setLocation(xf, yf);
+            if ((mPrivateFlags & CANCEL_NEXT_UP_EVENT) != 0) {
+                ev.setAction(MotionEvent.ACTION_CANCEL);
+                mPrivateFlags &= ~CANCEL_NEXT_UP_EVENT;
+            }
+            return super.dispatchTouchEvent(ev);
+        }
+        
+		　
+        // if have a target, see if we're allowed to and want to intercept its
+        // events
+        // 这个if代码快的代码ActionDown不会执行，只有MOVE和UP的动作会执行到这里
+        // 这里是对于拦截的处理
+        // 如果允许拦截 并且 ViewGroup子类onInterceptTouchEvent返回true，那么将
+        // Cancel动作发送给消费了此事件的对象，然后返回true，表示消费了此事件
+        if (!disallowIntercept && onInterceptTouchEvent(ev)) {
+            final float xc = scrolledXFloat - (float) target.mLeft;
+            final float yc = scrolledYFloat - (float) target.mTop;
+            mPrivateFlags &= ~CANCEL_NEXT_UP_EVENT;
+            ev.setAction(MotionEvent.ACTION_CANCEL);
+            ev.setLocation(xc, yc);
+            if (!target.dispatchTouchEvent(ev)) {
+                // target didn't handle ACTION_CANCEL. not much we can do
+                // but they should have.
+            }
+            // clear the target
+            mMotionTarget = null;
+            // Don't dispatch this event to our own view, because we already
+            // saw it when intercepting; we just want to give the following
+            // event to the normal onTouchEvent().
+            return true;
+        }
+		　
+        if (isUpOrCancel) {
+            mMotionTarget = null;
+        }
+
+        // finally offset the event to the target's coordinate system and
+        // dispatch the event.
+        final float xc = scrolledXFloat - (float) target.mLeft;
+        final float yc = scrolledYFloat - (float) target.mTop;
+        ev.setLocation(xc, yc);
+
+        if ((target.mPrivateFlags & CANCEL_NEXT_UP_EVENT) != 0) {
+            ev.setAction(MotionEvent.ACTION_CANCEL);
+            target.mPrivateFlags &= ~CANCEL_NEXT_UP_EVENT;
+            mMotionTarget = null;
+        }
+        
+        // 如果没有拦截MOVE和UP事件动作，直接将事件动作派发给target
+        return target.dispatchTouchEvent(ev);
+    }
+	
+	// ViewGroup的onInterceptTouchEvent，默认返回false，不拦截子视图事件
+	public boolean onInterceptTouchEvent(MotionEvent ev) {
+        return false;
+    }
+
+	// View的dispatchTouchEvent方法
+	public boolean dispatchTouchEvent(MotionEvent event) {
+	    if (!onFilterTouchEventForSecurity(event)) {
+	        return false;
+	    }
+	    
+	    // 如果设置了touchListener
+	    if (mOnTouchListener != null && (mViewFlags & ENABLED_MASK) == ENABLED &&
+	            mOnTouchListener.onTouch(this, event)) {
+	        return true;
+	    }
+	
+	    return onTouchEvent(event);
+	}
+
+比如我们有一个ContentView的层次结果如下：
+
+<pre>
+-> DecorView  
+　-> LinearLayout  
+　　-> FrameLayout -> TextView  
+　　-> FrameLayout -> RelativeLayout -> TextView    
+</pre>
+
+比如我们点击一下TextView，我们大致分析一下事件处理的流程:
+1、DOWN事件投递到DecorView上，因为DecorView是FrameLayout的子类，所以调用ViewGroup的dispatchTouchEvent方法，ViewGroup默认的onInterceptTouchEvent返回的是false，所以DOWN事件会派发到子视图：
+	
+	// ViewGroup的dispatchTouchEvent代码片段
+	if (action == MotionEvent.ACTION_DOWN) {
+	    // ...
+		if (disallowIntercept || !onInterceptTouchEvent(ev)) {
+			// ...
+			if (child.dispatchTouchEvent(ev))  {
+	           // Event handled, we have a target now.
+	           mMotionTarget = child;
+	           return true;
+	       }
+	       // ...
+		}    
+	    // ...
+	}
+
+分发是一层一层的往下调用，上层的DecorView的dispatchTouchEvent一直没有返回，返回是逆向的过程，和递归的过程一样。
+同理，DOWN事件将一直往下分发：
+
+<pre>
+->LinearLayout.dispatchTouchEvent  
+　　->FrameLayout.dispatchTouchEvent  
+　　　　->RelativeLayout.dispatchTouchEvent  
+　　　　　　->TextView.dispatchTouchEvent  
+　　　　　　->View.dispatchTouchEvent  
+</pre>
+
+TextView继承自View，它的dispatchTouchEvent方法来父类View，看看源码:
+
+	public boolean dispatchTouchEvent(MotionEvent event) {
+        if (!onFilterTouchEventForSecurity(event)) {
+            return false;
+        }
+
+        if (mOnTouchListener != null && (mViewFlags & ENABLED_MASK) == ENABLED &&
+                mOnTouchListener.onTouch(this, event)) {
+            return true;
+        }
+        return onTouchEvent(event);
+    }
+
+从源码可以看到，如果设置了onTouchListener，那么会先执行注册的onTouch监听,如果一切顺利的话(三个条件不都为true，ps:onTouch方法的返回值一般为false，view一般是enable的)，接着执行onTouchEvent，如果提前被onTouch消费(onTouch返回true)了，那就没法处理onClick了，因为onClick在onTouchEvent
+里面才会被调用。
+为什么View提供了一个onTouchEvent()的地方，还提供onTouchListener接口呢？应该是对处理Touch事件的屏蔽和扩展作用，比如我们要打印view的Touch的点的坐标，我们可以自定义一个View如下:
+
+	public class CustomView extends View {  
+	      
+	    public CustomView(Context context, AttributeSet attrs) {  
+	        super(context, attrs);  
+	    }  
+	  
+	    public CustomView(Context context, AttributeSet attrs, int defStyle) {  
+	        super(context, attrs, defStyle);  
+	    }  
+	  
+	    @Override  
+	    public boolean onTouchEvent(MotionEvent event) {  
+	          
+	        Log.i("tag", "X的坐标 = " + event.getX() + " Y的坐标 = " + event.getY());  
+	          
+	        return super.onTouchEvent(event);  
+	    }  
+	  
+	}
+
+也可以直接对View设置OnTouchListener接口,在return的时候调用下v.onTouchEvent():
+
+	view.setOnTouchListener(new OnTouchListener() {  
+	              
+	            @Override  
+	            public boolean onTouch(View v, MotionEvent event) {  
+	                  
+	                Log.i("tag", "X的坐标 = " + event.getX() + " Y的坐标 = " + event.getY());  
+	                  
+	                return v.onTouchEvent(event);  
+	            }  
+	});  
+
+View的onTouchEvent()方法:
+	
+	// View的onTouchEvent方法
+	public boolean onTouchEvent(MotionEvent event) {
+        final int viewFlags = mViewFlags;
+		　
+		　// 如果当前View是Disable状态 并且 可点击状态(单击和长按)，则会消费掉事件
+        if ((viewFlags & ENABLED_MASK) == DISABLED) {
+            // A disabled view that is clickable still consumes the touch
+            // events, it just doesn't respond to them.
+            return (((viewFlags & CLICKABLE) == CLICKABLE ||
+                    (viewFlags & LONG_CLICKABLE) == LONG_CLICKABLE));
+        }
+		　
+		　// 如果设置了mTouchDelegate，则将事件交给代理处理，直接return true；
+        if (mTouchDelegate != null) {
+            if (mTouchDelegate.onTouchEvent(event)) {
+                return true;
+            }
+        }
+		　
+		　// 如果可以点击(单击 或者 长按)，结果一定会返回true，消费此事件
+        if (((viewFlags & CLICKABLE) == CLICKABLE ||
+                (viewFlags & LONG_CLICKABLE) == LONG_CLICKABLE)) {
+            switch (event.getAction()) {
+            
+                // 抬起事件
+                case MotionEvent.ACTION_UP:
+                    
+                    boolean prepressed = (mPrivateFlags & PREPRESSED) != 0;
+                    // 如果包含PREPRESSED标识或PRESSED标识，则进入执行体，根据DOWN和MOVE的分析知道，也就是无论是在115ms之前或是之后，都会进入执行体
+                    if ((mPrivateFlags & PRESSED) != 0 || prepressed) {
+                        // take focus if we don't have it already and we should in
+                        // touch mode.
+                        boolean focusTaken = false;
+                        if (isFocusable() && isFocusableInTouchMode() && !isFocused()) {
+                            focusTaken = requestFocus();
+                        }
+                        
+                        // 如果执行了长按回调，并且长按的回调返回false
+                        if (!mHasPerformedLongPress) {
+                            // This is a tap, so remove the longpress check
+                            // 移出长按的检测
+                            removeLongPressCallback();
+
+                            // Only perform take click actions if we were in the pressed state
+                            if (!focusTaken) {
+                                // Use a Runnable and post this rather than calling
+                                // performClick directly. This lets other visual state
+                                // of the view update before c                                lick actions start.
+                                // 执行单击回调函数
+                                if (mPerformClick == null) {
+                                    mPerformClick = new PerformClick();
+                                }
+                                if (!post(mPerformClick)) {
+                                    performClick();
+                                }
+                            }
+                        }
+
+                        if (mUnsetPressedState == null) {
+                            mUnsetPressedState = new UnsetPressedState();
+                        }
+                         
+                        // 如果prepressed为true
+                        if (prepressed) {
+                            // 设置PRESSED标识，刷新背景
+                            mPrivateFlags |= PRESSED;
+                            refreshDrawableState();
+                            // 延迟125ms后执行mUnsetPressedState，这个里面把我们的PRESSED标识重置，然后刷新背景，把setPress转发下去
+                            postDelayed(mUnsetPressedState,
+                                    ViewConfiguration.getPressedStateDuration());
+                        } else if (!post(mUnsetPressedState)) {
+                            // If the post failed, unpress right now
+                            mUnsetPressedState.run();
+                        }
+                        
+                        removeTapCallback();
+                    }
+                    break;
+                    
+				   // 按下处理
+                case MotionEvent.ACTION_DOWN:
+                    if (mPendingCheckForTap == null) {
+                        mPendingCheckForTap = new CheckForTap();
+                    }
+                    
+                    // 设置PREPRESSED标识
+                    mPrivateFlags |= PREPRESSED;
+                    // 指示长按事件还未触发
+                    mHasPerformedLongPress = false;
+                    // 发送一个延迟消息，时间为115毫秒，延迟后执行CheckForTap()
+                    postDelayed(mPendingCheckForTap, ViewConfiguration.getTapTimeout());
+                    break;
+
+                case MotionEvent.ACTION_CANCEL:
+                    mPrivateFlags &= ~PRESSED;
+                    refreshDrawableState();
+                    removeTapCallback();
+                    break;
+
+                case MotionEvent.ACTION_MOVE:
+                    final int x = (int) event.getX();
+                    final int y = (int) event.getY();
+
+                    // Be lenient about moving outside of buttons
+                    int slop = mTouchSlop;
+                    // 如果触摸点移出了我们的view
+                    if ((x < 0 - slop) || (x >= getWidth() + slop) ||
+                            (y < 0 - slop) || (y >= getHeight() + slop)) {
+                        // Outside button
+                        // 移除DOWN触发时设置的PREPRESSED标识,即你在115ms内移出了view
+                        removeTapCallback();
+                        // 如果包含PRESSED标识，说明已经在115ms之后了，移除长按回调，重置PRESSED标识并刷新背景
+                        if ((mPrivateFlags & PRESSED) != 0) {
+                            // Remove any future long press/tap checks
+                            removeLongPressCallback();
+
+                            // Need to switch from pressed to not pressed
+                            mPrivateFlags &= ~PRESSED;
+                            refreshDrawableState();
+                        }
+                    }
+                    break;
+            }
+            return true;
+        }
+
+        return false;
+    }
+
+    // ACTION_DOWN点击 延迟处理函数
+    private final class CheckForTap implements Runnable {
+        public void run() {    
+            // 取消ACTION_DOWN里面设置的PREPRESSED标识
+            mPrivateFlags &= ~PREPRESSED;
+            // 设置PRESSED标识，并且刷新背景，如果设置了点击效果就是这里处理了
+            mPrivateFlags |= PRESSED;
+            refreshDrawableState();
+            // 如果View支持长按事件，再发一个延时消息，检测是否是长按
+            if ((mViewFlags & LONG_CLICKABLE) == LONG_CLICKABLE) {
+                postCheckForLongClick(ViewConfiguration.getTapTimeout());
+            }
+        }
+    }
+	
+	// 发送检测长按消息
+	private void postCheckForLongClick(int delayOffset) {
+        mHasPerformedLongPress = false;
+
+        if (mPendingCheckForLongPress == null) {
+            mPendingCheckForLongPress = new CheckForLongPress();
+        }
+        mPendingCheckForLongPress.rememberWindowAttachCount();
+        // 延迟时间为500ms-115ms
+        postDelayed(mPendingCheckForLongPress,
+                ViewConfiguration.getLongPressTimeout() - delayOffset);
+    }
+    
+    // 检测长按延迟处理函数
+    class CheckForLongPress implements Runnable {
+
+        private int mOriginalWindowAttachCount;
+
+        public void run() {
+            if (isPressed() && (mParent != null)
+                    && mOriginalWindowAttachCount == mWindowAttachCount) {
+                if (performLongClick()) {
+                    mHasPerformedLongPress = true;
+                }
+            }
+        }
+
+        public void rememberWindowAttachCount() {
+            mOriginalWindowAttachCount = mWindowAttachCount;
+        }
+    }
+	
+	// 重置PREPRESSED标识，并且移出点击检测回调
+	private void removeTapCallback() {
+        if (mPendingCheckForTap != null) {
+            mPrivateFlags &= ~PREPRESSED;
+            removeCallbacks(mPendingCheckForTap);
+        }
+    }
+
+ACTION_DOWN分析:
+　　当用户按下，首先会设置标识为PREPRESSED，然后发送一个延迟115ms的消息，如果这个时候过后，没有抬起，会重置View的PREPRESSED标识，并且标识设置为PREDDED，如果View支持长按，会发送一个长按检测的延迟消息，延迟时间为500ms-115ms，也就是用户从down的一刻开始，500ms内没有抬起则认为是长按事件。
+
+　　如果设置了长按的事件，那么执行长按的回调；如果长按的返回值为true，那么会执行mHasPerformedLongPress = true，这就表示长按消费了此事件活动，那么后面根据这个mHasPerformedLongPress，如果是true，就不会执行click事件，否则会继续执行click事件回调。
+
+ACTION_MOVE分析:
+　　首先拿到触摸点的x、y坐标，判断是否移出了我们的view，如果移出了，如果是在115ms内就移出了，这个时候要重置DOWN时的PREPRESSED标识，然后取消Tap检测的延迟回调，如果是在115ms之后移出的，那么这个时候需要重置PRESSED标识，并且取消LongClick检测的延迟回调。
+
+ACTION_UP分析:
+　　判断是否包含PRESSED或者PREPRESSED标识，也就是无论是115ms内或者之后，都会进入这个执行体，首先设置是否获取焦点，然后判断mHasPerformedLongPress标识，如果true，说明执行了长按回调，并且回调返回true告知消费了此事件动作，如果返回false，里面做一些长按清理的工作，以及执行点击回调，就是我们熟悉的onClickListener，执行完点击回调，需要重新标志位，刷新的背景，把setPress转发下去。
+
+对于TouchEvent的分析告一段落了，我们上面的DOWN消息转发到了TextView的dispatchTouchEvent，好了，消息转发到"底"了，然后在View.dispatchTouchEvent会调用View.onTouchEvent，默认的View.onTouchEvent返回的false，不消费此事件动作，那么事件动作会以冒泡的形式向上回朔，由于TextView.dispatchTouchEvent返回的为false，导致它的mMotionTarget为null，继续往上一层回朔，到RelativeLayout.dispatchTouchEvent方法中，target = mMotionTarget，结果也为null，执行super.dispatchTouchEvent(ev)代码并返回，由于RelativeLayout没有设置onTouchListener，所以会调用onTouchEvent方法，一直向上遍历，调用到View.onTouchEvent,由于这里的几个视图的onTouchEvent都会返回false，那么会一直向上直到Activity的onTouchEvent，再网上我们就不管了。。。
+
+有点乱，自己理解理解。
+
+<h4>总结</h4>
+
+1. View的转发流程:
+	View.dispatchTouchEvent->View.setOnTouchListener->View.onTouchEvent
+	如果设置了onTouchListener并且返回值为true，那么事件被消费，onTouchEvent不会调用。
+2. ViewGroup的转发流程:
+	
+3. onTouchEvent的DOWN，MOVE，UP  
+   按下DOWN:
+   a. 首先设置PREPRESSED，设置mHasPerformedLongPress=false，然后发送一个115ms的mPendingCheckForTap；
+   b. 如果115ms内没有出发UP，则将标识置为PRESSED，清除PREPRESSED标识，同时发出一个延时为500ms-115ms的消息，检测长按任务。
+   c. 如果500ms内未出发UP，则会出发LongClickListener，此时如果长按回调不为null，则会执行回调，如果回调的返回为true，才把mHasPerformedlongPress设置为true，否则依然是false。
+   
+   移动MOVE:
+   检测触摸点是否移出了view，如果移出了：
+   a. 115ms内移出，直接移出mPendingCheckForTap回调。
+   b. 115ms后，则将标识位中的PRESSED去除，同时移除长按的检测回调:removeLongPressCallback();
+   
+   抬起UP:
+   a. 115ms内触发UP，此时标识为PREPRESSED，则执行UnsetPressedState，setPress(false);会把setPress转发下去，可以在View中复写dispatchSetPressed方法接受。
+   b. 如果115ms-500ms之间触发，即长按未触发，移除长按检测，执行onClick回调。
+   c. 如果500ms以后触发：那么有两种情况：  
+   	   b1. 设置了onLongClickListener，且onClick回调返回true，onClick不触发.
+   	   b2. 没有设置onLongClickListener或者onClick回调返回false，触发onClick。
+   d. 最后执行mUnsetPressedState.run(),将setPress传递下去，将PRESSED标识去除，刷新背景。
+   
+参考教程：
+
+- [Andriod 从源码的角度详解View,ViewGroup的Touch事件的分发机制][2]
+- [Android事件传递机制][1]
+- [Android事件分发机制完全解析，带你从源码的角度彻底理解(上)][6]
+- [Android View 事件分发机制 源码解析 （上）][3]
+- [Android ViewGroup事件分发机制][4]
+- [Android源码分析-点击事件派发机制][5]
+
+[1]:http://ryantang.me/blog/2014/01/02/android-event-dispatch/
+[2]:http://blog.csdn.net/xiaanming/article/details/21696315
+[3]:http://blog.csdn.net/lmj623565791/article/details/38960443
+[4]:http://blog.csdn.net/lmj623565791/article/details/39102591
+[5]:http://blog.csdn.net/singwhatiwanna/article/details/17339857
+[6]:http://blog.csdn.net/guolin_blog/article/details/9097463

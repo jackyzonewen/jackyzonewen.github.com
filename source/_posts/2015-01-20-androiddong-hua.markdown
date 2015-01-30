@@ -59,7 +59,10 @@ ParentView根据ChildView在其内部的布局来调整Canvas，其中画布的�
 
 抽象类Animation中主要定义了动画的一些属性，比如开始时间、持续时间、是否重复播放等，这个类主要有两个重要的函数：getTransformation和applyTransformation，在getTransformation中Animation会根据动画的属性来产生一系列的差值点，然后将这些差值点传给applyTransformation，不同的动画重载这个函数，实现不同的动画效果，通过这个函数将根据这些点来生成不同的Transformation，Transformation中包含一个矩阵和alpha值，矩阵是用来做平移、旋转和缩放动画的，而alpha值是用来做透明度的动画，类的层次结构如下：
 
+<!--
 ![](../images/animation.png)
+-->
+{% img ../images/animation.png %}
 
 #####如何使用？
 
@@ -143,8 +146,10 @@ Android SDK提供了另外一个类AnimationDrawable来定义使用帧动画，�
 	
 ####属性动画
 
+<!--
 ![](../images/animator.png)
-
+-->
+{% img ../images/animator.png %}
 
 
 ####参考
