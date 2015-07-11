@@ -17,12 +17,6 @@ tags: [block]
 
 #### Block语法
 
-一图一世界：
-
-![](http://beyondvincent.com/wp-content/uploads/2013/07/blocks_2x.png)
-
-
-
 声明block变量:
 
 As a local variable:
